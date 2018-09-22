@@ -1,0 +1,43 @@
+<div class="card">
+	<div
+		class="mb-2"
+		fxLayoutAlign="start center">
+
+		<h4
+			class="card-title m-0"
+			fxFlex>
+			Product Attributes
+		</h4>
+
+		<div fxFlex="45px">
+			<button
+				class="btn btn-primary btn-rounded"
+				type="button"
+				(click)="create()">
+
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+	</div>
+
+	<table class="table">
+		<tr>
+			<th>Name</th>
+			<th>Type</th>
+			<th>Values</th>
+		</tr>
+		<tr *ngFor="let i of items">
+			<td>
+				<a [routerLink]="['./../../', i._id.$oid]">
+					{{i.name}}
+				</a>
+			</td>
+			<td>
+				{{i.type}}
+			</td>
+			<td>
+				{{i.values}}
+			</td>
+		</tr>
+	</table>
+</div>

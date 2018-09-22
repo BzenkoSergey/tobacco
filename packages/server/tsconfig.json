@@ -1,11 +1,16 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "module": "commonjs",
+	"outDir": "./dist",
     "moduleResolution": "node",
+	"lib": ["es2015", "dom"],
     "rootDir": "src",
-    "outDir": "dist",
     "declaration": true
-  }
+  },
+  "exclude": [
+	  "node_modules",
+	  "dist"
+  ]
 }

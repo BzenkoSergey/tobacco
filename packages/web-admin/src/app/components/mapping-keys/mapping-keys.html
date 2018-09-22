@@ -1,0 +1,47 @@
+<div
+	class="mb-2"
+	fxLayoutAlign="start center">
+
+	<h4
+		class="card-title m-0"
+		fxFlex>
+
+		Mapping Keys
+	</h4>
+
+	<div fxFlex="45px">
+		<button
+			class="btn btn-primary btn-rounded"
+			type="button"
+			(click)="add()">
+
+			<i class="fas fa-plus"></i>
+		</button>
+	</div>
+</div>
+
+<div
+	*ngFor="let item of items; index as i"
+	class="form-group"
+	fxLayoutAlign="start center"
+	fxLayoutGap="2%">
+
+	<div fxFlex>
+		<div>
+			<input
+				type="text"
+				placeholder="Value"
+				[name]="i + 'mapping-key'"
+				[(ngModel)]="item.value">
+		</div>
+	</div>
+	<div fxFlex="45px">
+		<button
+			class="btn btn-primary btn-rounded"
+			type="button"
+			(click)="remove(item)">
+
+			<i class="fas fa-trash-alt"></i>
+		</button>
+	</div>
+</div>

@@ -1,0 +1,25 @@
+<div class="card">
+	<h4 class="card-title">
+		Grabber Details
+	</h4>
+
+	<ul
+		fxLayout="row"
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%"
+		class="tab">
+
+		<li>
+			<a [routerLink]="['operations']">
+				Operations
+			</a>
+		</li>
+		<li>
+			<a [routerLink]="['items']">
+				Grabbed Items
+			</a>
+		</li>
+	</ul>
+
+	<router-outlet></router-outlet>
+</div>

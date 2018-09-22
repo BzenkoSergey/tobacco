@@ -1,0 +1,19 @@
+<ul
+	*ngIf="categories.length"
+	class="level-{{level}}">
+
+	<li *ngFor="let item of categories">
+		<button
+			class="link"
+			(click)="select(item)">
+			{{item.name}}
+		</button>
+
+		<categories-items
+			[items]="items"
+			[parent]="item._id.$oid"
+			[level]="level + 1"
+			(selected)="select($event)">
+		</categories-items>
+	</li>
+</ul>

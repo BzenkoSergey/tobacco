@@ -1,0 +1,76 @@
+<div class="card">
+	<div
+		class="mb-2"
+		fxLayoutAlign="start center">
+
+		<h4
+			class="card-title m-0"
+			fxFlex>
+			Product Lines
+		</h4>
+
+		<div fxFlex="45px">
+			<button
+				class="btn btn-primary btn-rounded"
+				type="button"
+				(click)="create()">
+
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+	</div>
+
+	<table class="table">
+		<tr>
+			<th>Logo</th>
+			<th>Name</th>
+		</tr>
+		<tbody *ngFor="let company of companies">
+			<tr class="company-row">
+				<td>
+					<img
+						*ngIf="company.logo"
+						[src]="company.logo"
+						alt="image">
+				</td>
+				<td>
+					{{company.name}}
+				</td>
+			</tr>
+			<tr *ngFor="let i of map.get(company)">
+				<td>
+					<img
+						*ngIf="i.logo"
+						[src]="i.logo"
+						alt="image">
+				</td>
+				<td>
+					<a [routerLink]="['./../../', i._id.$oid]">
+						{{i.name}}
+					</a>
+				</td>
+			</tr>
+		</tbody>
+		<tbody>
+			<tr class="company-row">
+				<td></td>
+				<td>
+					UnAssigned
+				</td>
+			</tr>
+			<tr *ngFor="let i of map.get(null)">
+				<td>
+					<img
+						*ngIf="i.logo"
+						[src]="i.logo"
+						alt="image">
+				</td>
+				<td>
+					<a [routerLink]="['./../../', i._id.$oid]">
+						{{i.name}}
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

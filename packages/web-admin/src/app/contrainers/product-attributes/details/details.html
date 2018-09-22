@@ -1,0 +1,109 @@
+<div class="card">
+	<h4 class="card-title">
+		Product Attribute
+	</h4>
+
+	<div
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<form
+			fxFlex="60%"
+			(submit)="save()">
+
+			<div class="form-group">
+				<label for="name">
+					Name
+				</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					placeholder="Enter Name"
+					[(ngModel)]="item.name">
+			</div>
+			<div class="form-group">
+				<label for="type">
+					Type
+				</label>
+				<select
+					type="text"
+					id="type"
+					name="type"
+					[(ngModel)]="item.type">
+					<option value="TEXT">Text</option>
+					<option value="LIST">List</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<button
+					class="btn btn-primary"
+					type="submit">
+					Save
+				</button>
+			</div>
+		</form>
+		<div fxFlex="38%">
+			<div
+				class="mb-2"
+				fxLayoutAlign="start center">
+
+				<h4
+					class="card-title m-0"
+					fxFlex>
+					Values
+				</h4>
+
+				<div fxFlex="45px">
+					<button
+						class="btn btn-primary btn-rounded"
+						type="button"
+						(click)="createValue()">
+
+						<i class="fas fa-plus"></i>
+					</button>
+				</div>
+			</div>
+			<div
+				*ngFor="let v of item.values; index as i"
+				class="form-group"
+				fxLayoutAlign="start center"
+				fxLayoutGap="2%">
+
+				<div fxFlex>
+					<input
+						type="text"
+						[name]="i + 'value'"
+						placeholder="Value"
+						[(ngModel)]="item.values[i]">
+				</div>
+				<div fxFlex="45px">
+					<button
+						class="btn btn-primary btn-rounded"
+						type="button"
+						(click)="removeValue(i)">
+
+						<i class="fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card">
+	<form (submit)="save()">
+		<mapping-keys
+			name="mappingKeys"
+			[(ngModel)]="item.mappingKeys">
+		</mapping-keys>
+
+		<div class="form-group mt-2">
+			<button
+				class="btn btn-primary"
+				type="submit">
+				Save
+			</button>
+		</div>
+	</form>
+</div>

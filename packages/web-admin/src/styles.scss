@@ -1,0 +1,183 @@
+/* You can add global styles to this file, and also import other style files */
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+	margin: 0;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 1rem;
+	line-height: 1.15;
+}
+
+.btn {
+	cursor: pointer;
+}
+
+.btn-link {
+	border: 0;
+	background-color: transparent;
+	font-size: 1.25rem;
+	color: inherit;
+}
+
+.btn-primary {
+	font-size: 0.875rem;
+    line-height: 1;
+    font-family: "opensans-regular", sans-serif;
+	font-weight: 400;
+	color: #fff;
+    background-color: #09b76b;
+	border-color: #09b76b;
+	display: inline-block;
+	text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+	padding: 0.56rem 1.375rem;
+	border-radius: 0.1875rem;
+}
+
+.btn-rounded {
+	padding: 15px;
+	border-radius: 50px;
+	font-size: 0.875rem;
+	line-height: 0;
+	font-weight: 400;
+	color: #fff;
+	outline: none;
+	background-color: #1094f7;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	user-select: none;
+	cursor: pointer;
+	border: 1px solid transparent;
+	transition: background-color 0.15s ease-in-out;
+
+	&:hover,
+	&:focus {
+		background-color: #077fd9;
+	}
+}
+
+.card {
+	padding: 1.88rem 1.81rem;
+	background-color: #fff;
+	margin-bottom: 15px;
+	border-radius: 2px;
+
+	&-unpadding {
+		margin: 0 -1.81rem !important;
+	}
+
+	&-title {
+		color: #000000;
+		margin: 0;
+		margin-bottom: 1.125rem;
+		text-transform: capitalize;
+		font-family: "opensans-semibold", sans-serif;
+	}
+}
+
+h4, .h4 {
+	font-size: 1.13rem;
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+.table {
+	width: 100%;
+	max-width: 100%;
+	border-collapse: collapse;
+
+	th, td {
+		border-top: 1px solid #f3f3f3;
+		vertical-align: middle;
+		font-size: 0.875rem;
+		line-height: 1;
+		padding: 0.9375rem;
+		text-align: left;
+	}
+
+	th {
+		border-top: 0;
+		font-family: "opensans-regular", sans-serif;
+		font-weight: 500;
+		vertical-align: bottom;
+		border-bottom: 1px solid #f3f3f3;
+	}
+}
+
+.m-0 {
+	margin: 0;
+}
+
+.m-1 {
+	margin: 0.25rem !important;
+}
+
+.mt-1 {
+	margin-top: 0.25rem !important;
+}
+
+.mr-1 {
+	margin-right: 0.25rem !important;
+}
+
+.mt-2 {
+    margin-top: 0.5rem !important;
+}
+
+.mb-1 {
+	margin-bottom: 0.25rem !important;
+}
+.mb-2 {
+	margin-bottom: 0.5rem !important;
+}
+.mb-3 {
+	margin-bottom: 0.75rem !important;
+}
+
+label {
+	font-size: 0.875rem;
+    line-height: 1;
+	vertical-align: top;
+	display: inline-block;
+    margin-bottom: .5rem;
+}
+
+select,
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+	border: 1px solid #f3f3f3;
+    font-family: "opensans-regular", sans-serif;
+    font-size: 0.75rem;
+    padding: 0.56rem 0.75rem;
+    line-height: 14px;
+	background: #fff;
+	display: block;
+	width: 100%;
+	color: #495057;
+	border-radius: 2px;
+	outline: none;
+
+	&:focus {
+		color: #495057;
+		background-color: #fff;
+		border-color: #80bdff;
+	}
+}
+
+.form-group {
+	margin-bottom: 1rem;
+}
+
+.w-100 {
+	width: 100%;
+}

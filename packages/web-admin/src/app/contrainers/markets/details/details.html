@@ -1,0 +1,306 @@
+<div class="card">
+	<h4 class="card-title">
+		Market
+	</h4>
+
+	<div
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<form
+			fxFlex="70%"
+			(submit)="save()">
+
+			<div class="form-group">
+				<label for="name">
+					Name
+				</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					placeholder="Enter Name"
+					[(ngModel)]="item.name">
+			</div>
+			<div class="form-group">
+				<label for="logo">
+					Logo
+				</label>
+				<input
+					type="text"
+					id="logo"
+					name="logo"
+					placeholder="Enter Logo"
+					[(ngModel)]="item.logo">
+			</div>
+			<div class="form-group">
+				<button
+					class="btn btn-primary"
+					type="submit">
+					Save
+				</button>
+			</div>
+		</form>
+		<div fxFlex="28%">
+			<img
+				*ngIf="item.logo"
+				class="w-100"
+				[src]="item.logo"
+				alt="image">
+		</div>
+	</div>
+</div>
+
+<div class="card">
+	<h4 class="card-title">
+		Grabber Settings
+	</h4>
+
+	<form (submit)="save()">
+		<div
+			fxLayoutAlign="start start"
+			fxLayoutGap="2%">
+
+			<div fxFlex="49%">
+				<div class="form-group">
+					<label for="pageLimit">
+						Page Limit
+					</label>
+					<input
+						type="text"
+						id="pageLimit"
+						name="pageLimit"
+						placeholder="Page Limit"
+						[(ngModel)]="item.grabber.pageLimit">
+				</div>
+				<div class="form-group">
+					<label for="host">
+						Host
+					</label>
+					<input
+						type="text"
+						id="host"
+						name="host"
+						placeholder="Host"
+						[(ngModel)]="item.grabber.host">
+				</div>
+			</div>
+
+			<div fxFlex="49%">
+				<div class="form-group">
+					<label for="path">
+						Path
+					</label>
+					<input
+						type="text"
+						id="path"
+						name="path"
+						placeholder="Path"
+						[(ngModel)]="item.grabber.path">
+				</div>
+				<div class="form-group">
+					<label for="protocol">
+						Protocol
+					</label>
+					<input
+						type="text"
+						id="protocol"
+						name="protocol"
+						placeholder="Protocol"
+						[(ngModel)]="item.grabber.protocol">
+				</div>
+			</div>
+		</div>
+
+		<h4 class="card-title">
+			Mapping
+		</h4>
+		<div
+			fxLayoutAlign="start start"
+			fxLayoutGap="2%">
+
+			<div fxFlex="49%">
+				<div class="form-group">
+					<label for="selector">
+						Selector
+					</label>
+					<input
+						type="text"
+						id="selector"
+						name="selector"
+						placeholder="Selector"
+						[(ngModel)]="item.grabber.mapping.selector">
+				</div>
+			</div>
+		</div>
+
+		<ul class="attributes card-unpadding">
+			<li>
+				<div
+					class="mb-2"
+					fxLayoutAlign="start center">
+
+					<h4
+						class="card-title m-0"
+						fxFlex>
+						Attributes
+					</h4>
+
+					<div fxFlex="45px">
+						<button
+							class="btn btn-primary btn-rounded"
+							type="button"
+							(click)="addAttribute()">
+
+							<i class="fas fa-plus"></i>
+						</button>
+					</div>
+				</div>
+			</li>
+			<li *ngFor="let attr of item.grabber.mapping.attributes; index as i;">
+				<div
+					fxLayoutAlign="start start"
+					fxLayoutGap="2%">
+
+					<div fxFlex="49%">
+						<div class="form-group">
+							<label [for]="i + 'attr-name'">
+								Name
+							</label>
+							<input
+								type="text"
+								[id]="i + 'attr-name'"
+								[name]="i + 'attr-name'"
+								placeholder="Name"
+								[(ngModel)]="attr.name">
+						</div>
+						<div class="form-group">
+							<label [for]="i + 'attr-selector'">
+								Selector
+							</label>
+							<input
+								type="text"
+								[id]="i + 'attr-selector'"
+								[name]="i + 'attr-selector'"
+								placeholder="Selector"
+								[(ngModel)]="attr.selector">
+						</div>
+						<div class="form-group">
+							<label [for]="i + 'attr-attrName'">
+								Attr Name
+							</label>
+							<input
+								type="text"
+								[id]="i + 'attr-attrName'"
+								[name]="i + 'attr-attrName'"
+								placeholder="Attr Name"
+								[(ngModel)]="attr.attrName">
+						</div>
+						<div class="form-group">
+							<label [for]="i + 'attr-type'">
+								Type
+							</label>
+							<select
+								[id]="i + 'attr-type'"
+								[name]="i + 'attr-type'"
+								[(ngModel)]="attr.type">
+
+								<option value="VALUE">
+									Value
+								</option>
+
+								<option value="TEXT">
+									Text
+								</option>
+
+								<option value="ATTR">
+									Attr
+								</option>
+							</select>
+						</div>
+					</div>
+					<div fxFlex="49%">
+						<div
+							class="mb-2"
+							fxLayoutAlign="start center">
+
+							<h4
+								class="card-title m-0"
+								fxFlex>
+								Transforms
+							</h4>
+
+							<div fxFlex="45px">
+								<button
+									class="btn btn-primary btn-rounded"
+									type="button"
+									(click)="addTransform(attr)">
+
+									<i class="fas fa-plus"></i>
+								</button>
+							</div>
+						</div>
+						<div
+							*ngFor="let transform of attr.transforms; index as ti;"
+							fxLayoutAlign="start start"
+							fxLayoutGap="2%">
+
+							<div fxFlex="49%">
+								<div class="form-group">
+									<label [for]="ti + 'transform-type' + i">
+										Type
+									</label>
+									<select
+										[id]="ti + 'transform-type' + i"
+										[name]="ti + 'transform-type' + i"
+										[(ngModel)]="transform[0]">
+
+										<option value="NUMBERIFY">
+											NUMBERIFY
+										</option>
+										<option value="BOOLEANIFY">
+											BOOLEANIFY
+										</option>
+										<option value="TRIM">
+											TRIM
+										</option>
+										<option value="REPLACE">
+											REPLACE
+										</option>
+										<option value="PREFIX">
+											PREFIX
+										</option>
+										<option value="POSTFIX">
+											POSTFIX
+										</option>
+									</select>
+								</div>
+							</div>
+							<div fxFlex="49%">
+								<div class="form-group">
+									<label [for]="ti + 'transform-option' + i">
+										Option
+									</label>
+									<input
+										type="text"
+										[id]="ti + 'transform-option' + i"
+										[name]="ti + 'transform-option' + i"
+										placeholder="Option"
+										[(ngModel)]="transform[1]">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+
+		<div class="form-group mt-2">
+			<button
+				class="btn btn-primary"
+				type="submit">
+				Save
+			</button>
+		</div>
+	</form>
+</div>

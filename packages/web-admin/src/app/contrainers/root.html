@@ -1,0 +1,113 @@
+<div
+	class="top-nav"
+	fxLayoutAlign="space-around stretch">
+
+	<div
+		class="logo"
+		fxFlex="265px">
+		logo
+	</div>
+
+	<ul
+		class="panel"
+		fxFlex
+		fxLayout="row"
+		fxLayoutAlign="center center">
+
+		<li fxFlex>
+			<button
+				type="button"
+				class="btn btn-link">
+
+				<i class="fas fa-bars"></i>
+			</button>
+		</li>
+		<li fxFlex>
+			<!-- search -->
+		</li>
+		<li fxFlex>
+			<!-- some info -->
+		</li>
+	</ul>
+</div>
+
+<div
+	class="content-wrap"
+	fxLayoutAlign="space-around stretch">
+
+	<div
+		class="sidebar"
+		fxFlex="265px">
+
+		<h3>MAIN</h3>
+		<ul>
+			<li>
+				<a [routerLink]="['markets']">
+					<i class="fas fa-columns"></i>
+
+					Markets
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['grabber']">
+					<i class="fas fa-columns"></i>
+
+					Grabber
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['companies']">
+					<i class="fas fa-columns"></i>
+
+					Companies
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['product-lines']">
+					<i class="fas fa-columns"></i>
+
+					Product Lines
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['product-attributes']">
+					<i class="fas fa-columns"></i>
+
+					Product Attributes
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['categories']">
+					<i class="fas fa-columns"></i>
+
+					Categories
+				</a>
+			</li>
+		</ul>
+
+		<h3>MAIN</h3>
+		<ul>
+			<li>
+				<a href="">
+					<i class="fas fa-columns"></i>
+
+					sidebar
+				</a>
+			</li>
+			<li>
+				<a href="">
+					<i class="fas fa-columns"></i>
+
+					sidebar
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div
+		class="content"
+		fxFlex>
+
+		<router-outlet></router-outlet>
+	</div>
+</div>

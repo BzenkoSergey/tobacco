@@ -1,0 +1,146 @@
+
+<div
+	fxLayoutAlign="start start"
+	fxLayoutGap="2%">
+
+	<div fxFlex="50%">
+		<div class="card">
+			<h4 class="card-title">
+				Categories
+			</h4>
+
+			<button
+				class="btn btn-primary mb-3"
+				type="button"
+				(click)="createPlaceholder()">
+
+				Create
+			</button>
+
+			<categories-items
+				[items]="items"
+				[level]="0"
+				(selected)="setPlaceholder($event)">
+			</categories-items>
+		</div>
+	</div>
+
+	<div fxFlex="50%">
+		<form
+			*ngIf="placeholder"
+			class="card"
+			(submit)="save(placeholder)">
+			<h4
+				*ngIf="placeholder._id"
+				class="card-title">
+				Edit Category
+			</h4>
+			<h4
+				*ngIf="!placeholder._id"
+				class="card-title">
+				Create Category
+			</h4>
+
+			<img
+				*ngIf="placeholder.logo"
+				class="w-100 mb-2"
+				[src]="placeholder.logo"
+				alt="image">
+
+			<div class="form-group">
+				<label for="name">
+					Name
+				</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					placeholder="Enter Name"
+					[(ngModel)]="placeholder.name">
+			</div>
+			<div class="form-group">
+				<label for="logo">
+					Logo
+				</label>
+				<input
+					type="text"
+					id="logo"
+					name="logo"
+					placeholder="Enter Logo"
+					[(ngModel)]="placeholder.logo">
+			</div>
+			<div class="form-group">
+				<label for="order">
+					Order
+				</label>
+				<input
+					type="number"
+					id="order"
+					name="order"
+					placeholder="Enter order"
+					[(ngModel)]="placeholder.order">
+			</div>
+			<div class="form-group">
+				<label for="parent">
+					Parent
+				</label>
+				<select
+					id="parent"
+					name="parent"
+					[(ngModel)]="placeholder.parent">
+
+					<option
+						*ngFor="let i of items"
+						[value]="i._id.$oid">
+						{{i.name}}
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<button
+					class="btn btn-primary mr-1"
+					type="submit">
+					Save
+				</button>
+				<button
+					*ngIf="placeholder._id"
+					class="btn btn-primary mr-1"
+					type="button"
+					(click)="createChildPlaceholder(placeholder)">
+					Create child
+				</button>
+				<button
+					*ngIf="placeholder._id"
+					class="btn btn-primary"
+					type="button"
+					(click)="remove(placeholder)">
+					Remove
+				</button>
+			</div>
+		</form>
+
+		<div
+			*ngIf="placeholder"
+			class="card">
+
+			<form (submit)="save(placeholder)">
+				<mapping-keys
+					name="mappingKeys"
+					[(ngModel)]="placeholder.mappingKeys">
+				</mapping-keys>
+
+				<div class="form-group mt-2">
+					<button
+						class="btn btn-primary"
+						type="submit">
+						Save
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+
+

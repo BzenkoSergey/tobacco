@@ -1,0 +1,69 @@
+<div class="card">
+	<h4 class="card-title">
+		Company
+	</h4>
+
+	<div
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<form
+			fxFlex="70%"
+			(submit)="save()">
+
+			<div class="form-group">
+				<label for="name">
+					Name
+				</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					placeholder="Enter Name"
+					[(ngModel)]="item.name">
+			</div>
+			<div class="form-group">
+				<label for="logo">
+					Logo
+				</label>
+				<input
+					type="text"
+					id="logo"
+					name="logo"
+					placeholder="Enter Logo"
+					[(ngModel)]="item.logo">
+			</div>
+			<div class="form-group">
+				<button
+					class="btn btn-primary"
+					type="submit">
+					Save
+				</button>
+			</div>
+		</form>
+		<div fxFlex="28%">
+			<img
+				*ngIf="item.logo"
+				class="w-100"
+				[src]="item.logo"
+				alt="image">
+		</div>
+	</div>
+</div>
+
+<div class="card">
+	<form (submit)="save()">
+		<mapping-keys
+			name="mappingKeys"
+			[(ngModel)]="item.mappingKeys">
+		</mapping-keys>
+
+		<div class="form-group mt-2">
+			<button
+				class="btn btn-primary"
+				type="submit">
+				Save
+			</button>
+		</div>
+	</form>
+</div>

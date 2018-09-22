@@ -1,0 +1,41 @@
+<div class="card">
+	<div
+		class="mb-2"
+		fxLayoutAlign="start center">
+
+		<h4
+			class="card-title m-0"
+			fxFlex>
+			Markets
+		</h4>
+
+		<div fxFlex="45px">
+			<button
+				class="btn btn-primary btn-rounded"
+				type="button"
+				(click)="create()">
+
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+	</div>
+
+	<table class="table">
+		<tr>
+			<th>Logo</th>
+			<th>Name</th>
+		</tr>
+		<tr *ngFor="let i of items">
+			<td>
+				<img
+					src="http://www.urbanui.com/pearl-admin/images/faces-clipart/pic-1.png"
+					alt="image">
+			</td>
+			<td>
+				<a [routerLink]="['./../../', i._id.$oid]">
+					{{i.name}}
+				</a>
+			</td>
+		</tr>
+	</table>
+</div>

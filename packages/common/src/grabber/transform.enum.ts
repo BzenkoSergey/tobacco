@@ -1,0 +1,8 @@
+export enum GrabberTransform {
+	NUMBERIFY = 'NUMBERIFY',
+	BOOLEANIFY = 'BOOLEANIFY',
+	TRIM = 'TRIM',
+	REPLACE = 'REPLACE',
+	PREFIX = 'PREFIX',
+	POSTFIX = 'POSTFIX'
+}

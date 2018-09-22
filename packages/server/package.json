@@ -1,15 +1,20 @@
 {
-  "name": "@cashew/server",
+  "name": "@magz/server",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@cashew/common": "1.0.0"
+    "@magz/common": "1.0.0",
+    "@magz/grabber": "1.0.0",
+    "expressjs": "1.0.1"
   },
   "devDependencies": {
-    "@types/node": "^10.3.2",
+    "@types/node": "10.10.1",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "method-override": "^3.0.0",
     "ts-node": "^6.1.0",
-    "typescript": "^2.9.1"
+    "typescript": "2.9.1"
   },
   "scripts": {
     "start": "ts-node src/index.ts",
