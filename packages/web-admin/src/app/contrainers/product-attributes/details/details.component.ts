@@ -3,13 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
-import { ProductAttributeDto, ProductLinesRestService, ProductAttributeType } from '@rest/product-attributes';
+import { ProductAttributeDto, ProductAttributesRestService, ProductAttributeValueDto } from '@rest/product-attributes';
 
 @Component({
 	templateUrl: './details.html',
 	styleUrls: ['./details.scss'],
 	providers: [
-		ProductLinesRestService
+		ProductAttributesRestService
 	]
 })
 
@@ -21,7 +21,7 @@ export class DetailsComponent implements OnDestroy {
 	item = new ProductAttributeDto();
 
 	constructor(
-		private service: ProductLinesRestService,
+		private service: ProductAttributesRestService,
 		route: ActivatedRoute
 	) {
 		this.sub = route.params.subscribe(params => {
@@ -37,7 +37,9 @@ export class DetailsComponent implements OnDestroy {
 	}
 
 	createValue() {
-		this.item.values.unshift('Placeholder');
+		const d = new ProductAttributeValueDto();
+		this.item.values.unshift(d);
+		console.log(this.item);
 	}
 
 	removeValue(i: number) {

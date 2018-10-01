@@ -6,7 +6,10 @@ import { DetailsComponent } from './details.component';
 const routes: Routes = [
 	{
 		path: '',
-		component: DetailsComponent
+		component: DetailsComponent,
+		data: {
+			breadcrumb: 'Market Details'
+		}
 	}
 ];
 

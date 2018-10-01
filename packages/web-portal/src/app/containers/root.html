@@ -1,0 +1,127 @@
+<div class="header clearfix">
+	<a
+		class="logo"
+		href="#">
+		<div class="name">
+			Hoogle
+		</div>
+		<div class="description">
+			Кальянный портал вещей
+		</div>
+	</a>
+	<div class="header-content">
+		<div class="search clearfix">
+			<button
+				class="search-btn"
+				type="button">
+				Искать
+			</button>
+
+			<div class="search-field-wrapper">
+				<input
+					type="search"
+					placeholder="Tangiers, 250 грамм, Noir Kashmir...">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="nav">
+	<ul class="items">
+		<li *ngFor="let i of filters">
+			<a
+				href="javascript:void(0)"
+				(click)="openFilter(i)">
+
+				{{i.label}}
+				<i
+					*ngIf="getChildrenByType(i.type).length"
+					class="fa fa-caret-down"
+					[class.fa-caret-up]="i.opened">
+				</i>
+			</a>
+
+			<div
+				*ngIf="getChildrenByType(i.type).length"
+				class="sub-items"
+				[class.open]="i.opened">
+
+				<filter-items
+					*ngIf="i.type === 'PRODUCT_ATTRIBUTE' && getProductAttribute(i.attribute)"
+					[items]="getProductAttribute(i.attribute).values"
+					[selectedItems]="getSelected(i.type, i.attribute)"
+					(selected)="handleQueries($event, i)">
+				</filter-items>
+				<filter-items
+					*ngIf="i.type !== 'PRODUCT_ATTRIBUTE'"
+					[items]="getChildrenByType(i.type)"
+					[selectedItems]="getSelected(i.type, null)"
+					(selected)="handleQueries($event, i)">
+				</filter-items>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="content">
+	<ul class="products clearfix">
+		<li
+			*ngFor="let product of products; let i = index"
+			class="product-li">
+
+			<div class="product">
+				<!-- <div class="product-label">
+					<span *ngIf="getCompany(product.company) as company">
+						{{company.name}}
+					</span>
+					{{product.name}}
+				</div> -->
+				<div class="product-info">
+					<div class="product-logo-wrap">
+						<img class="product-logo" [src]="product.logo" alt="">
+					</div>
+
+					<div class="product-name">
+						<span *ngIf="getCompany(product.company) as company">
+							{{company.name}}
+						</span>
+						{{product.name}}
+					</div>
+				</div>
+
+				<ul class="products-items">
+					<li
+						*ngFor="let item of product.items"
+						class="products-item clearfix">
+
+						<div class="price">
+							<a
+								target="_blank"
+								[href]="item.url">
+								<!-- Price: {{item.price}} -->
+								{{item.price}} грн
+							</a>
+						</div>
+
+						<div
+							*ngIf="getMarket(item.market) as market"
+							class="market">
+
+							<img *ngIf="market.logo" class="market-logo" [src]="market.logo">
+							<span *ngIf="!market.logo" class="market-name">{{market.name}}</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<div class="row"></div>
+		</li>
+	</ul>
+
+	<pagination
+		class="text-center public-pagination"
+		[itemsPerPage]="queries.itemsPerPage"
+		[page]="queries.page"
+		[total]="productsTotal">
+	</pagination>
+</div>

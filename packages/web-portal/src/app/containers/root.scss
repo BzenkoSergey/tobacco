@@ -1,0 +1,361 @@
+$text-color: #222;
+$bg-image: 'http://www.dronestagr.am/wp-content/uploads/2016/02/DJI_0008-1200x674.jpg';
+
+
+.header {
+	padding: 30px 20px 20px;
+
+	background-position: center bottom;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-image:
+	linear-gradient(to bottom, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.66) 80%, #fff 100%),
+		// linear-gradient(to bottom, rgba(255, 255, 255, 0.52) 0%, #ffffff00 80%, #fff 100%),
+		url($bg-image);
+
+	a {
+		text-decoration: none;
+		color: $text-color;
+		text-shadow: 1px -1px #ffffff2e, 1px 1px #ffffff2e;
+	}
+
+	&-content {
+		float: left;
+		width: calc(100% - 187px);
+		max-width: 700px;
+	}
+
+	.search {
+		margin-top: 12px;
+		margin-bottom: 12px;
+		box-shadow: 0 4px 5px 0 rgba(0,0,0,.08);
+
+		&-btn {
+			background-color: #ffeb3b;
+			border-radius: 0;
+			border-top-left-radius: 4px;
+			border-bottom-left-radius: 4px;
+			padding: 18px 0 17px;
+			width: 90px;
+			text-align: center;
+			font-size: 13px;
+			color: #3e3e3e;
+			font-weight: bold;
+			border: none;
+			float: left;
+			outline: none;
+			cursor: pointer;
+			text-transform: uppercase;
+
+			transition: background-color;
+			transition-duration: .3s;
+
+			&:hover,
+			&:focus {
+				background-color: #fbe533;
+			}
+
+			&:focus {
+				// box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.0784313725490196);
+			}
+		}
+
+		&-field-wrapper {
+			width: calc(100% - 90px);
+			float: left;
+
+			input {
+				background-color: white;
+				width: 100%;
+				font: inherit;
+				font-size: 15px;
+				padding: 16px;
+				border: none;
+				border-top-right-radius: 4px;
+				border-bottom-right-radius: 4px;
+				outline: none;
+				color: inherit;
+			}
+		}
+	}
+}
+
+.logo {
+	font-size: 12px;
+	float: left;
+	width: 167px;
+	padding-right: 20px;
+	text-align: center;
+
+	.name {
+		font-weight: bold;
+		font-size: 37px;
+	}
+
+	.desc {
+		display: block;
+		// opacity: .5;
+	}
+
+	.text {
+		display: inline-block;
+		vertical-align: middle;
+	}
+}
+
+.nav {
+	padding-left: 187px;
+	background-color: #ffffff;
+	box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.0784314);
+
+	.items {
+		margin: 0;
+		padding: 0;
+
+		li {
+			position: relative;
+			display: inline-block;
+			vertical-align: top;
+
+			a {
+				text-decoration: none;
+				color: #222;
+				display: block;
+				font-size: 14px;
+				padding: 12px 10px;
+			}
+		}
+
+		.sub-items {
+			min-width: 200px;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			background-color: #fff;
+			max-height: 0;
+			opacity: 0;
+			z-index: 1;
+			border: 1px solid rgba(0, 0, 0, 0.08);
+			box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.05);
+			border-top: 0;
+			border-bottom-left-radius: 5px;
+			border-bottom-right-radius: 5px;
+			transition: opacity;
+			transition-duration: .3s;
+			overflow: hidden;
+			font-size: 13px;
+			color: #626262;
+			font-weight: bold;
+
+			&.open {
+				max-height: none;
+				opacity: 1;
+			}
+		}
+	}
+}
+
+.content {
+	padding: 25px;
+}
+
+.products {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.product {
+	background-color: #fff;
+	padding: 10px;
+	width: 100%;
+
+	@media (min-width: 508px) {
+		margin-right: 1%;
+	}
+	@media (min-width: 508px) and (max-width: 767px) {
+		width: 32.666666666666664%;
+	}
+	@media (min-width: 768px) and (max-width: 991px) {
+		width: 24.25%;
+	}
+	@media (min-width: 992px) and (max-width: 1199px) {
+		width: 19.2%;
+	}
+	@media (min-width: 1200px) {
+		width: 13.428571428571429%;
+	}
+
+	margin-bottom: 15px;
+	float: left;
+	border-radius: 2px;
+	box-shadow: 0px 0px 9px rgba(0, 0, 0, 0.0584314);
+
+	&-name {
+		text-align: center;
+	}
+
+	&-logo {
+		max-width: 100%;
+		max-height: 100px;
+
+		&-wrap {
+			text-align: center;
+			margin-bottom: 5px;
+		}
+	}
+
+	&-li {
+		.row {
+			display: none;
+			clear: both;
+		}
+
+		@media (min-width: 508px) and (max-width: 767px) {
+			&:nth-child(3n) .row {
+				display: block;
+			}
+		}
+		@media (min-width: 768px) and (max-width: 991px) {
+			&:nth-child(4n) .row {
+				display: block;
+			}
+		}
+		@media (min-width: 992px) and (max-width: 1199px) {
+			&:nth-child(5n) .row {
+				display: block;
+			}
+		}
+		@media (min-width: 1200px) {
+			&:nth-child(7n) .row {
+				display: block;
+			}
+		}
+	}
+	@media (min-width: 508px) and (max-width: 767px) {
+		&-li:nth-child(3n) & {
+			margin-right: 0;
+		}
+	}
+	@media (min-width: 768px) and (max-width: 991px) {
+		&-li:nth-child(4n) & {
+			margin-right: 0;
+		}
+	}
+	@media (min-width: 992px) and (max-width: 1199px) {
+		&-li:nth-child(5n) & {
+			margin-right: 0;
+		}
+	}
+	@media (min-width: 1200px) {
+		&-li:nth-child(7n) & {
+			margin-right: 0;
+		}
+	}
+}
+
+
+
+
+.products-items {
+	list-style: none;
+	margin: 10px -10px -10px;
+	padding: 0;
+}
+
+.products-item {
+	padding: 5px 10px;
+	border-top: 1px solid rgba(0, 0, 0, 0.0784314);
+
+	.price {
+		float: right;
+		padding: 6px;
+
+		a {
+			text-decoration: none;
+		}
+	}
+
+	.market {
+		float: left;
+		width: 50px;
+		text-align: center;
+
+		&-logo {
+			max-width: 100%;
+			max-height: 26px;
+		}
+	}
+}
+
+.products-item {
+	padding: 3px 5px;
+
+	.market {
+		float: left;
+		width: 27px;
+	}
+
+	.market-name {
+		padding: 5px 0;
+    	display: block;
+	}
+}
+
+
+// .products-items {
+// 	// overflow: hidden;
+// 	display: flex;
+// 	// flex-wrap: wrap;
+// 	flex-wrap: nowrap;
+// 	border-top: 1px solid rgba(0, 0, 0, 0.0784314);
+// }
+
+// .products-item {
+// 	// float: left;
+// 	// width: 45px;
+// 	// display: flex;
+// 	flex: 1 1 0%;
+// 	border-bottom: 1px solid rgba(0, 0, 0, 0.0784314);
+// 	border-right: 1px solid rgba(0, 0, 0, 0.0784314);
+// 	border-top: none;
+
+// 	.market {
+// 		width: 100%;
+// 		float: none;
+// 	}
+
+// 	.price {
+// 		float: none;
+// 	}
+// }
+
+
+
+
+// .product-logo-wrap {
+// 	padding-top: 10px;
+// }
+
+// .product-label {
+// 	padding: 0 10px 10px;
+// 	margin: 0 -10px;
+// 	border-bottom: 1px solid rgba(0, 0, 0, 0.0784314);
+// }
+
+// .products-items {
+// 	border-left: 1px solid rgba(0, 0, 0, 0.0784314);
+// 	list-style: none;
+//     padding: 0;
+//     float: left;
+//     margin: 0 -10px -10px 10px;
+//     width: calc(100% - 55px);
+
+// 	.products-item:first-child {
+// 		border: none;
+// 	}
+// }
+// .product-info {
+// 	float: left;
+// 	width: 55px;
+// }

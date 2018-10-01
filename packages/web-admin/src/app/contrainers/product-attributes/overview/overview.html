@@ -36,7 +36,9 @@
 				{{i.type}}
 			</td>
 			<td>
-				{{i.values}}
+				<span *ngFor="let v of i.values">
+					{{v.value}}
+				</span>
 			</td>
 		</tr>
 	</table>

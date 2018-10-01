@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+
+html {
+	-webkit-font-smoothing: antialiased;
+}
+
+body {
+	background-color: #f3f3f3;
+	font-family: Roboto, "Myriad Pro", Arial, sans-serif;
+	// background-image: url(http://www.dronestagr.am/wp-content/uploads/2016/02/DJI_0008-1200x674.jpg);
+	// background-position: center top;
+	// background-repeat: no-repeat;
+	font-size: 13px;
+	line-height: 1.33;
+	color: #4f4f4f;
+	margin: 0;
+}
+
+.center-layout {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+	.container {
+		width: 100%;
+		max-width: calc(100% - 30px);
+	}
+}
+
+@media (min-width: 992px) {
+	.container {
+		width: 100%;
+		max-width: 965px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.center-layout {
+		width: 100%;
+		max-width: 1250px;
+	}
+}
+
+
+.clearfix:before,
+.clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}

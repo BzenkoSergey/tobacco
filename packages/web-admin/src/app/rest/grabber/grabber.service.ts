@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { GrabberInputDto } from '@magz/common';
 
-type ResultItem = {
+export type ResultItem = {
 	available: boolean;
 	image: string;
 	label: string;

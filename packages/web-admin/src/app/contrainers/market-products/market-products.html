@@ -1,0 +1,96 @@
+
+<div
+	*ngFor="let product of products"
+	class="card">
+
+	<div
+		fxLayout="row"
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<div fxFlex="100px">
+			<img
+				class="w-100"
+				[src]="product.logo"
+				alt="">
+			<div>{{product.name}}</div>
+		</div>
+
+		<div fxFlex>
+			<div
+				*ngFor="let item of getItems(product._id.$oid)"
+				class="market-product"
+				fxLayout="row"
+				fxLayoutAlign="start start"
+				fxLayoutGap="2%">
+
+				<div fxFlex>
+
+					<div>Label: {{item.label}}</div>
+					<div>Price: {{item.price}}</div>
+					<div>Available: {{item.available}}</div>
+					<div>Url: {{item.url}}</div>
+					<div>
+						Attributes:
+						<div *ngFor="let attr of item.attributes">
+							- {{attr.name}}: {{attr.value}}
+						</div>
+					</div>
+				</div>
+				<div
+					*ngIf="getMarket(item.market) as market"
+					fxFlex="100px">
+
+					<img
+						class="w-100"
+						[src]="market.logo"
+						alt="">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--
+<div
+	*ngFor="let item of items"
+	class="card">
+
+	<div
+		fxLayout="row"
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<div
+			*ngIf="getMarket(item.market) as market"
+			fxFlex="100px">
+
+			<img
+				class="w-100"
+				[src]="market.logo"
+				alt="">
+		</div>
+
+		<div
+			*ngIf="getProduct(item.product) as product"
+			fxFlex="100px">
+
+			<img
+				class="w-100"
+				[src]="product.logo"
+				alt="">
+			<div>{{product.name}}</div>
+		</div>
+
+		<div fxFlex>
+			<div>Label: {{item.label}}</div>
+			<div>Price: {{item.price}}</div>
+			<div>Available: {{item.available}}</div>
+			<div>
+				Attributes:
+				<div *ngFor="let attr of item.attributes">
+					- {{attr.name}}: {{attr.value}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div> -->

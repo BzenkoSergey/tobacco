@@ -6,7 +6,10 @@ import { CategoriesComponent } from './categories.component';
 const routes: Routes = [
 	{
 		path: '',
-		component: CategoriesComponent
+		component: CategoriesComponent,
+		data: {
+			breadcrumb: 'Categories'
+		}
 	}
 ];
 

@@ -1,0 +1,9 @@
+.market-product {
+	padding: 10px 0 10px;
+	border-bottom: 1px solid rgb(244, 244, 248);
+	font-size: 14px;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}

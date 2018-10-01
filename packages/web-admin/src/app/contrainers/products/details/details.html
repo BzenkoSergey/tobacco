@@ -1,0 +1,172 @@
+<div class="card">
+	<h4 class="card-title">
+		Product
+	</h4>
+
+	<div
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<form
+			fxFlex="70%"
+			(submit)="save()">
+
+			<div class="form-group">
+				<label for="name">
+					Name
+				</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					placeholder="Enter Name"
+					[(ngModel)]="item.name">
+			</div>
+			<div class="form-group">
+				<label for="logo">
+					Logo
+				</label>
+				<input
+					type="text"
+					id="logo"
+					name="logo"
+					placeholder="Enter Logo"
+					[(ngModel)]="item.logo">
+			</div>
+			<div class="form-group">
+				<label for="company">
+					Company
+				</label>
+				<select
+					id="company"
+					name="company"
+					[(ngModel)]="item.company">
+
+					<option
+						*ngFor="let c of companies"
+						[value]="c._id.$oid">
+						{{c.name}}
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="categories">
+					Categories
+				</label>
+				<select
+					multiple
+					id="categories"
+					name="categories"
+					[(ngModel)]="item.categories">
+
+					<option
+						*ngFor="let c of categories"
+						[value]="c._id.$oid">
+						{{c.name}}
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="productLine">
+					Product Line
+				</label>
+				<select
+					id="productLine"
+					name="productLine"
+					[(ngModel)]="item.productLine">
+
+					<option [value]="null">
+						No Product Lines
+					</option>
+					<option
+						*ngFor="let c of productLines"
+						[value]="c._id.$oid">
+						{{c.name}}
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="productAttributes">
+					Product Attributes
+				</label>
+				<select
+					multiple
+					id="productAttributes"
+					name="productAttributes"
+					[(ngModel)]="item.productAttributes">
+
+					<option
+						*ngFor="let c of productAttributes"
+						[value]="c._id.$oid">
+						{{c.name}}
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<button
+					class="btn btn-primary"
+					type="submit">
+					Save
+				</button>
+			</div>
+		</form>
+		<div fxFlex="28%">
+			<img
+				*ngIf="item.logo"
+				class="w-100"
+				[src]="item.logo"
+				alt="image">
+		</div>
+	</div>
+</div>
+
+<div class="card">
+	<form (submit)="save()">
+		<mapping-keys
+			name="mappingKeys"
+			[(ngModel)]="item.mappingKeys">
+		</mapping-keys>
+
+		<div class="form-group mt-2">
+			<button
+				class="btn btn-primary"
+				type="submit">
+				Save
+			</button>
+		</div>
+	</form>
+</div>
+
+
+<div
+	*ngFor="let item of marketProducts"
+	class="card">
+
+	<div
+		fxLayout="row"
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<div
+			*ngIf="getMarket(item.market) as market"
+			fxFlex="100px">
+
+			<img
+				class="w-100"
+				[src]="market.logo"
+				alt="">
+		</div>
+
+		<div fxFlex>
+			<div>Label: {{item.label}}</div>
+			<div>Price: {{item.price}}</div>
+			<div>Available: {{item.available}}</div>
+			<div>
+				Attributes:
+				<div *ngFor="let attr of item.attributes">
+					- {{attr.name}}: {{attr.value}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

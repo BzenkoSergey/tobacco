@@ -4,6 +4,9 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
 	{
 		path: '',
+		data: {
+			breadcrumb: 'Home'
+		},
 		children: [
 			{
 				path: '',
@@ -13,6 +16,10 @@ const routes: Routes = [
 			{
 				path: 'markets',
 				loadChildren: './markets/markets.module#MarketsModule'
+			},
+			{
+				path: 'market-products',
+				loadChildren: './market-products/market-products.module#MarketProductsModule'
 			},
 			{
 				path: 'grabber',
@@ -31,8 +38,16 @@ const routes: Routes = [
 				loadChildren: './product-attributes/product-attributes.module#ProductAttributesModule'
 			},
 			{
+				path: 'products',
+				loadChildren: './products/products.module#ProductsModule'
+			},
+			{
 				path: 'categories',
 				loadChildren: './categories/categories.module#CategoriesModule'
+			},
+			{
+				path: 'portal-settings',
+				loadChildren: './portal-settings/portal-settings.module#PortalSettingsModule'
 			}
 		]
 	}

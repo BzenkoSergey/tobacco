@@ -1,0 +1,52 @@
+.search {
+	padding: 0 5px 5px;
+
+	input {
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		border: 1px solid #f3f3f3;
+		padding: 5px;
+		outline: none;
+		font-weight: normal;
+		width: 100%;
+	}
+}
+
+ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-height: 250px;
+	overflow: auto;
+
+	li {
+		display: block;
+		border-top: 1px solid #f3f3f3;
+
+		label {
+			display: block;
+			margin: 0;
+			padding: 3px 10px;
+			transition: background-color;
+			transition-duration: .3s;
+
+			&:hover {
+				background-color: #fbfbfb;
+			}
+
+			span {
+				display: inline-block;
+				vertical-align: middle;
+			}
+		}
+
+		input[type="checkbox"] {
+			position: static;
+			display: inline-block;
+			vertical-align: middle;
+			margin: 0;
+			margin-right: 5px;
+		}
+	}
+}

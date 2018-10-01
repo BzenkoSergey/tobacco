@@ -60,7 +60,7 @@ export class HttpStack {
 				const urlInfo = url.parse(urlResource);
 				method.get({
 					hostname: urlInfo.hostname,
-					path: urlInfo.path,
+					path: encodeURI(urlInfo.path),
 					protocol: urlInfo.protocol,
 					agent: agent,
 				}, (res: any) => {

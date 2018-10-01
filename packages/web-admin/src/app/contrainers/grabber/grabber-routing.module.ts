@@ -7,6 +7,9 @@ const routes: Routes = [
 	{
 		path: '',
 		component: GrabberComponent,
+		data: {
+			breadcrumb: 'Grabbers'
+		},
 		children: [
 			{
 				path: '',

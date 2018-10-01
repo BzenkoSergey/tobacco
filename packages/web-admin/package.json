@@ -23,6 +23,8 @@
     "@angular/platform-browser-dynamic": "6.1.7",
     "@angular/router": "6.1.7",
     "core-js": "^2.5.4",
+    "ng6-breadcrumbs": "^1.0.6",
+    "ngx-breadcrumbs": "0.0.3",
     "rxjs": "6.2.2",
     "zone.js": "~0.8.26"
   },

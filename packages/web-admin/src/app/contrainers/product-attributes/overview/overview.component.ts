@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { ProductAttributeDto, ProductLinesRestService } from '@rest/product-attributes';
+import { ProductAttributeDto, ProductAttributesRestService } from '@rest/product-attributes';
 
 @Component({
 	templateUrl: './overview.html',
 	styleUrls: ['./overview.scss'],
 	providers: [
-		ProductLinesRestService
+		ProductAttributesRestService
 	]
 })
 
@@ -17,7 +17,7 @@ export class OverviewComponent {
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
-		private service: ProductLinesRestService
+		private service: ProductAttributesRestService
 	) {
 		this.fetch();
 	}

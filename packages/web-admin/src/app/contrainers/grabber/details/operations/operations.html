@@ -3,15 +3,138 @@
 		class="btn btn-primary"
 		type="button"
 		(click)="performGrabber()">
-		Grabb all
+		Make Snapshot
+	</button>
+
+	<button
+		*ngIf="snapshot.length"
+		class="btn btn-primary"
+		type="button"
+		(click)="saveSnapshot()">
+		Save Snapshot
+	</button>
+
+	<button
+		*ngIf="snapshot.length"
+		class="btn btn-primary"
+		type="button"
+		(click)="saveItems()">
+		Save Items
+	</button>
+
+	<button
+		*ngIf="snapshot.length"
+		class="btn btn-primary"
+		type="button"
+		(click)="findProducts()">
+		Find Products
 	</button>
 </div>
 
-<ul>
-	<li *ngFor="let row of results">
-		<div>
-			Grapped from: {{row[0]}}
+<ul class="items">
+	<li
+		*ngFor="let item of snapshot"
+		fxLayout="row"
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<div fxFlex>
+			<div class="card">
+				<div [class.red]="!!getChanges(item).label">
+					Label: {{item.label}}
+				</div>
+				<div [class.red]="!!getChanges(item).price">
+					Price: {{item.price}}
+				</div>
+				<div [class.red]="!!getChanges(item).available">
+					Available: {{item.available}}
+				</div>
+				<div [class.red]="!!getChanges(item).attributes">
+					Attributes:
+					<div *ngFor="let attr of item.attributes">
+						- {{attr.name}}: {{attr.value}}
+					</div>
+				</div>
+					Url: {{item.url}}
+			</div>
 		</div>
-		<pre *ngFor="let item of row[1][0]">{{item | json}}</pre>
+		<div
+			*ngIf="map.get(item) as exist"
+			fxFlex>
+			<div class="card">
+				<div>Label: {{exist.label}}</div>
+				<div>Price: {{exist.price}}</div>
+				<div>Available: {{exist.available}}</div>
+				<div>
+					Attributes:
+					<div *ngFor="let attr of exist.attributes">
+						- {{attr.name}}: {{attr.value}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div fxFlex>
+			<div
+				class="card"
+				fxLayout="row"
+				fxLayoutAlign="start start"
+				fxLayoutGap="2%">
+
+				<div
+					*ngIf="getProduct(item.product) as product"
+					fxFlex="100px">
+
+					<img
+						class="w-100"
+						[src]="product.logo"
+						alt="">
+					<div>{{product.name}}</div>
+				</div>
+
+				<div fxFlex="100px">
+					<button
+						*ngIf="map.get(item) as exist"
+						class="btn btn-primary"
+						type="button"
+						(click)="updateMarketProduct(item, exist)">
+						Update
+					</button>
+					<button
+						*ngIf="!item._id && item.product && !map.get(item)"
+						class="btn btn-primary"
+						type="button"
+						(click)="createMarketProduct(item)">
+						Create
+					</button>
+				</div>
+			</div>
+		</div>
 	</li>
 </ul>
+<!--
+<table class="table">
+	<tr>
+		<th>Label</th>
+		<th>Price</th>
+		<th>Available</th>
+		<th>Market</th>
+		<td>Product</td>
+	</tr>
+	<tr *ngFor="let item of snapshot">
+		<td>{{item.label}}</td>
+		<td>{{item.price}}</td>
+		<td>{{item.available}}</td>
+		<td>{{item.market}}</td>
+		<td>
+			<div *ngIf="getProduct(item.product) as product">
+				<img
+					width="100px"
+					[src]="product.logo"
+					alt="">
+				<div *ngFor="let attr of item.attributes">
+					{{attr.name}}: {{attr.value}}
+				</div>
+			</div>
+		</td>
+	</tr>
+</table> -->

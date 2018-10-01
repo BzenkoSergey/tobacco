@@ -1,0 +1,140 @@
+<div class="card">
+	<h4 class="card-title">
+		Portal Settings
+	</h4>
+
+	<div
+		class="mb-2"
+		fxLayoutAlign="start center">
+
+		<h4
+			class="card-title m-0"
+			fxFlex>
+
+			Navigation Filters
+		</h4>
+
+		<div fxFlex="45px">
+			<button
+				class="btn btn-primary btn-rounded"
+				type="button"
+				(click)="addFilter()">
+
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+	</div>
+
+	<div
+		*ngFor="let filter of item.filters; index as i"
+		class="form-group"
+		fxLayoutAlign="start center"
+		fxLayoutGap="2%">
+
+		<div fxFlex>
+			<select
+				[name]="i + 'filter-type'"
+				[(ngModel)]="filter.type">
+
+				<option value="PRODUCT_ATTRIBUTE">Product Attribute</option>
+				<option value="CATEGORY">Category</option>
+				<option value="COMPANIES">Companies</option>
+				<option value="PRODUCT_LINES">Product Lines</option>
+				<option value="MARKETS">Markets</option>
+			</select>
+		</div>
+		<div fxFlex>
+			<div *ngIf="filter.type === 'PRODUCT_ATTRIBUTE'">
+				<select
+					[name]="i + 'filter-attribute'"
+					[(ngModel)]="filter.attribute">
+
+					<option
+						*ngFor="let productLine of productLines"
+						[value]="productLine._id.$oid">
+						{{productLine.name}}
+					</option>
+				</select>
+			</div>
+			<div *ngIf="filter.type === 'CATEGORY'">
+				<select
+					[name]="i + 'filter-category'"
+					[(ngModel)]="filter.parentCategory">
+
+					<option
+						*ngFor="let category of categories"
+						[value]="category._id.$oid">
+						{{category.name}}
+					</option>
+				</select>
+			</div>
+			<div *ngIf="filter.type === 'COMPANIES'">
+				<input
+					type="checkbox"
+					[id]="i + 'filter-companies'"
+					[name]="i + 'filter-companies'"
+					[(ngModel)]="filter.companies">
+
+				<label [for]="i + 'filter-companies'">
+					Enable Companies
+				</label>
+			</div>
+			<div *ngIf="filter.type === 'PRODUCT_LINES'">
+				<input
+					type="checkbox"
+					[id]="i + 'filter-productLines'"
+					[name]="i + 'filter-productLines'"
+					[(ngModel)]="filter.productLines">
+
+				<label [for]="i + 'filter-productLines'">
+					Enable Product Lines
+				</label>
+			</div>
+			<div *ngIf="filter.type === 'MARKETS'">
+				<input
+					type="checkbox"
+					[id]="i + 'filter-markets'"
+					[name]="i + 'filter-markets'"
+					[(ngModel)]="filter.markets">
+
+				<label [for]="i + 'filter-markets'">
+					Enable Markets
+				</label>
+			</div>
+		</div>
+		<div fxFlex>
+			<input
+				type="text"
+				placeholder="Label"
+				[id]="i + 'filter-label'"
+				[name]="i + 'filter-label'"
+				[(ngModel)]="filter.label">
+		</div>
+		<div fxFlex="45px">
+			<button
+				class="btn btn-primary btn-rounded"
+				type="button"
+				(click)="removeFilter(filter)">
+
+				<i class="fas fa-trash-alt"></i>
+			</button>
+		</div>
+	</div>
+
+	<div
+		fxLayoutAlign="start start"
+		fxLayoutGap="2%">
+
+		<form
+			fxFlex="100%"
+			(submit)="save()">
+			<div class="form-group">
+				<button
+					class="btn btn-primary"
+					type="submit">
+					Save
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

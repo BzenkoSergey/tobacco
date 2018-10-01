@@ -6,7 +6,10 @@ import { OperationsComponent } from './operations.component';
 const routes: Routes = [
 	{
 		path: '',
-		component: OperationsComponent
+		component: OperationsComponent,
+		data: {
+			breadcrumb: 'Operations'
+		}
 	}
 ];
 

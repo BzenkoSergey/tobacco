@@ -1,5 +1,7 @@
 import { DocumentDto, MappingKeyDto } from './../shared';
 
+import { ProductAttributeValueDto } from './product-attribute-value.dto';
+
 export enum ProductAttributeType {
 	TEXT = 'TEXT',
 	LIST = 'LIST'
@@ -11,8 +13,7 @@ export class ProductAttributeDto implements DocumentDto {
 	};
 	name: string;
 	type = ProductAttributeType.TEXT;
-	values: string[] = [];
-	mappingKeys: MappingKeyDto[] = [];
+	values: ProductAttributeValueDto[] = [];
 
 	constructor(d?: ProductAttributeDto) {
 		if (!d) {
@@ -23,8 +24,8 @@ export class ProductAttributeDto implements DocumentDto {
 		this.values = d.values;
 		this.type = d.type;
 
-		if (d.mappingKeys) {
-			this.mappingKeys = d.mappingKeys.map(m => new MappingKeyDto(m));
+		if (d.values) {
+			this.values = d.values.map(m => new ProductAttributeValueDto(m));
 		}
 	}
 }

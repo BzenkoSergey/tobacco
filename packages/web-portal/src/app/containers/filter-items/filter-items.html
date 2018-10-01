@@ -1,0 +1,21 @@
+<div class="search">
+	<input
+		type="search"
+		placeholder="Поиск"
+		name="search"
+		[(ngModel)]="search"
+		(ngModelChange)="defineDisplayed()">
+</div>
+
+<ul>
+	<li *ngFor="let item of displayed">
+		<label>
+			<input
+				type="checkbox"
+				[checked]="selectedItems.get(item)"
+				(change)="select(item)">
+
+			<span>{{item.name || item.value}}</span>
+		</label>
+	</li>
+</ul>

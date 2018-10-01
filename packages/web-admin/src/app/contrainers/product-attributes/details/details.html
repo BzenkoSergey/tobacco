@@ -43,39 +43,44 @@
 				</button>
 			</div>
 		</form>
-		<div fxFlex="38%">
-			<div
-				class="mb-2"
-				fxLayoutAlign="start center">
+	</div>
+</div>
 
-				<h4
-					class="card-title m-0"
-					fxFlex>
-					Values
-				</h4>
+<div class="card">
+	<form (submit)="save()">
+		<div
+			class="mb-2"
+			fxLayoutAlign="start center">
 
-				<div fxFlex="45px">
-					<button
-						class="btn btn-primary btn-rounded"
-						type="button"
-						(click)="createValue()">
+			<h4
+				class="card-title m-0"
+				fxFlex>
+				Values
+			</h4>
 
-						<i class="fas fa-plus"></i>
-					</button>
-				</div>
+			<div fxFlex="45px">
+				<button
+					class="btn btn-primary btn-rounded"
+					type="button"
+					(click)="createValue()">
+
+					<i class="fas fa-plus"></i>
+				</button>
 			</div>
+		</div>
+
+		<div *ngFor="let v of item.values; index as i">
 			<div
-				*ngFor="let v of item.values; index as i"
 				class="form-group"
 				fxLayoutAlign="start center"
 				fxLayoutGap="2%">
 
-				<div fxFlex>
+				<div fxFlex="40%">
 					<input
 						type="text"
-						[name]="i + 'value'"
+						[name]="i + 'dvalue'"
 						placeholder="Value"
-						[(ngModel)]="item.values[i]">
+						[(ngModel)]="v.value">
 				</div>
 				<div fxFlex="45px">
 					<button
@@ -86,17 +91,14 @@
 						<i class="fas fa-trash-alt"></i>
 					</button>
 				</div>
+				<div fxFlex>
+					<mapping-keys
+						[name]="i + 'mappingKeys'"
+						[(ngModel)]="v.mappingKeys">
+					</mapping-keys>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>
-
-<div class="card">
-	<form (submit)="save()">
-		<mapping-keys
-			name="mappingKeys"
-			[(ngModel)]="item.mappingKeys">
-		</mapping-keys>
 
 		<div class="form-group mt-2">
 			<button

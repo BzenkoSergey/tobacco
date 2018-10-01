@@ -1,0 +1,63 @@
+<div class="card">
+	<div
+		class="mb-2"
+		fxLayoutAlign="start center">
+
+		<h4
+			class="card-title m-0"
+			fxFlex>
+			Products
+		</h4>
+
+		<div fxFlex="45px">
+			<button
+				class="btn btn-primary btn-rounded"
+				type="button"
+				(click)="create()">
+
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+	</div>
+
+	<table class="table">
+		<tr>
+			<th>Logo</th>
+			<th>Name</th>
+			<th>Company</th>
+			<th>Product Line</th>
+			<th>Categories</th>
+			<th>Actions</th>
+		</tr>
+		<tr *ngFor="let i of items">
+			<td>
+				<img
+					[src]="i.logo"
+					alt="image">
+			</td>
+			<td>
+				<a [routerLink]="['./../../', i._id.$oid]">
+					{{i.name}}
+				</a>
+			</td>
+			<td>
+				{{getCompanyName(i.company)}}
+			</td>
+			<td>
+				{{getProductLineName(i.productLine)}}
+			</td>
+			<td>
+				{{getCategoriesNames(i.categories)}}
+			</td>
+			<td>
+				<button
+					class="btn btn-primary"
+					type="button"
+					(click)="remove(i)">
+
+					Remove
+				</button>
+			</td>
+		</tr>
+	</table>
+</div>

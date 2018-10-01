@@ -1,0 +1,41 @@
+@import "components/components";
+@import "helpers/helpers";
+
+html {
+	-webkit-font-smoothing: antialiased;
+}
+
+body {
+	background-color: #f3f3f3;
+	font-family: Roboto, "Myriad Pro", Arial, sans-serif;
+	// background-image: url(http://www.dronestagr.am/wp-content/uploads/2016/02/DJI_0008-1200x674.jpg);
+	// background-position: center top;
+	// background-repeat: no-repeat;
+
+}
+
+.center-layout {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+@media (min-width: 768px) {
+	.container {
+		width: 100%;
+		max-width: calc(100% - 30px);
+	}
+}
+
+@media (min-width: 992px) {
+	.container {
+		width: 100%;
+		max-width: 965px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.center-layout {
+		width: 100%;
+		max-width: 1250px;
+	}
+}

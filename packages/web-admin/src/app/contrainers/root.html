@@ -3,6 +3,7 @@
 	fxLayoutAlign="space-around stretch">
 
 	<div
+		*ngIf="opennedSideBar"
 		class="logo"
 		fxFlex="265px">
 		logo
@@ -17,7 +18,8 @@
 		<li fxFlex>
 			<button
 				type="button"
-				class="btn btn-link">
+				class="btn btn-link"
+				(click)="opennedSideBar = !opennedSideBar">
 
 				<i class="fas fa-bars"></i>
 			</button>
@@ -36,6 +38,7 @@
 	fxLayoutAlign="space-around stretch">
 
 	<div
+		*ngIf="opennedSideBar"
 		class="sidebar"
 		fxFlex="265px">
 
@@ -46,6 +49,13 @@
 					<i class="fas fa-columns"></i>
 
 					Markets
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['market-products']">
+					<i class="fas fa-columns"></i>
+
+					Market products
 				</a>
 			</li>
 			<li>
@@ -77,6 +87,13 @@
 				</a>
 			</li>
 			<li>
+				<a [routerLink]="['products']">
+					<i class="fas fa-columns"></i>
+
+					Products
+				</a>
+			</li>
+			<li>
 				<a [routerLink]="['categories']">
 					<i class="fas fa-columns"></i>
 
@@ -88,17 +105,10 @@
 		<h3>MAIN</h3>
 		<ul>
 			<li>
-				<a href="">
+				<a [routerLink]="['portal-settings']">
 					<i class="fas fa-columns"></i>
 
-					sidebar
-				</a>
-			</li>
-			<li>
-				<a href="">
-					<i class="fas fa-columns"></i>
-
-					sidebar
+					Portal Settings
 				</a>
 			</li>
 		</ul>
@@ -107,6 +117,8 @@
 	<div
 		class="content"
 		fxFlex>
+
+		<breadcrumb [allowBootstrap]="false"></breadcrumb>
 
 		<router-outlet></router-outlet>
 	</div>

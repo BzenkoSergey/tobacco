@@ -5,7 +5,8 @@
   "main": "dist/grabber-api.js",
   "typings": "dist/grabber-api.d.ts",
   "scripts": {
-    "start": "tsc && node --inspect=9339 dist/index",
+	"start": "",
+    "start2": "tsc && node --inspect=9339 dist/index",
     "build": "tsc"
   },
   "author": "",

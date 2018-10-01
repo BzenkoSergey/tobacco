@@ -7,6 +7,9 @@ const routes: Routes = [
 	{
 		path: '',
 		component: MarketsComponent,
+		data: {
+			breadcrumb: 'Markets'
+		},
 		children: [
 			{
 				path: '',

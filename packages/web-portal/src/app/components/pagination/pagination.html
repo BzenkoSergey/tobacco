@@ -1,0 +1,14 @@
+<nav
+	*ngIf="pages.length">
+
+	<a
+		*ngFor="let item of pages; let i = index; let first = first; let last = last"
+		class="item"
+		[routerLink]="['./']"
+		[queryParams]="{ page: item }"
+		[class.active]="item === page"
+		[class.f]="first || last">
+
+		{{item + 1}}
+	</a>
+</nav>
