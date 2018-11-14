@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { debounceTime } from 'rxjs/operators';
+
 import { CompanyDto, CategoryDto, MarketDto, ProductDto, ProductLineDto, ProductAttributeDto, MarketProductDto } from '@magz/common';
 
 import { FiltersRestService } from '@rest/filters';
@@ -10,8 +12,9 @@ import { CategoriesRestService } from '@rest/categories';
 import { ProductsRestService } from '@rest/products';
 import { ProductAttributesRestService } from '@rest/product-attributes';
 import { ProductLinesRestService } from '@rest/product-lines';
+import { SearchRestService } from '@rest/search';
 
-import { ProductFullDto } from '@rest/products/product-full.dto';
+import { AggregatedProductDto } from '@rest/products/product-full.dto';
 
 @Component({
 	selector: 'root',
@@ -24,7 +27,8 @@ import { ProductFullDto } from '@rest/products/product-full.dto';
 		CategoriesRestService,
 		ProductsRestService,
 		ProductAttributesRestService,
-		ProductLinesRestService
+		ProductLinesRestService,
+		SearchRestService
 	]
 })
 
@@ -40,7 +44,8 @@ export class RootComponent {
 		productLines: [],
 		productAttributes: [],
 		page: 0,
-		itemsPerPage: 10
+		itemsPerPage: 25,
+		search: ''
 	};
 
 	filtersSelections: any = {};
@@ -52,7 +57,8 @@ export class RootComponent {
 	productAttributes: ProductAttributeDto[] = [];
 
 	productsTotal = 0;
-	products: ProductFullDto[] = [];
+	searchProducts: { query: string }[] = [];
+	products: AggregatedProductDto[] = [];
 
 	constructor(
 		private router: Router,
@@ -63,14 +69,20 @@ export class RootComponent {
 		private categoriesService: CategoriesRestService,
 		private productsService: ProductsRestService,
 		private productAttributesService: ProductAttributesRestService,
-		private productLinesService: ProductLinesRestService
+		private productLinesService: ProductLinesRestService,
+		private searchRestService: SearchRestService
 	) {
 		window['a'] = this;
-		route.queryParams.subscribe(p => {
-			this.queries = this.fixRouteQueries(p);
-			this.convertQueriesToPlainObject();
-			this.fetchProducts();
-		});
+
+		console.log('===-----------');
+		route.queryParams
+			.pipe(debounceTime(200))
+			.subscribe(p => {
+				console.log('-----------', p);
+				this.queries = this.fixRouteQueries(p);
+				this.convertQueriesToPlainObject();
+				this.fetchProducts();
+			});
 		this.fetchCompanies();
 		this.fetchMarkets();
 		this.fetchProductAttributes();
@@ -88,6 +100,25 @@ export class RootComponent {
 					};
 				});
 			});
+	}
+
+	performSearch(text: string) {
+		this.router.navigate([], {
+			queryParams: {
+				page: 0,
+				search: text
+			},
+			queryParamsHandling: 'merge'
+		});
+	}
+
+	searchProduct(text: string) {
+		console.log(text);
+		this.fetchProductsBySearch(text);
+	}
+
+	searchReset() {
+		this.searchProducts = [];
 	}
 
 	getMarket(id: string) {
@@ -142,7 +173,8 @@ export class RootComponent {
 			this.queries.productLines = list.map(i => i._id);
 		}
 		this.router.navigate([], {
-			queryParams: this.queries
+			queryParams: this.queries,
+			queryParamsHandling: 'merge'
 		});
 		this.convertQueriesToPlainObject();
 	}
@@ -157,7 +189,8 @@ export class RootComponent {
 			productLines: [],
 			productAttributes: [],
 			page: 0,
-			itemsPerPage: 10
+			itemsPerPage: 25,
+			search: ''
 		};
 		const keys = Object.keys(obj);
 		if (!keys.length) {
@@ -165,13 +198,17 @@ export class RootComponent {
 		}
 		keys.forEach(p => {
 			let value = obj[p];
+			if (p === 'search') {
+				o[p] = value;
+				return;
+			}
 			if (p === 'page') {
 				value = +obj[p] || 0;
 				o[p] = value;
 				return;
 			}
 			if (p === 'itemsPerPage') {
-				value = +obj[p] || 10;
+				value = +obj[p] || 25;
 				o[p] = value;
 				return;
 			}
@@ -329,6 +366,20 @@ export class RootComponent {
 		return s;
 	}
 
+	fetchProductsBySearch(text: string) {
+		this.searchRestService.list({
+			query: text
+		})
+		// const products = this.productsService.list({
+		// 	search: text,
+		// 	itemsPerPage: 5
+		// });
+		// products
+			.subscribe(list => {
+				this.searchProducts = list;
+			});
+	}
+
 	fetchProducts() {
 		const available = true;
 		const products = this.productsService.list({
@@ -338,13 +389,21 @@ export class RootComponent {
 			categories: this.queries.categories,
 			attributes: this.queries.attributes,
 			page: this.queries.page,
-			itemsPerPage: this.queries.itemsPerPage
+			itemsPerPage: this.queries.itemsPerPage,
+			search: this.queries.search
 		});
 		products
 			.subscribe(list => {
 				this.products = list.items;
 				this.productsTotal = list.total;
 
+
+				if (this.productsTotal && this.queries.search) {
+					this.searchRestService.create({
+						query: this.queries.search
+					})
+					.subscribe();
+				}
 				this.products.forEach(p => {
 					p.items = p.items
 						.sort((a, b) => {

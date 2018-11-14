@@ -4,6 +4,7 @@ import { numberify } from './numberify';
 import { booleanify } from './booleanify';
 import { trim } from './trim';
 import { replace } from './replace';
+import { replaceRegexp } from './replace-regexp';
 import { prefix } from './prefix';
 import { postfix } from './postfix';
 
@@ -23,6 +24,9 @@ export class TransformsService {
 		}
 		if(transform === GrabberTransform.REPLACE) {
 			return replace(value, options);
+		}
+		if(transform === GrabberTransform.REPLACE_REGEXP) {
+			return replaceRegexp(value || '', options.split('|'));
 		}
 		if(transform === GrabberTransform.PREFIX) {
 			return prefix(value, options);

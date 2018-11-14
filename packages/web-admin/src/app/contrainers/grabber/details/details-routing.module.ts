@@ -20,6 +20,14 @@ const routes: Routes = [
 				loadChildren: './operations/operations.module#OperationsModule'
 			},
 			{
+				path: 'job',
+				loadChildren: './job/job.module#JobModule'
+			},
+			{
+				path: 'links',
+				loadChildren: './links/links.module#LinksModule'
+			},
+			{
 				path: 'items',
 				loadChildren: './items/items.module#ItemsModule'
 			}

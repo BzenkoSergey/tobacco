@@ -6,6 +6,13 @@ import { CompanyDto, CompaniesRestService } from '@rest/companies';
 import { CategoryDto, CategoriesRestService } from '@rest/categories';
 import { ProductLineDto, ProductLinesRestService } from '@rest/product-lines';
 
+import { ProductAttributesRestService } from '@rest/product-attributes';
+import { MarketsRestService } from '@rest/markets';
+import { MarketProductsRestService } from '@rest/market-products';
+
+import { AggregatedProductsRestService } from '@rest/aggregated-products/aggregated-products.service';
+import { AggregatedProductsService } from './../../shared/aggregated-products.service';
+
 @Component({
 	templateUrl: './overview.html',
 	styleUrls: ['./overview.scss'],
@@ -13,12 +20,19 @@ import { ProductLineDto, ProductLinesRestService } from '@rest/product-lines';
 		ProductsRestService,
 		CompaniesRestService,
 		CategoriesRestService,
-		ProductLinesRestService
+		ProductLinesRestService,
+
+		MarketProductsRestService,
+		MarketsRestService,
+		ProductAttributesRestService,
+		AggregatedProductsRestService,
+		AggregatedProductsService
 	]
 })
 
 export class OverviewComponent {
 	items: ProductDto[] = [];
+	companyId: string;
 
 	categories: CategoryDto[] = [];
 	companies: CompanyDto[] = [];
@@ -30,12 +44,31 @@ export class OverviewComponent {
 		private service: ProductsRestService,
 		private companiesService: CompaniesRestService,
 		private categoriesService: CategoriesRestService,
-		private productLinesService: ProductLinesRestService
+		private productLinesService: ProductLinesRestService,
+		private aggregatedProductsService: AggregatedProductsService
 	) {
+		route.queryParams.subscribe(p => {
+			this.companyId = p.companyId;
+			this.fetch();
+		});
 		this.fetchCategories();
 		this.fetchCompanies();
 		this.fetchProductLines();
-		this.fetch();
+		// this.fetch();
+	}
+
+	aggregateAll() {
+		this.items.forEach(i => {
+			this.aggregatedProductsService.aggregate(i._id.$oid);
+		});
+	}
+
+	selectCompany(companyId: string) {
+		this.router.navigate([], {
+			queryParams: {
+				companyId: companyId
+			}
+		});
 	}
 
 	getProductLineName(id: string) {
@@ -59,23 +92,36 @@ export class OverviewComponent {
 		this.service.remove(d)
 			.subscribe(s => {
 				this.fetch();
+				this.aggregatedProductsService.remove(d._id.$oid);
 			});
 	}
 
 	create() {
 		const item = new ProductDto();
-		item.name = 'Placeholder';
+		item.name = '';
+		if (this.companyId) {
+			item.company = this.companyId;
+		}
 
 		this.service.create(item)
 			.subscribe(d => {
 				this.router.navigate(['./../../', d._id.$oid], {
-					relativeTo: this.route
+					relativeTo: this.route,
+					queryParams: {
+						companyId: this.companyId
+					}
 				});
 			});
 	}
 
 	fetch() {
-		this.service.list()
+		const query: any = {};
+		if (this.companyId) {
+			query.company = this.companyId;
+		}
+
+		this.service
+			.list(query)
 			.subscribe(list => {
 				this.items = list;
 			});

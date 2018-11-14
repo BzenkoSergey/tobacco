@@ -20,6 +20,10 @@ const routes: Routes = [
 				loadChildren: './grabber-overview.module#OverviewModule'
 			},
 			{
+				path: 'settings',
+				loadChildren: './settings/settings.module#SettingsModule'
+			},
+			{
 				path: ':marketId',
 				loadChildren: './grabber-details.module#DetailsModule'
 			}

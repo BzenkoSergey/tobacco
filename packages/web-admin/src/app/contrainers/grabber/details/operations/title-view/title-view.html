@@ -1,0 +1,14 @@
+<div class="title-view">
+	<span *ngFor="let s of render">
+
+		<b
+			*ngIf="isHighlighted(s)"
+			[class.company]="isCompany(s)"
+			[class.product-line]="isProductLine(s)">
+			{{getText(s)}}
+		</b>
+		<span *ngIf="!isHighlighted(s)">
+			{{s}}
+		</span>
+	</span>
+</div>

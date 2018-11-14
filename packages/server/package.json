@@ -6,7 +6,8 @@
   "dependencies": {
     "@magz/common": "1.0.0",
     "@magz/grabber": "1.0.0",
-    "expressjs": "1.0.1"
+    "expressjs": "1.0.1",
+    "nodemon": "^1.18.4"
   },
   "devDependencies": {
     "@types/node": "10.10.1",
@@ -17,7 +18,7 @@
     "typescript": "2.9.1"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "nodemon",
     "build": "tsc"
   }
 }

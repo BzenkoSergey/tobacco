@@ -1,116 +1,407 @@
-<div>
-	<button
-		class="btn btn-primary"
-		type="button"
-		(click)="performGrabber()">
-		Make Snapshot
-	</button>
+<mat-card>
+	<form
+		fxLayout="row"
+		fxLayoutAlign="start center"
+		(submit)="search()">
 
-	<button
-		*ngIf="snapshot.length"
-		class="btn btn-primary"
-		type="button"
-		(click)="saveSnapshot()">
-		Save Snapshot
-	</button>
+		<div fxFlex="200px">
+			{{item.name}}
+			{{snapshot.length}} / {{snapshotDisplayed.length}}
+		</div>
+		<div fxFlex="300px">
+			<mat-form-field>
+				<input
+					matInput
+					name="search"
+					placeholder="Search item"
+					[disabled]="processing"
+					[(ngModel)]="searchQuery">
+			</mat-form-field>
+			<button
+				mat-raised-button
+				type="submit"
+				[disabled]="processing">
+				Search
+			</button>
+		</div>
+		<div fxFlex>
+			<button
+				type="button"
+				mat-raised-button
+				[disabled]="status || processing"
+				(click)="run()">
 
-	<button
-		*ngIf="snapshot.length"
-		class="btn btn-primary"
-		type="button"
-		(click)="saveItems()">
-		Save Items
-	</button>
+				Run
+			</button>
 
-	<button
-		*ngIf="snapshot.length"
-		class="btn btn-primary"
-		type="button"
-		(click)="findProducts()">
-		Find Products
-	</button>
+			<button
+				type="button"
+				mat-raised-button
+				[disabled]="status || processing"
+				(click)="run(true)">
+
+				Run Test
+			</button>
+
+			<button
+				*ngIf="snapshot.length"
+				mat-raised-button
+				type="button"
+				[disabled]="processing"
+				(click)="saveItems()">
+				Save
+			</button>
+
+			<button
+				*ngIf="snapshot.length"
+				mat-raised-button
+				type="button"
+				[disabled]="processing"
+				(click)="deleteRemoved()">
+				Delete Removed
+			</button>
+		</div>
+	</form>
+	<div
+		fxLayout="row"
+		fxLayoutAlign="start start">
+
+		<mat-form-field>
+			<mat-select
+				placeholder="Company"
+				name="company"
+				[disabled]="processing"
+				[(ngModel)]="company"
+				(ngModelChange)="setCompany()">
+
+				<mat-option value="">All</mat-option>
+				<mat-option
+					*ngFor="let item of companies"
+					[value]="item._id.$oid">
+					{{item.name}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field
+			*ngIf="getProductLines().length"
+			fxFlex="140px">
+
+			<mat-select
+				placeholder="Product Line"
+				name="productLine"
+				[disabled]="processing"
+				[(ngModel)]="productLine"
+				(ngModelChange)="setProductLine()">
+
+				<mat-option value="">All</mat-option>
+				<mat-option
+					*ngFor="let item of getProductLines()"
+					[value]="item._id.$oid">
+					{{item.name}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field fxFlex="90px">
+			<mat-select
+				placeholder="SortBy"
+				name="sortBy"
+				[disabled]="processing"
+				[(ngModel)]="sortBy"
+				(ngModelChange)="setSortBy()">
+
+				<mat-option value="">All</mat-option>
+				<mat-option value="name">Name</mat-option>
+				<mat-option value="quality">Quality</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<div class="pl">
+			<div>
+				<mat-checkbox
+					[disabled]="processing"
+					[(ngModel)]="processed"
+					(ngModelChange)="setProcessed()">
+					Processed
+				</mat-checkbox>
+			</div>
+			<button
+				*ngIf="processed !== null"
+				mat-stroked-button
+				type="button"
+				[disabled]="processing"
+				(click)="processed = null; setProcessed()">
+				Reset
+			</button>
+		</div>
+		<div class="pl">
+			<div>
+				<mat-checkbox
+					[disabled]="processing"
+					[(ngModel)]="availabled"
+					(ngModelChange)="setAvailable()">
+					Availabled
+				</mat-checkbox>
+			</div>
+			<button
+				*ngIf="availabled !== null"
+				mat-stroked-button
+				type="button"
+				[disabled]="processing"
+				(click)="availabled = null; setAvailable()">
+				Reset
+			</button>
+		</div>
+		<div class="pl">
+			<div>
+				<mat-checkbox
+					[disabled]="processing"
+					[(ngModel)]="changed"
+					(ngModelChange)="setChanged()">
+					Changed
+				</mat-checkbox>
+			</div>
+			<button
+				*ngIf="changed !== null"
+				mat-stroked-button
+				type="button"
+				[disabled]="processing"
+				(click)="changed = null; setChanged()">
+				Reset
+			</button>
+		</div>
+		<div class="pl">
+			<div>
+				<mat-checkbox
+					[disabled]="processing"
+					[(ngModel)]="created"
+					(ngModelChange)="setCreated()">
+					Created
+				</mat-checkbox>
+			</div>
+			<button
+				*ngIf="created !== null"
+				mat-stroked-button
+				type="button"
+				[disabled]="processing"
+				(click)="created = null; setCreated()">
+				Reset
+			</button>
+		</div>
+		<div class="pl">
+			<div>
+				<mat-checkbox
+					[disabled]="processing"
+					[(ngModel)]="attributes"
+					(ngModelChange)="setAttributes()">
+					Attributes
+				</mat-checkbox>
+			</div>
+			<button
+				*ngIf="attributes !== null"
+				mat-stroked-button
+				type="button"
+				[disabled]="processing"
+				(click)="attributes = null; setAttributes()">
+				Reset
+			</button>
+		</div>
+		<div class="pl">
+			<div>
+				<mat-checkbox
+					[disabled]="processing"
+					[(ngModel)]="withProductLine"
+					(ngModelChange)="setWithProductLine()">
+					Product Line
+				</mat-checkbox>
+			</div>
+			<button
+				*ngIf="withProductLine !== null"
+				mat-stroked-button
+				type="button"
+				[disabled]="processing"
+				(click)="withProductLine = null; setWithProductLine()">
+				Reset
+			</button>
+		</div>
+	</div>
+</mat-card>
+
+<div
+	*ngIf="processing"
+	class="spinner"
+	fxLayout="row"
+	fxLayoutAlign="center center">
+
+	<mat-spinner></mat-spinner>
 </div>
 
-<ul class="items">
-	<li
-		*ngFor="let item of snapshot"
-		fxLayout="row"
-		fxLayoutAlign="start start"
-		fxLayoutGap="2%">
+<cdk-virtual-scroll-viewport
+	class="items"
+	itemSize="146">
 
-		<div fxFlex>
-			<div class="card">
-				<div [class.red]="!!getChanges(item).label">
-					Label: {{item.label}}
-				</div>
-				<div [class.red]="!!getChanges(item).price">
-					Price: {{item.price}}
-				</div>
-				<div [class.red]="!!getChanges(item).available">
+	<div
+		*cdkVirtualFor="let item of snapshotDisplayed"
+		class="item"
+		fxLayout="row"
+		fxLayoutAlign="start stretch"
+		fxLayoutGap="1%">
+
+		<div fxFlex="40%">
+			<ul class="card list">
+				<li
+					class="p-0"
+					[class.red]="!!getChanges(item).label">
+
+					<title-view
+						[title]="item.label"
+						[product]="item.productDto"
+						[company]="item.companyDto"
+						[productLine]="item.productLineDto"
+						[productAttributes]="item.attributes">
+					</title-view>
+				</li>
+				<li
+					[class.red]="!!getChanges(item).price"
+					fxLayout="row"
+					fxLayoutAlign="space-between start">
+
+					<span>
+						Price: <b>{{item.price}}</b>
+					</span>
+
+					<span>
+						Quality: <b>{{item.quality}}</b>
+					</span>
+				</li>
+				<li [class.red]="!!getChanges(item).available">
 					Available: {{item.available}}
-				</div>
-				<div [class.red]="!!getChanges(item).attributes">
+				</li>
+				<li [class.red]="!!getChanges(item).attributes">
 					Attributes:
 					<div *ngFor="let attr of item.attributes">
 						- {{attr.name}}: {{attr.value}}
 					</div>
-				</div>
-					Url: {{item.url}}
-			</div>
+				</li>
+				<li
+					class="p-0"
+					fxLayout="row"
+					fxLayoutAlign="start center">
+
+					<div fxFlex>
+						<input
+							class="form-control"
+							type="text"
+							[value]="item.url">
+					</div>
+					<div fxFlex="30px">
+						<a
+							target="_blank"
+							[href]="item.url">
+							<i class="fas fa-external-link-alt"></i>
+						</a>
+					</div>
+				</li>
+			</ul>
 		</div>
 		<div
-			*ngIf="map.get(item) as exist"
-			fxFlex>
-			<div class="card">
-				<div>Label: {{exist.label}}</div>
-				<div>Price: {{exist.price}}</div>
-				<div>Available: {{exist.available}}</div>
-				<div>
+			*ngIf="item.alias as exist"
+			fxFlex="40%">
+			<ul class="card list">
+				<!-- <li>{{exist._id.$oid}} {{exist.product}}</li> -->
+				<li class="p-0">
+					<input
+						class="form-control"
+						type="text"
+						[value]="exist.label">
+				</li>
+				<li>Price: <b>{{exist.price}}</b></li>
+				<li>Available: {{exist.available}}</li>
+				<li>
 					Attributes:
 					<div *ngFor="let attr of exist.attributes">
 						- {{attr.name}}: {{attr.value}}
 					</div>
-				</div>
-			</div>
+				</li>
+				<li
+					class="p-0"
+					fxLayout="row"
+					fxLayoutAlign="start center">
+
+					<div fxFlex>
+						<input
+							class="form-control"
+							type="text"
+							[value]="exist.url">
+					</div>
+					<div fxFlex="30px">
+						<a
+							target="_blank"
+							[href]="exist.url">
+							<i class="fas fa-external-link-alt"></i>
+						</a>
+					</div>
+				</li>
+			</ul>
 		</div>
 		<div fxFlex>
+			<div *ngIf="!item.product && item.alias">
+				Confused Product
+			</div>
 			<div
-				class="card"
-				fxLayout="row"
-				fxLayoutAlign="start start"
-				fxLayoutGap="2%">
+				*ngIf="item.product"
+				class="card product">
 
-				<div
-					*ngIf="getProduct(item.product) as product"
-					fxFlex="100px">
+				<div *ngIf="item.productDto as product">
+					<div class="product-img">
+						<img
+							[src]="product.logo"
+							alt="">
+					</div>
 
-					<img
-						class="w-100"
-						[src]="product.logo"
-						alt="">
-					<div>{{product.name}}</div>
+					<div class="h">
+						<a [routerLink]="['/', 'products', product._id.$oid]">
+							{{product.name}}
+						</a>
+					</div>
+
+					<div
+						*ngIf="item.productLineDto as productLine"
+						class="h">
+						{{productLine.name}}
+					</div>
 				</div>
 
-				<div fxFlex="100px">
+				<div class="btns">
+					<span *ngIf="item.alias as exist">
+						<button
+							*ngIf="hasChanges(item)"
+							mat-mini-fab
+							type="button"
+							(click)="updateMarketProduct(item)">
+							<mat-icon>redo</mat-icon>
+						</button>
+					</span>
 					<button
-						*ngIf="map.get(item) as exist"
-						class="btn btn-primary"
-						type="button"
-						(click)="updateMarketProduct(item, exist)">
-						Update
-					</button>
-					<button
-						*ngIf="!item._id && item.product && !map.get(item)"
-						class="btn btn-primary"
+						*ngIf="!item._id && item.product && !item.alias"
+						mat-mini-fab
 						type="button"
 						(click)="createMarketProduct(item)">
-						Create
+						<mat-icon>add</mat-icon>
+					</button>
+					<button
+						*ngIf="item.alias as exist"
+						mat-mini-fab
+						type="button"
+						(click)="removeMarketProduct(item)">
+						<mat-icon>delete</mat-icon>
 					</button>
 				</div>
 			</div>
 		</div>
-	</li>
-</ul>
+	</div>
+</cdk-virtual-scroll-viewport>
 <!--
 <table class="table">
 	<tr>

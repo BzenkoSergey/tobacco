@@ -1,0 +1,29 @@
+0 silly input [ 'build' ]
+1 silly flags { _: [ 'run' ],
+1 silly flags   'reject-cycles': false,
+1 silly flags   rejectCycles: false,
+1 silly flags   script: 'build',
+1 silly flags   args: [] }
+2 verbose rootPath /Users/bzenkosergey/Projects/tobacco
+3 info version 2.11.0
+4 silly existsSync /Users/bzenkosergey/Projects/tobacco/VERSION
+5 silly initialize attempt
+6 silly initialize success
+7 silly execute attempt
+8 silly runScriptInDir build [] common
+9 silly getExecOpts { cwd: '/Users/bzenkosergey/Projects/tobacco/packages/common' }
+10 silly runScriptInDir build [] web-admin
+11 silly getExecOpts { cwd: '/Users/bzenkosergey/Projects/tobacco/packages/web-admin' }
+12 silly runScriptInDir build [] web-portal
+13 silly getExecOpts { cwd: '/Users/bzenkosergey/Projects/tobacco/packages/web-portal' }
+14 error build Errored while running script in 'web-portal'
+15 error execute callback with error
+16 error Error: Command failed: yarn run build
+16 error (node:16310) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+16 error You seem to not be depending on "@angular/core" and/or "rxjs". This is an error.
+16 error error Command failed with exit code 2.
+16 error yarn run v1.3.2
+16 error $ ng build
+16 error info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+16 error
+16 error     at Promise.all.then.arr (/usr/local/lib/node_modules/lerna/node_modules/execa/index.js:236:11)

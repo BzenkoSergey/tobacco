@@ -5,67 +5,56 @@ var router = express.Router();
 import { GrabberTransform, GrabberInputDto, GrabberMappingAttributeType } from '@magz/common';
 import { GrabberApi } from '@magz/grabber';
 
-const hookahLovers = new GrabberInputDto({
-	pageLimit: 50,
-	host: 'https://hookah-lovers.com.ua',
-	path: '/tabak/afza/', 
-	protocol: 'HTTPS',
-	mapping: {
-		selector: '.card-item__wrapper',
-		attributes: [
-			{
-				name: 'label',
-				selector: '.card-item__name',
-				transforms: [
-					[GrabberTransform.TRIM, '']
-				]
-			},
-			{
-				name: 'image',
-				selector: '.card-item__img-holder img',
-				type: GrabberMappingAttributeType.ATTR,
-				attrName: 'src',
-				transforms: []
-			},
-			{
-				name: 'price',
-				selector: '.card-item__price-cost',
-				transforms: [
-					[GrabberTransform.NUMBERIFY, '']
-				]
-			},
-			{
-				name: 'url',
-				selector: '.card-item__wrapper a:first-of-type',
-				type: GrabberMappingAttributeType.ATTR,
-				attrName: 'href',
-				transforms: []
-			},
-			{
-				name: 'available',
-				selector: '.card-item__buy__text',
-				transforms: [
-					[GrabberTransform.BOOLEANIFY, 'Нет в наличии']
-				]
-			}
-		]
+const runned = new Map<string, boolean>();
+const map = new Map<string, Map<string, any[]>>();
+
+router.get('/grabber/:host', (req, res, next) => {
+	const m = map.get(encodeURIComponent(req.params.host));
+
+	if (!m) {
+		res.status(200).json([]);
+		return;
 	}
+
+	res.status(200).json(Array.from(m));
+});
+
+router.get('/grabber/status/:host', (req, res, next) => {
+	const m = runned.get(encodeURIComponent(req.params.host));
+
+	res.status(200).json(!!m);
 });
 
 router.post('/grabber', (req, res, next) => {
+	req.setTimeout(500000);
 	const result = [];
+	const host = encodeURIComponent(req.body.host);
+	const m = map.get(host) || new Map<string, any[]>();
+	map.set(host, m);
 
+	console.log(host);
+	runned.set(host, true);
 	new GrabberApi()
 		.perform(req.body)
 		.subscribe(
 			d => {
-				console.log('next =>');
+				// console.log('next =>');
+				m.set(<string>d[0], <any>d[1]);
 				result.push(d);
 			},
 			err => console.error(err),
 			() => {
+				runned.set(host, false);
 				res.status(200).json(result);
-				console.log('complete');
+				console.log('/////////================');
+				console.log('/////////================');
+				console.log('/////////================');
+				console.log('/////////================');
+				console.log('complete', result.length);
+				console.log('/////////================');
+				console.log('/////////================');
+				console.log('/////////================');
+				console.log('/////////================');
 			}
 		);
 });

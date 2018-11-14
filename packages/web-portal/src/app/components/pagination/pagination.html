@@ -4,6 +4,7 @@
 	<a
 		*ngFor="let item of pages; let i = index; let first = first; let last = last"
 		class="item"
+		queryParamsHandling="merge"
 		[routerLink]="['./']"
 		[queryParams]="{ page: item }"
 		[class.active]="item === page"

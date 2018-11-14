@@ -5,7 +5,7 @@
 	<div
 		*ngIf="opennedSideBar"
 		class="logo"
-		fxFlex="265px">
+		fxFlex="250px">
 		logo
 	</div>
 
@@ -40,7 +40,7 @@
 	<div
 		*ngIf="opennedSideBar"
 		class="sidebar"
-		fxFlex="265px">
+		fxFlex="250px">
 
 		<h3>MAIN</h3>
 		<ul>
@@ -63,6 +63,13 @@
 					<i class="fas fa-columns"></i>
 
 					Grabber
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['grabber/settings']">
+					<i class="fas fa-columns"></i>
+
+					Grabber Settings
 				</a>
 			</li>
 			<li>
@@ -91,6 +98,20 @@
 					<i class="fas fa-columns"></i>
 
 					Products
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['images']">
+					<i class="fas fa-columns"></i>
+
+					Images
+				</a>
+			</li>
+			<li>
+				<a [routerLink]="['products-search']">
+					<i class="fas fa-columns"></i>
+
+					Products Search
 				</a>
 			</li>
 			<li>

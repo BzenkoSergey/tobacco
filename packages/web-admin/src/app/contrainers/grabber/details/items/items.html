@@ -1,1 +1,129 @@
-ii
+<mat-card>
+	<form
+		fxLayout="row"
+		fxLayoutAlign="start center"
+		(submit)="performSearch($event)">
+
+		<div fxFlex>
+			Pages: {{items.length}} / {{displayed.length}}
+		</div>
+		<div fxFlex>
+			<mat-form-field>
+				<input
+					matInput
+					name="search"
+					placeholder="Search item"
+					[(ngModel)]="search">
+			</mat-form-field>
+		</div>
+		<div fxFlex>
+			<button
+				mat-raised-button>Search</button>
+		</div>
+	</form>
+</mat-card>
+
+<cdk-virtual-scroll-viewport
+	class="items"
+	itemSize="187">
+
+	<div
+		*cdkVirtualFor="let item of displayed"
+		class="item"
+		fxLayout="row"
+		fxLayoutAlign="start stretch"
+		fxLayoutGap="2%">
+
+		<div fxFlex="35%">
+			<ul class="card list">
+				<li>
+					<input
+						class="form-control"
+						type="text"
+						[value]="item.label">
+				</li>
+				<li>
+					Price: {{item.price}}
+				</li>
+				<li>
+					Available: {{item.available}}
+				</li>
+				<li>
+					Attributes:
+					<div *ngFor="let attr of item.attributes">
+						- {{attr.name}}: {{attr.value}}
+					</div>
+				</li>
+				<li>
+					<input
+						class="form-control"
+						type="text"
+						[value]="item.url">
+				</li>
+			</ul>
+		</div>
+		<!-- <div
+			*ngIf="map.get(item) as exist"
+			fxFlex="35%">
+			<ul class="card list">
+				<li>
+					<input
+						class="form-control"
+						type="text"
+						[value]="exist.label">
+				</li>
+				<li>Price: {{exist.price}}</li>
+				<li>Available: {{exist.available}}</li>
+				<li>
+					Attributes:
+					<div *ngFor="let attr of exist.attributes">
+						- {{attr.name}}: {{attr.value}}
+					</div>
+				</li>
+				<li>
+					<input
+						class="form-control"
+						type="text"
+						[value]="exist.url">
+				</li>
+			</ul>
+		</div> -->
+		<div fxFlex>
+			<div
+				*ngIf="item.product"
+				class="card product">
+
+				<div *ngIf="getProduct(item) as product">
+					<img
+						[src]="product.logo"
+						alt="">
+
+					<div>{{product.name}}</div>
+
+					<div *ngIf="getProductLine(product) as productLine">
+						{{productLine.name}}
+					</div>
+				</div>
+
+				<div>
+					<!-- <div *ngIf="map.get(item) as exist">
+						<button
+							*ngIf="hasChanges(item)"
+							class="btn btn-primary"
+							type="button"
+							(click)="updateMarketProduct(item, exist)">
+							Update
+						</button>
+					</div>
+					 -->
+					<button
+						class="btn btn-primary"
+						type="button"
+						(click)="syncItem(item)">
+						Sync
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</cdk-virtual-scroll-viewport>

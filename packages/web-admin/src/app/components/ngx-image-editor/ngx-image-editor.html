@@ -1,0 +1,144 @@
+<div class="ngx-image-editor-component" fxLayout="column" fxLayoutAlign="center stretch">
+		<div mat-dialog-title class="photo-editor-header">
+			<div class="file-name">
+				{{state.ImageName}}
+
+				{{imageWidth}} / {{imageHeight}}
+			</div>
+			<button [hidden]="croppedImage" mat-icon-button color="accent" matTooltip="Crop image"
+					(click)="handleCrop()">
+				<mat-icon>crop</mat-icon>
+			</button>
+			<button mat-icon-button
+					[hidden]="croppedImage"
+					color="accent"
+					matTooltip="Center canvas"
+					(click)="centerCanvas()">
+				<mat-icon>center_focus_strong</mat-icon>
+			</button>
+		</div>
+
+		<div mat-dialog-content
+			 #dialogCropContainer
+			 class="dialog-crop-container"
+			 fxLayout="column"
+			 fxLayoutAlign="center center"
+			 fxFlex="grow">
+			<ng-template [ngIf]="!croppedImage">
+				<div
+						[style.visibility]="loading ? 'hidden' : 'visible'"
+						[style.background]="canvasFillColor"
+						class="img-container">
+					<img #previewimg
+						 [src]="previewImageURL">
+				</div>
+			</ng-template>
+			<ng-template [ngIf]="croppedImage && !loading">
+				<div class="cropped-image">
+					<img #croppedImg
+						 [ngStyle]="{'transform': 'scale(' + zoomIn + ')'}"
+						 [src]="croppedImage">
+				</div>
+			</ng-template>
+			<mat-progress-spinner *ngIf="loading" mode="indeterminate"></mat-progress-spinner>
+		</div>
+
+		<div
+				class="dialog-button-actions"
+				mat-dialog-actions
+				fxLayout="column"
+				fxLayoutAlign="space-around stretch"
+				fxFlex="nogrow">
+
+			<!-- <div class="image-detail-toolbar">
+				<div class="image-zoom"
+				fxLayout="row"
+				fxLayoutAlign="space-around stretch">
+					<button fxFlex="40px" mat-icon-button color="accent" (click)="zoomChange(0.1, 'zoomIn')">
+						<mat-icon>zoom_in</mat-icon>
+					</button>
+					<mat-slider fxFlex [value]="sliderValue" (input)="zoomChange($event.value)" thumbLabel></mat-slider>
+					<button fxFlex="40px" mat-icon-button color="accent" (click)="zoomChange(-0.1, 'zoomOut')">
+						<mat-icon>zoom_out</mat-icon>
+					</button>
+				</div>
+			</div> -->
+			<div class="cropped-image-buttons" [style.visibility]="!croppedImage ? 'hidden' : 'visible'">
+				<button mat-raised-button color="accent" (click)="saveImage()">
+					<mat-icon>done</mat-icon>
+					<span>Save</span>
+				</button>
+				<button mat-raised-button color="accent" (click)="undoCrop()">
+					<mat-icon>undo</mat-icon>
+					<span>Undo</span>
+				</button>
+			</div>
+			<div fxLayout="row" [style.visibility]="croppedImage ? 'hidden' : 'visible'">
+				<mat-button-toggle-group
+						#dragMode="matButtonToggleGroup"
+						(change)="cropper.setDragMode($event.value)"
+						value="move">
+					<mat-button-toggle value="move" matTooltip="Move mode">
+						<mat-icon>open_with</mat-icon>
+					</mat-button-toggle>
+					<mat-button-toggle value="crop" matTooltip="Crop mode">
+						<mat-icon>crop</mat-icon>
+					</mat-button-toggle>
+				</mat-button-toggle-group>
+
+				<mat-button-toggle-group
+						#selectRatio="matButtonToggleGroup"
+						(change)="setRatio($event.value)"
+						value="{{ratios[0].value}}">
+					<mat-button-toggle *ngFor="let ratio of ratios" value="{{ratio.value}}" matTooltip="Aspect ratio">
+						{{ratio.text}}
+					</mat-button-toggle>
+				</mat-button-toggle-group>
+
+			</div>
+			<div
+					class="canvas-config"
+					fxLayout="row"
+					fxLayoutAlign="start space-between"
+					fxLayoutGap="10px"
+					[style.visibility]="croppedImage ? 'hidden' : 'visible'">
+
+				<mat-form-field color="accent" fxFlex>
+					<input matInput
+						   id="imageWidth"
+						   placeholder="Canvas width"
+						   type="number"
+						   (ngModelChange)="setImageWidth($event)"
+						   [ngModel]="canvasWidth">
+				</mat-form-field>
+
+				<mat-form-field color="accent" fxFlex>
+					<input matInput
+						   id="imageHeight"
+						   placeholder="Canvas height"
+						   type="number"
+						   (ngModelChange)="setImageHeight($event)"
+						   [ngModel]="canvasHeight">
+				</mat-form-field>
+
+				<mat-form-field color="accent" fxFlex>
+					<input matInput
+						   id="cropBoxWidth"
+						   placeholder="Cropbox width"
+						   type="number"
+						   (ngModelChange)="setCropBoxWidth($event)"
+						   [ngModel]="cropBoxWidth">
+				</mat-form-field>
+
+				<mat-form-field color="accent" fxFlex>
+					<input matInput
+						   id="cropBoxHeight"
+						   placeholder="Cropbox height"
+						   type="number"
+						   (ngModelChange)="setCropBoxHeight($event)"
+						   [ngModel]="cropBoxHeight">
+				</mat-form-field>
+			</div>
+		</div>
+
+	</div>

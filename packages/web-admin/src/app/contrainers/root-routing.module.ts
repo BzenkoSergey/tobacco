@@ -42,6 +42,14 @@ const routes: Routes = [
 				loadChildren: './products/products.module#ProductsModule'
 			},
 			{
+				path: 'images',
+				loadChildren: './images/images.module#ImagesModule'
+			},
+			{
+				path: 'products-search',
+				loadChildren: './products-search/products-search.module#ProductsSearchModule'
+			},
+			{
 				path: 'categories',
 				loadChildren: './categories/categories.module#CategoriesModule'
 			},

@@ -1,0 +1,107 @@
+.ngx-image-editor-component .photo-editor-header {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	width: 100%;
+	padding: 5px 0;
+	z-index: 100;
+	margin: 0;
+}
+
+.ngx-image-editor-component .photo-editor-header > .mat-icon {
+	padding: 0 10px;
+}
+
+.ngx-image-editor-component .photo-editor-header > .file-name {
+	flex: 1 1 100%;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.ngx-image-editor-component mat-progress-spinner {
+	position: absolute;
+}
+
+.ngx-image-editor-component .dialog-crop-container {
+	width: 800px;
+	height: 300px;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.ngx-image-editor-component .cropper-bg {
+	background-image: none !important;
+}
+
+.ngx-image-editor-component .cropper-bg > .cropper-modal {
+	opacity: 1 !important;
+	background: none;
+}
+
+.ngx-image-editor-component .img-container {
+	width: 800px !important;
+	height: 300px !important;
+	max-width: 100%;
+}
+
+.ngx-image-editor-component .cropped-image img {
+	width: auto !important;
+	height: auto !important;
+	max-width: 800px !important;
+	max-height: 300px !important;
+}
+
+.ngx-image-editor-component .dialog-button-actions {
+	position: relative;
+	padding: 0;
+}
+
+.ngx-image-editor-component .dialog-button-actions:last-child {
+	margin: 0;
+}
+
+.ngx-image-editor-component .dialog-button-actions > DIV mat-button-toggle-group {
+	margin: 20px;
+}
+
+.ngx-image-editor-component .dialog-button-actions .cropped-image-buttons {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.ngx-image-editor-component .dialog-button-actions > .canvas-config {
+	padding: 5px;
+	margin: 0 20px;
+}
+
+
+.mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+	line-height: 34px !important;
+}
+
+
+.ngx-image-editor-component .dialog-button-actions > .canvas-config md2-colorpicker {
+	width: 200px !important;
+}
+
+
+.ngx-image-editor-component .dialog-button-actions .image-detail-toolbar > .image-zoom {
+	display: flex;
+	align-items: center;
+	padding: 0 10px;
+}
+
+.ngx-image-editor-component .dialog-button-actions .image-detail-toolbar > .image-zoom .mat-slider-horizontal .mat-slider-wrapper .mat-slider-thumb-container {
+	cursor: grab;
+}
+
+
+.ngx-image-editor-component .dialog-button-actions .image-detail-toolbar > .image-dimensions {
+	padding: 0 10px;
+	font-size: 14px;
+	width: 200px;
+	max-width: 200px;
+}

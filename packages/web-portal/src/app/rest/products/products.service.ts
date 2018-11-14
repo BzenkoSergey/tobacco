@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 
 import { map } from 'rxjs/operators';
 
-import { ProductFullDto } from './product-full.dto';
+import { AggregatedProductDto } from './product-full.dto';
 
 type Page = {
 	total: number,
-	items: ProductFullDto[]
+	items: AggregatedProductDto[]
 };
 
 @Injectable()
@@ -19,7 +19,7 @@ export class ProductsRestService {
 		return this.http.get<Page>(url, { params: queries })
 			.pipe(
 				map(d => {
-					d.items = d.items.map(i => new ProductFullDto(i));
+					d.items = d.items.map(i => new AggregatedProductDto(i));
 					return d;
 				})
 			);

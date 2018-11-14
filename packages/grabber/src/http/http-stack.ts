@@ -9,7 +9,7 @@ export class HttpStack {
 	private resolved = 0;
 	private stack: any[] = [];
 	private waitCount = 0;
-	private runLimit = 12;
+	private runLimit = 3;
 
 	constructor(private host: string, private allowHttpRedirect: boolean) {}
 

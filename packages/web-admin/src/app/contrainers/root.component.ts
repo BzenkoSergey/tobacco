@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
 	styleUrls: ['./root.scss']
 })
 export class RootComponent {
-	opennedSideBar = true;
+	opennedSideBar = false;
 	title = 'web-admin';
 }

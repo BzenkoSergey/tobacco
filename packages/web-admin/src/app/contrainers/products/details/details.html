@@ -8,7 +8,7 @@
 		fxLayoutGap="2%">
 
 		<form
-			fxFlex="70%"
+			fxFlex="53%"
 			(submit)="save()">
 
 			<div class="form-group">
@@ -21,6 +21,18 @@
 					name="name"
 					placeholder="Enter Name"
 					[(ngModel)]="item.name">
+			</div>
+
+			<div class="form-group">
+				<label for="translate">
+					Translate
+				</label>
+				<input
+					type="text"
+					id="translate"
+					name="translate"
+					placeholder="Enter translate"
+					[(ngModel)]="item.translate">
 			</div>
 			<div class="form-group">
 				<label for="logo">
@@ -78,17 +90,28 @@
 					<option [value]="null">
 						No Product Lines
 					</option>
-					<option
-						*ngFor="let c of productLines"
-						[value]="c._id.$oid">
-						{{c.name}}
-					</option>
+
+					<optgroup
+						*ngFor="let company of filterBySelected(item.company)"
+						[attr.label]="company.name">
+
+						<option
+							*ngFor="let c of getProductLine(company)"
+							[value]="c._id.$oid">
+							{{c.name}}
+						</option>
+					</optgroup>
 				</select>
 			</div>
 			<div class="form-group">
 				<label for="productAttributes">
 					Product Attributes
 				</label>
+				<button
+					type="button"
+					(click)="item.productAttributes = []">
+					Reset
+				</button>
 				<select
 					multiple
 					id="productAttributes"
@@ -103,6 +126,15 @@
 				</select>
 			</div>
 			<div class="form-group">
+				<input
+					id="visible"
+					type="checkbox"
+					name="visible"
+					[(ngModel)]="item.visible">
+
+				<label for="visible">Visible</label>
+			</div>
+			<div class="form-group">
 				<button
 					class="btn btn-primary"
 					type="submit">
@@ -110,12 +142,19 @@
 				</button>
 			</div>
 		</form>
-		<div fxFlex="28%">
-			<img
-				*ngIf="item.logo"
-				class="w-100"
-				[src]="item.logo"
-				alt="image">
+
+		<div fxFlex="45%">
+			<input
+				type="text"
+				name="externalUrl"
+				[(ngModel)]="externalUrl"
+				(ngModelChange)="updateImageUrl()">
+
+			<ngx-image-editor
+				*ngIf="item.logo && showEditor"
+				[config]="getConfigs()"
+				(file)="imageEditer($event)">
+			</ngx-image-editor>
 		</div>
 	</div>
 </div>

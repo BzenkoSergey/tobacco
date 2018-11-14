@@ -42,6 +42,10 @@ export class DetailsComponent implements OnDestroy {
 		attr.transforms.unshift(transform);
 	}
 
+	addLink() {
+		this.item.grabber.ignoreLinks.push('');
+	}
+
 	addAttribute() {
 		const attr = new GrabberMappingAttributeDto();
 		this.item.grabber.mapping.attributes.unshift(attr);

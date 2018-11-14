@@ -1,0 +1,46 @@
+
+<div
+	fxLayout="row"
+	fxLayoutAlign="space-between center"
+	fxLayoutGap="1%">
+
+	<h4
+		fxFlex
+		class="card-title">
+		Images
+	</h4>
+	<button
+		fxFlex="100px"
+		mat-raised-button
+		(click)="syncAll()">
+		Sync All
+	</button>
+</div>
+
+<div
+	fxLayout="row"
+	fxLayoutAlign="start start"
+	fxLayoutGap="1%">
+
+	<div
+		*ngFor="let i of items"
+		fxFlex="24.25%"
+		fxFlex.gt-sm="19.2%">
+
+		<mat-card>
+			<mat-card-subtitle>{{i}}</mat-card-subtitle>
+			<img
+				mat-card-image
+				src="http://localhost:3310/images/file/{{i}}"
+				alt="">
+
+			<mat-card-actions>
+				<button
+					mat-button
+					(click)="sync(i)">
+					Sync
+				</button>
+			</mat-card-actions>
+		</mat-card>
+	</div>
+</div>

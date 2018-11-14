@@ -8,6 +8,12 @@
 			"type": "node",
 			"request": "launch",
 			"name": "Launch Program",
+			"program": "ts-node ${workspaceFolder}/packages/web-portal-api/src/index.ts"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch Program",
 			"program": "${workspaceFolder}/packages/server/dist/index.js",
 			"outFiles": [
 				"${workspaceFolder}/**/*.js"

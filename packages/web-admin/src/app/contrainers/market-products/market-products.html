@@ -1,6 +1,17 @@
+{{start}} {{end}}
+======
+
+<mat-paginator
+	[pageIndex]="page"
+	[pageSize]="pageSize"
+	[length]="products.length"
+	[pageSize]="20"
+	[pageSizeOptions]="[5, 10, 25, 100]"
+	(page)="setPage($event)">
+</mat-paginator>
 
 <div
-	*ngFor="let product of products"
+	*ngFor="let product of products | slice:start:end"
 	class="card">
 
 	<div
@@ -8,11 +19,15 @@
 		fxLayoutAlign="start start"
 		fxLayoutGap="2%">
 
-		<div fxFlex="100px">
+		<div
+			fxFlex="60px"
+			class="text-center">
+
 			<img
 				class="w-100"
 				[src]="product.logo"
 				alt="">
+
 			<div>{{product.name}}</div>
 		</div>
 
@@ -25,13 +40,16 @@
 				fxLayoutGap="2%">
 
 				<div fxFlex>
-
-					<div>Label: {{item.label}}</div>
+					<div>
+						<input
+							class=""
+							type="text"
+							[value]="item.url">
+					</div>
+					<div>{{item.label}}</div>
 					<div>Price: {{item.price}}</div>
 					<div>Available: {{item.available}}</div>
-					<div>Url: {{item.url}}</div>
 					<div>
-						Attributes:
 						<div *ngFor="let attr of item.attributes">
 							- {{attr.name}}: {{attr.value}}
 						</div>
@@ -39,17 +57,39 @@
 				</div>
 				<div
 					*ngIf="getMarket(item.market) as market"
-					fxFlex="100px">
+					fxFlex="100px"
+					class="text-center">
+
+					<button
+						mat-raised-button
+						(click)="remove(item)">
+						Remove
+					</button>
 
 					<img
-						class="w-100"
+						*ngIf="market.logo"
+						class="market-logo"
 						[src]="market.logo"
 						alt="">
+
+					<span *ngIf="!market.logo">
+						{{market.name}}
+					</span>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+<mat-paginator
+	[pageIndex]="page"
+	[pageSize]="pageSize"
+	[length]="products.length"
+	[pageSize]="20"
+	[pageSizeOptions]="[5, 10, 25, 100]"
+	(page)="setPage($event)">
+</mat-paginator>
+
 <!--
 <div
 	*ngFor="let item of items"

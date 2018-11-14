@@ -1,0 +1,7 @@
+Pages: {{items.length}}
+
+<ul class="stream">
+	<li *ngFor="let i of items">
+		<pre>{{i | json}}</pre>
+	</li>
+</ul>

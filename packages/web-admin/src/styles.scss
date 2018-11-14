@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+// @import "~cropperjs/src/css/cropper.scss";
 
 * {
 	box-sizing: border-box;
@@ -213,4 +216,12 @@ breadcrumb ol {
 			text-decoration: none;
 		}
 	}
+}
+
+.text-center {
+	text-align: center;
+}
+
+.mat-form-field-infix {
+	width: 100% !important;
 }

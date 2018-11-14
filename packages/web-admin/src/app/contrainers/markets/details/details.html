@@ -112,6 +112,37 @@
 			</div>
 		</div>
 
+		<div>
+			<div
+				class="mb-2"
+				fxLayoutAlign="start center">
+
+				<h4
+					class="card-title m-0"
+					fxFlex>
+					Ignore Links
+				</h4>
+
+				<div fxFlex="45px">
+					<button
+						class="btn btn-primary btn-rounded"
+						type="button"
+						(click)="addLink()">
+
+						<i class="fas fa-plus"></i>
+					</button>
+				</div>
+			</div>
+			<div *ngFor="let link of item.grabber.ignoreLinks; index as i;">
+				<input
+					type="text"
+					placeholder="Ingore Link"
+					type="text"
+					[name]="i + 'link'"
+					[(ngModel)]="item.grabber.ignoreLinks[i]">
+			</div>
+		</div>
+
 		<h4 class="card-title">
 			Mapping
 		</h4>
@@ -266,6 +297,9 @@
 										</option>
 										<option value="REPLACE">
 											REPLACE
+										</option>
+										<option value="REPLACE_REGEXP">
+											REPLACE_REGEXP
 										</option>
 										<option value="PREFIX">
 											PREFIX

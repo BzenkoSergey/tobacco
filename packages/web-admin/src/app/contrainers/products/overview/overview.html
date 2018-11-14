@@ -1,4 +1,18 @@
 <div class="card">
+	<select
+		name="companyId"
+		[(ngModel)]="companyId"
+		(ngModelChange)="selectCompany($event)">
+
+		<option value="">Select Company</option>
+
+		<option
+			*ngFor="let item of companies"
+			[value]="item._id.$oid">
+			{{item.name}}
+		</option>
+	</select>
+
 	<div
 		class="mb-2"
 		fxLayoutAlign="start center">
@@ -6,8 +20,18 @@
 		<h4
 			class="card-title m-0"
 			fxFlex>
-			Products
+			Products {{items.length}}
 		</h4>
+
+		<div fxFlex="45px">
+			<button
+				class="btn btn-primary btn-rounded"
+				type="button"
+				(click)="aggregateAll()">
+
+				<i class="fas fa-coins"></i>
+			</button>
+		</div>
 
 		<div fxFlex="45px">
 			<button

@@ -10,19 +10,10 @@
 		</div>
 	</a>
 	<div class="header-content">
-		<div class="search clearfix">
-			<button
-				class="search-btn"
-				type="button">
-				Искать
-			</button>
-
-			<div class="search-field-wrapper">
-				<input
-					type="search"
-					placeholder="Tangiers, 250 грамм, Noir Kashmir...">
-			</div>
-		</div>
+		<search
+			[query]="queries.search"
+			(changed)="performSearch($event)">
+		</search>
 	</div>
 </div>
 
@@ -63,7 +54,7 @@
 	</ul>
 </div>
 
-<div class="content">
+<div class="content containe2r center-layou2t">
 	<ul class="products clearfix">
 		<li
 			*ngFor="let product of products; let i = index"
@@ -82,8 +73,11 @@
 					</div>
 
 					<div class="product-name">
-						<span *ngIf="getCompany(product.company) as company">
+						<span *ngIf="product.company as company">
 							{{company.name}}
+						</span>
+						<span *ngIf="product.productLine as productLine">
+							{{productLine.name}}
 						</span>
 						{{product.name}}
 					</div>
@@ -93,23 +87,34 @@
 					<li
 						*ngFor="let item of product.items"
 						class="products-item clearfix">
+						<a
+							class="products-item-info"
+							target="_blank"
+							[href]="item.url">
 
-						<div class="price">
-							<a
-								target="_blank"
-								[href]="item.url">
+							<div
+								*ngIf="item.market as market"
+								class="market">
+
+								<img *ngIf="market.logo" class="market-logo" [src]="market.logo">
+								<span *ngIf="!market.logo" class="market-name">{{market.name}}</span>
+							</div>
+							<div class="price">
 								<!-- Price: {{item.price}} -->
-								{{item.price}} грн
-							</a>
-						</div>
-
-						<div
-							*ngIf="getMarket(item.market) as market"
-							class="market">
-
-							<img *ngIf="market.logo" class="market-logo" [src]="market.logo">
-							<span *ngIf="!market.logo" class="market-name">{{market.name}}</span>
-						</div>
+								<span
+									*ngIf="item.productAttributes.length"
+									class="price-attr">
+									<span *ngFor="let attr of item.productAttributes">
+										<span *ngIf="attr.name === 'Weight'">
+											<span *ngFor="let v of attr.values">{{v}}</span>
+										</span>
+									</span>
+								</span>
+								<span class="price-value">
+									{{item.price}}
+								</span>
+							</div>
+						</a>
 					</li>
 				</ul>
 			</div>
@@ -119,7 +124,7 @@
 	</ul>
 
 	<pagination
-		class="text-center public-pagination"
+		class="pagination"
 		[itemsPerPage]="queries.itemsPerPage"
 		[page]="queries.page"
 		[total]="productsTotal">

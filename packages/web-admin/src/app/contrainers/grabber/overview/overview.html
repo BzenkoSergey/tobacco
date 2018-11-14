@@ -1,41 +1,50 @@
-<div class="card">
-	<div
-		class="mb-2"
-		fxLayoutAlign="start center">
+<div
+	class="mb-2"
+	fxLayoutAlign="start center">
 
-		<h4
-			class="card-title m-0"
-			fxFlex>
-			Grabbers
-		</h4>
+	<h4
+		class="card-title m-0"
+		fxFlex>
+		Grabbers
+	</h4>
+</div>
 
-		<div fxFlex="45px">
-			<button
-				class="btn btn-primary btn-rounded"
-				type="button"
-				(click)="create()">
+<ul class="markets">
+	<li
+		*ngFor="let i of items"
+		class="market card">
 
-				<i class="fas fa-plus"></i>
-			</button>
-		</div>
-	</div>
+		<div class="market-logo">
 
-	<table class="table">
-		<tr>
-			<th>Logo</th>
-			<th>Name</th>
-		</tr>
-		<tr *ngFor="let i of items">
-			<td>
-				<img
-					src="http://www.urbanui.com/pearl-admin/images/faces-clipart/pic-1.png"
-					alt="image">
-			</td>
-			<td>
-				<a [routerLink]="['./../../', i._id.$oid]">
+			<img
+				*ngIf="i.logo"
+				[src]="i.logo"
+				alt="image">
+
+			<div class="market-name">
+				<a [routerLink]="['./../../', i._id.$oid, 'job']">
 					{{i.name}}
 				</a>
-			</td>
-		</tr>
-	</table>
-</div>
+			</div>
+		</div>
+		<div class="market-info">
+			<button
+				class="btn btn-primary"
+				type="button"
+				[disabled]="!!getStatus(i._id.$oid)"
+				(click)="run(i)">
+				<span *ngIf="!!getStatus(i._id.$oid)">
+					Running
+				</span>
+				<span *ngIf="!getStatus(i._id.$oid)">
+					Run
+				</span>
+			</button>
+			<button
+				class="btn btn-primary"
+				type="button">
+				Stop
+			</button>
+		</div>
+	</li>
+</ul>

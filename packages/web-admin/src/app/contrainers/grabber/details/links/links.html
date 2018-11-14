@@ -1,0 +1,63 @@
+<mat-card>
+	<form
+		fxLayout="row"
+		fxLayoutAlign="start center"
+		(submit)="performSearch($event)">
+
+		<div fxFlex>
+			Pages: {{links.length}}
+		</div>
+		<div fxFlex>
+			<mat-form-field>
+				<input
+					matInput
+					name="search"
+					placeholder="Search item"
+					[(ngModel)]="search">
+			</mat-form-field>
+		</div>
+		<div fxFlex>
+			<button
+				mat-raised-button>Search</button>
+		</div>
+	</form>
+
+	<mat-tab-group (selectedTabChange)="setTab($event.index)">
+		<mat-tab label="Empty {{emptyLinks.length}}">
+			<cdk-virtual-scroll-viewport
+				itemSize="29"
+				class="stream">
+
+				<div
+					*cdkVirtualFor="let i of emptyLinks"
+					class="item">
+					{{i.link}}
+				</div>
+			</cdk-virtual-scroll-viewport>
+		</mat-tab>
+		<mat-tab label="With Content {{contentLinks.length}}">
+			<cdk-virtual-scroll-viewport
+				itemSize="153"
+				minBufferPx="200" maxBufferPx="1500"
+				class="stream">
+
+				<div
+					*cdkVirtualFor="let i of contentLinks"
+					class="item">
+
+					{{i.link}}
+					<pre *ngFor="let l of i.items">{{l | json}}</pre>
+				</div>
+			</cdk-virtual-scroll-viewport>
+		</mat-tab>
+	</mat-tab-group>
+</mat-card>
+
+<!--
+<ul class="stream">
+	<li *ngFor="let i of links; trackBy: trackLinksByFn">
+		{{i.link}}
+
+		<pre *ngFor="let l of i.items">{{l | json}}</pre>
+	</li>
+</ul> -->

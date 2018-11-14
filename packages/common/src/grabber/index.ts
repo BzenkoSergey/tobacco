@@ -3,3 +3,5 @@ export * from './mapping-attribute-type.enum';
 export * from './mapping-attribute.dto';
 export * from './mapping.dto';
 export * from './transform.enum';
+export * from './job.dto';
+export * from './settings.dto';

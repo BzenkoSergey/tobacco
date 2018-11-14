@@ -13,35 +13,59 @@ export class EntitiesHandlerService {
 		private mapping: GrabberMappingDto
 	) {}
 
-	handle(html: string): [Entity[], Entity] {
-		const entitis = this.parse(html);
+	handle(html: string, url: string): [Entity[], Entity] {
+		const entitis = this.parse(html, url);
 		let addition = null;
 		if(this.mapping.additions) {
-			addition = this.parseAdditions(html);
+			addition = this.parseAdditions(html, url);
 		}
 		return [entitis, addition];
 	}
 
-	private parseAdditions(html: string): Entity {
+	private parseAdditions(html: string, url: string): Entity {
 		const $ = cheerio.load(html);
 		const $root = $('html');
-		return this.parseEntity(this.mapping.additions, $root);
+		return this.parseEntity(this.mapping.additions, $root, url);
 	}
 
-	private parse(html: string): Entity[] {
+	private parse(html: string, url: string): Entity[] {
 		const $ = cheerio.load(html);
 		const $roots = $(this.mapping.selector);
 
 		return $roots.toArray()
 			.map((root: JQuery<HTMLElement>) => {
-				return this.parseEntity(this.mapping.attributes, $(root));
+				return this.parseEntity(this.mapping.attributes, $(root), url);
 			});
 	}
 
-	private parseEntity(attrs: GrabberMappingAttributeDto[], $root: JQuery<HTMLElement>): Entity {
+	private parseEntity(attrs: GrabberMappingAttributeDto[], $root: JQuery<HTMLElement>, url: string): Entity {
 		var entity = {};
 		attrs.forEach(attr => {
-			const $el = attr.root ? $root : $root.find(attr.selector);
+			if (attr.selector === '$url') {
+				entity[attr.name] = url;
+				return;
+			}
+			const config = attr.selector.split('|');
+			const selectorInfo = config[0].split(':::');
+			const selector = selectorInfo[0];
+			const toRemove = config[1];
+
+			let $el = attr.root ? $root : $root.find(selector);
+			if (toRemove) {
+				$el.find(toRemove).remove();
+			}
+			if (selectorInfo[1] === 'reverse') {
+				try {
+					
+				const $newEl = cheerio('<span></span>');
+				$el.each((a, b) => {
+					$newEl.prepend(b);
+				});
+				$el = $newEl;
+				} catch(e) {
+					console.error(e);
+				}
+			} 
 			let value = null;
 			if(attr.type === 'VALUE') {
 				value = $el.val();

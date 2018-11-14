@@ -32,6 +32,13 @@ export class OverviewComponent {
 			});
 	}
 
+	remove(d: ProductLineDto) {
+		this.service.remove(d)
+			.subscribe(() => {
+				this.items = this.items.filter(i => i._id.$oid !== d._id.$oid);
+			});
+	}
+
 	create() {
 		const item = new ProductLineDto();
 		item.name = 'Placeholder';

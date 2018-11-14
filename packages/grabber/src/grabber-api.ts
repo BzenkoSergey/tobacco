@@ -13,13 +13,17 @@ export class GrabberApi {
 			input.pageLimit,
 			input.host,
 			input.path,
-			input.protocol
+			input.protocol,
+			input.ignoreLinks,
+			input.links,
+			input.onlyDefinedLinks,
+			input.testMode
 		);
 
 		return linksService.perform()
 			.pipe(
 				map(d => {
-					const result = entitiesHandlerService.handle(d[1]);
+					const result = entitiesHandlerService.handle(d[1], d[0]);
 					return [d[0], result];
 				})
 			);

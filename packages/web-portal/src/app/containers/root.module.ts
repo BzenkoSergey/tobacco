@@ -6,6 +6,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { PaginationModule } from '@components/pagination/pagination.module';
 
+import { SearchModule } from './search/search.module';
 import { FilterItemsModule } from './filter-items/filter-items.module';
 import { RootRoutingModule } from './root-routing.module';
 import { RootComponent } from './root.component';
@@ -19,7 +20,8 @@ import { RootComponent } from './root.component';
 
 		PaginationModule,
 		FilterItemsModule,
-		RootRoutingModule
+		RootRoutingModule,
+		SearchModule
 	],
 	declarations: [
 		RootComponent

@@ -1,0 +1,37 @@
+<mat-card>
+	<mat-card-title>Grabber Settings</mat-card-title>
+
+	<mat-card-content>
+			<button
+				mat-raised-button
+				color="primary"
+				type="button"
+				(click)="run()">
+				Run Scheduler
+			</button>
+			<button
+				mat-raised-button
+				color="primary"
+				type="button"
+				(click)="run2()">
+				Run2 Scheduler
+			</button>
+
+		<form (submit)="save()">
+			<mat-form-field>
+				<input
+					matInput
+					name="amount"
+					placeholder="Amount"
+					[(ngModel)]="item.amount">
+			</mat-form-field>
+
+			<button
+				mat-raised-button
+				color="primary"
+				type="submit">
+				Save
+			</button>
+		</form>
+	</mat-card-content>
+</mat-card>

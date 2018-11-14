@@ -10,6 +10,7 @@ import { ProductsRouting } from './products';
 import { ProductLinesRouting } from './product-lines';
 import { ProductAttributesRouting } from './product-attributes';
 import { MarketProductsRouting } from './market-products';
+import { SearchRouting } from './search';
 import { router } from './settings/settings.service';
 
 var app = express();
@@ -29,6 +30,7 @@ app.use(new ProductsRouting().getRouter());
 app.use(new ProductLinesRouting().getRouter());
 app.use(new ProductAttributesRouting().getRouter());
 app.use(new MarketProductsRouting().getRouter());
+app.use(new SearchRouting().getRouter());
 app.use(router);
 
 app.listen(5000, function () {

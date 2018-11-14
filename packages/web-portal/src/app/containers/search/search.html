@@ -1,0 +1,77 @@
+<form
+	class="search clearfix"
+	(submit)="performSearch()">
+
+	<button
+		class="search-btn"
+		type="submit">
+		Искать
+	</button>
+
+	<div class="search-field-wrapper">
+		<input
+			type="search"
+			placeholder="Tangiers, 250 грамм, Noir Kashmir..."
+			[formControl]="control"
+			(keydown)="down($event)"
+			(blur)="resetAutocomplete()">
+
+		<ul
+			*ngIf="searchProducts.length"
+			class="search-items"
+			(mouseenter)="index = -1">
+
+			<li *ngFor="let p of searchProducts; index as i">
+				<button
+					type="button"
+					class="search-item-btn"
+					[class.active]="index === i"
+					(click)="setQuery(p.query)">
+
+					<div class="product-name">
+						{{p.query}}
+					</div>
+
+					<!-- <div class="product-info">
+						<div class="product-logo-wrap">
+							<img class="product-logo" [src]="p.logo" alt="">
+						</div>
+
+						<div class="product-name">
+							<span *ngIf="getCompany(p.company) as company">
+								{{company.name}}
+							</span>
+							{{p.name}}
+						</div>
+					</div>
+
+					<ul class="products-items">
+						<li
+							*ngFor="let item of p.items"
+							class="products-item clearfix">
+							<a
+								class="products-item-info"
+								target="_blank"
+								[href]="item.url">
+
+								<div class="price">
+
+									<span class="price-attr">
+										<span *ngFor="let attr of item.attributes">
+											<span *ngIf="attr.name === 'Weight'">
+												{{attr.value}}
+											</span>
+										</span>
+									</span>
+									<span class="price-value">
+										{{item.price}}
+									</span>
+								</div>
+							</a>
+						</li>
+					</ul> -->
+				</button>
+			</li>
+		</ul>
+	</div>
+</form>

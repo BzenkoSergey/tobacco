@@ -3,13 +3,84 @@
 	padding: 0;
 	list-style: none;
 	font-size: 14px;
+	height: 700px;
 
+	.item,
 	li {
-		padding: 10px 0;
+		padding: 5px 0;
 		border-bottom: 1px solid rgb(244, 244, 248);
 	}
 }
 
 .red {
 	color: red;
+}
+
+.pl {
+	padding-left: 10px;
+}
+
+.p-0 {
+	padding: 0 !important;
+}
+
+.list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 12px;
+
+	li {
+		padding: 5px;
+		border-bottom: 1px solid rgb(244, 244, 248);
+
+		input {
+			padding: 5px;
+			border: 0;
+		}
+	}
+}
+
+.spinner {
+	margin: 50px 0;
+}
+
+.product {
+	position: relative;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	height: 100%;
+
+	.product-img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		text-align: center;
+	}
+
+	img {
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+	.h {
+		position: relative;
+		z-index: 1;
+		font-weight: bold;
+		padding: 4px 0;
+		color: #fff;
+		background: rgba(0, 0, 0, 0.44);
+
+		a {
+			color: #fff;
+			text-decoration: none;
+		}
+	}
+
+	.btns {
+		margin-top: 20px;
+	}
 }

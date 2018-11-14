@@ -1,0 +1,43 @@
+<div class="card">
+	<h4 class="card-title mb-2-0">
+		Product Search
+	</h4>
+
+	<button
+		class="btn btn-primary"
+		type="button"
+		(click)="update()">
+		Apply
+	</button>
+
+	<table class="table">
+		<tr *ngFor="let product of products">
+			<td>
+				<!-- <span *ngIf="getCategories(product.categories) as categories">
+					<span *ngFor="let category of categories">
+						{{category.name}}
+					</span>
+				</span>
+				<span *ngIf="getCompany(product.company) as company">
+					{{company.name}}
+				</span>
+				<span *ngIf="getProductLine(product.productLine) as productLine">
+					{{productLine.name}}
+				</span> -->
+				{{product.name}}
+			</td>
+			<td>
+				<input
+					class="form-control"
+					type="text"
+					[value]="map.get(product._id.$oid)">
+			</td>
+			<td>
+				<input
+					class="form-control"
+					type="text"
+					[value]="getSearchName(product._id.$oid)">
+			</td>
+		</tr>
+	</table>
+</div>
