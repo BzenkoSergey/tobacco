@@ -38,6 +38,15 @@
 				type="button"
 				mat-raised-button
 				[disabled]="status || processing"
+				(click)="runNew()">
+
+				Run For New
+			</button>
+
+			<button
+				type="button"
+				mat-raised-button
+				[disabled]="status || processing"
 				(click)="run(true)">
 
 				Run Test

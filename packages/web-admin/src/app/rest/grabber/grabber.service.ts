@@ -103,6 +103,11 @@ export class GrabberRestService {
 		return this.http.post<boolean>(url, d);
 	}
 
+	runParallel(d: GrabberJob) {
+		const url = this.apiUrl() + '/' + d.id + '/run/parallel';
+		return this.http.post<boolean>(url, d);
+	}
+
 	partiallyRun(d: GrabberJob) {
 		const url = this.apiUrl() + '/' + d.id + '/partially/run';
 		return this.http.post<boolean>(url, d);

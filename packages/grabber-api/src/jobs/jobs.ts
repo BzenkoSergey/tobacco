@@ -96,6 +96,38 @@ router.post('/job/run', (req, res) => {
 	res.status(200).json(true);
 });
 
+
+
+router.post('/job/:jobId', (req, res) => {
+	const jobId = req.params.jobId;
+	const job = new GrabberJob(req.body);
+	job.id = jobId;
+	jobs.set(jobId, job);
+	res.status(200).json(job);
+});
+
+router.post('/job/:jobId/run/parallel', (req, res) => {
+	const jobId = req.params.jobId;
+	const job = new GrabberJob(req.body);
+
+	console.log(job.config.ignoreLinks);
+	const stream = streams.get(jobId) || new Map<string, any[]>();
+	streams.set(jobId, stream);
+	runned.set(jobId, true);
+
+	new GrabberApi()
+		.perform(job.config)
+		.subscribe(
+			d => {
+				stream.set(<string>d[0], <any>d[1]);
+			},
+			err => console.error(err),
+			() => runned.set(jobId, false)
+		);
+
+	res.status(200).json(true);
+});
+
 router.post('/job/:jobId/run', (req, res) => {
 	const jobId = req.params.jobId;
 	const job = jobs.get(jobId);
