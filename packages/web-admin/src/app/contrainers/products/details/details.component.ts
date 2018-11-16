@@ -546,9 +546,9 @@ export class DetailsComponent implements OnDestroy {
 	private getImageUrl() {
 		let url = this.externalUrl || this.item.logo;
 		if (url.includes('http')) {
-			url = 'http://localhost:3310/images/external/' + url;
+			url = 'http://'+window.location.hostname+':3310/images/external/' + url;
 		} else {
-			url = 'http://localhost:3310/images/' + this.item._id.$oid;
+			url = 'http://'+window.location.hostname+':3310/images/' + this.item._id.$oid;
 		}
 		return url;
 	}

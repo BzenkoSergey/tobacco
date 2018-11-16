@@ -114,7 +114,7 @@ export class GrabberRestService {
 	}
 
 	private apiUrl() {
-		return `http://localhost:3300/job`;
+		return `http://`+ window.location.hostname +`:3300/job`;
 	}
 }
 

@@ -42,6 +42,10 @@ export class ImagesComponent {
 			});
 	}
 
+	getUrl(p: string) {
+		return 'http://'+window.location.hostname+':3310/images/file/' + p;
+	}
+
 	private fetch() {
 		this.service.list()
 			.subscribe(d => this.items = d);

@@ -31,7 +31,7 @@
 			<mat-card-subtitle>{{i}}</mat-card-subtitle>
 			<img
 				mat-card-image
-				src="http://localhost:3310/images/file/{{i}}"
+				[src]="getUrl(i)"
 				alt="">
 
 			<mat-card-actions>

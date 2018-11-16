@@ -31,6 +31,6 @@ export class ImagesRestService {
 	}
 
 	private apiUrl() {
-		return `http://localhost:3310/images`;
+		return `http://`+ window.location.hostname +`:3310/images`;
 	}
 }
