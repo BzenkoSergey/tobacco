@@ -273,6 +273,19 @@ export class OperationsComponent implements OnDestroy {
 		return this.productLines.find(p => p._id.$oid === productLineId);
 	}
 
+	runNew() {
+		const links = this.marketProducts.map(mp => mp.url);
+
+		const job = new GrabberJob();
+		job.id = this.itemId;
+		job.config = this.item.grabber;
+		job.config.ignoreLinks = links;
+		this.grabberService.runParallel(job)
+			.subscribe(g => {
+				console.log(g);
+			});
+	}
+
 	run(testMode = false) {
 		this.grabberService.get(this.itemId)
 			.subscribe(job => {
