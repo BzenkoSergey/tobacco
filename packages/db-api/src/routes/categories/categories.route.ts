@@ -19,6 +19,13 @@ export class CategoriesRoute {
 				});
 		});
 
+		this.router.get(this.path + '/:id', (req, res, next) => {
+			this.get(req.params.jobId)
+				.subscribe(d => {
+					res.status(200).json(d);
+				});
+		});
+
 		this.router.post(this.path, (req, res) => {
 			this.create(req.body)
 				.subscribe(d => {
@@ -78,6 +85,18 @@ export class CategoriesRoute {
 
 	private list(query: Object|null) {
 		return new MongoDb(this.collection).find(query || {})
+			.pipe(
+				map(list => {
+					return list.map(i => new CategoryDto(i));
+				})
+			);
+	}
+
+	private get(id: string) {
+		return new MongoDb(this.collection)
+			.findOne({
+				_id: ObjectId(id)
+			})
 			.pipe(
 				map(list => {
 					return list.map(i => new CategoryDto(i));
