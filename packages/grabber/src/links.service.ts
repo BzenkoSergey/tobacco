@@ -147,13 +147,19 @@ export class LinksService {
 			(data: string) => {
 				html += data.toString();
 			},
-			headers => {
+			() => {
 				const i = this.waiting.indexOf(url);
 				this.waiting.splice(i, 1);
 
-				this.cacheService.createFile(url, html);
-				subj.next([url, html, this.parse(html)]);
-				subj.complete();
+				this.cacheService.createFile(url, html)
+					.subscribe(
+						() => {},
+						err => subj.error(err),
+						() => {
+							subj.next([url, html, this.parse(html)]);
+							subj.complete();
+						}
+					)
 			},
 			(error: any) => {
 				console.log('error:' + url);
