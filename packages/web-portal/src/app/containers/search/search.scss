@@ -56,14 +56,17 @@
 		background-color: #fff;
 		position: absolute;
 		top: 100%;
-		left: 0;
-		width: 100%;
+		right: 0;
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		z-index: 3;
 		box-shadow: 0 4px 5px 0 rgba(0,0,0,.08);
 		border-radius: 0 0 3px 3px;
+		width: calc(100% + 90px);
+		@media (min-width: 588px) {
+			width: 100%;
+		}
 
 		li {
 			border-top: 1px solid #f3f3f3;

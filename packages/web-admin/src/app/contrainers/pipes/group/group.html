@@ -1,0 +1,59 @@
+<div
+	class="group"
+	fxLayout="column"
+	fxLayoutAlign="center stretch">
+
+	<div
+		fxFlex
+		class="text-center">
+
+		<button
+			class="group-icon"
+			(click)="select()">
+			Group
+		</button>
+		<!-- Pipe Group -->
+		<!-- {{groupInfo.order}} - {{groupInfo.id}} -->
+		<div
+			*ngIf="getPipeGroup(groupInfo.id) as group"
+			fxLayout="row"
+			fxLayoutAlign="center start"
+			fxLayoutGap="6%">
+
+			<div
+				fxFlex
+				*ngFor="let pipeInfo of group.pipes">
+<!--
+				<pipe
+					fxFill
+					[order]="pipeInfo.order"
+					[processId]="processId"
+					[pipeInfo]="pipeInfo"
+					[pipes]="pipes"
+					(selected)="selectPipe($event)">
+				</pipe> -->
+			</div>
+		</div>
+	</div>
+
+	<div
+		fxLayout="row"
+		fxLayoutAlign="center start"
+		fxLayoutGap="6%">
+
+		<div
+			fxFlex
+			*ngFor="let childInfo of groupInfo.children">
+
+			<group
+				[groupInfo]="childInfo"
+				[order]="childInfo.order"
+				[processId]="processId"
+				[groups]="groups"
+				[pipes]="pipes"
+				(selected)="selectChild($event)"
+				(selectedPipe)="selectPipe($event)">
+			</group>
+		</div>
+	</div>
+</div>

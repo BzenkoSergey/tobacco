@@ -222,6 +222,63 @@ breadcrumb ol {
 	text-align: center;
 }
 
+.card-unindent {
+	margin-left: -16px;
+	margin-right: -16px;
+}
+
 .mat-form-field-infix {
 	width: 100% !important;
+}
+
+
+
+.node {
+	cursor: pointer;
+	position: relative;
+
+	.label {
+		position: absolute;
+		top: 0;
+		left: 0;
+		font-size: 14px;
+	}
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 2px;
+  r: 6;
+  cursor: pointer;
+
+  &[status="DONE"] {
+	stroke: #8e9a5d;
+  }
+  &[status="PENDING"] {
+	stroke: #cccccc;
+  }
+  &[status="IN_PROCESS"] {
+	stroke: #eaad00;
+  }
+  &[status="SKIPPED_JOB"] {
+	stroke: #9aa4e8;
+  }
+  &[status="ERROR"] {
+	stroke: #ea0000;
+  }
+  &[state="selected"] {
+	stroke: #000;
+  }
+}
+
+.node text {
+  font-size: 7px;
+  text-anchor: middle;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1px;
 }

@@ -1,0 +1,50 @@
+{
+	"options" : null,
+	"id": null,
+	"type" : "LINE",
+	"label" : "",
+	"services" : [
+		"HTTP_STACK",
+		"STORE",
+		"EXT"
+	],
+	"children" : [
+		{
+			"id" : "5c23c3a9b1e0d83310742fed",
+			"options" : "{\"delay\": \"*/30 * * * * *\", \"interval\": true}",
+			"type" : "",
+			"code": "INTERVAL",
+			"label" : "",
+			"children" : [
+				{
+					"id" : "5c23be56b1e0d83310742ae1",
+					"type" : "",
+					"label" : "",
+					"children" : [
+						{
+							"id" : "5c23c4bab1e0d8331074307c",
+							"type" : "",
+							"label" : "",
+							"children": [
+								{
+									"id" : "5c23caa9b1e0d833107453ec",
+									"type" : "",
+									"label" : "",
+									"children": [
+										{
+											"id" : "5c23c3a9b1e0d83310742fed",
+											"type" : "",
+											"label" : "",
+											"code": "DELAY_ITEM",
+											"children": []
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

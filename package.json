@@ -4,10 +4,13 @@
     "packages/*"
   ],
   "scripts": {
-	"start": "lerna run start --parallel",
+    "start": "lerna run start --parallel",
     "build": "lerna run build"
   },
   "devDependencies": {
     "lerna": "^2.11.0"
+  },
+  "dependencies": {
+    "mongodb-backup": "^1.6.9"
   }
 }

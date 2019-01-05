@@ -1,0 +1,152 @@
+<div class="ngx-image-editor-component">
+	<div class="photo-editor-header">
+		<div class="file-name">
+			{{state.ImageName}}
+
+			{{imageWidth}} / {{imageHeight}}
+		</div>
+
+		<button
+			class="btn btn-success"
+			[hidden]="croppedImage"
+			(click)="handleCrop()">
+			<i class="fas fa-crop-alt"></i>
+		</button>
+		<button
+			class="btn btn-success"
+			[hidden]="croppedImage"
+			(click)="centerCanvas()">
+			<i class="fas fa-arrows-alt"></i>
+		</button>
+	</div>
+
+	<div
+		#dialogCropContainer
+		class="dialog-crop-container">
+
+		<ng-template [ngIf]="!croppedImage">
+			<div
+				[style.visibility]="loading ? 'hidden' : 'visible'"
+				[style.background]="canvasFillColor"
+				class="img-container">
+				<img
+					#previewimg
+					[src]="previewImageURL">
+			</div>
+		</ng-template>
+		<ng-template [ngIf]="croppedImage && !loading">
+			<div class="cropped-image">
+				<img
+					#croppedImg
+					[ngStyle]="{'transform': 'scale(' + zoomIn + ')'}"
+					[src]="croppedImage">
+			</div>
+		</ng-template>
+		<!-- <mat-progress-spinner *ngIf="loading" mode="indeterminate"></mat-progress-spinner> -->
+	</div>
+
+	<div class="dialog-button-actions">
+		<!-- <div class="image-detail-toolbar">
+			<div class="image-zoom"
+			fxLayout="row"
+			fxLayoutAlign="space-around stretch">
+				<button fxFlex="40px" mat-icon-button color="accent" (click)="zoomChange(0.1, 'zoomIn')">
+					<mat-icon>zoom_in</mat-icon>
+				</button>
+				<mat-slider fxFlex [value]="sliderValue" (input)="zoomChange($event.value)" thumbLabel></mat-slider>
+				<button fxFlex="40px" mat-icon-button color="accent" (click)="zoomChange(-0.1, 'zoomOut')">
+					<mat-icon>zoom_out</mat-icon>
+				</button>
+			</div>
+		</div> -->
+		<div
+			class="cropped-image-buttons"
+			[style.visibility]="!croppedImage ? 'hidden' : 'visible'">
+
+			<button
+				class="btn btn-success mr-2"
+				(click)="saveImage()">
+				<i class="fas fa-check"></i>
+			</button>
+			<button
+				class="btn btn-danger"
+				(click)="undoCrop()">
+				<i class="fas fa-undo"></i>
+			</button>
+		</div>
+		<div
+			class="d-flex justify-content-between mt-2"
+			[style.visibility]="croppedImage ? 'hidden' : 'visible'">
+
+			<div>
+				<button
+					type="button"
+					class="btn btn-link"
+					(click)="cropper.setDragMode('move')">
+					<i class="fas fa-arrows-alt"></i>
+				</button>
+				<button
+					type="button"
+					class="btn btn-link"
+					(click)="cropper.setDragMode('crop')">
+					<i class="fas fa-crop-alt"></i>
+				</button>
+			</div>
+
+			<div class="btn-group">
+				<button
+					*ngFor="let ratio of ratios"
+					type="button"
+					class="btn btn-secondary"
+					(click)="setRatio(ratio.value)">
+					{{ratio.text}}
+				</button>
+			</div>
+		</div>
+		<div
+			class="canvas-config mt-2 row"
+			[style.visibility]="croppedImage ? 'hidden' : 'visible'">
+
+			<div class="col-3">
+				<input
+					matInput
+					class="form-control"
+					id="imageWidth"
+					placeholder="Canvas width"
+					type="number"
+					(ngModelChange)="setImageWidth($event)"
+					[ngModel]="canvasWidth">
+			</div>
+			<div class="col-3">
+				<input
+					matInput
+					class="form-control"
+					id="imageHeight"
+					placeholder="Canvas height"
+					type="number"
+					(ngModelChange)="setImageHeight($event)"
+					[ngModel]="canvasHeight">
+			</div>
+			<div class="col-3">
+				<input
+					matInput
+					class="form-control"
+					id="cropBoxWidth"
+					placeholder="Cropbox width"
+					type="number"
+					(ngModelChange)="setCropBoxWidth($event)"
+					[ngModel]="cropBoxWidth">
+			</div>
+			<div class="col-3">
+				<input
+					matInput
+					class="form-control"
+					id="cropBoxHeight"
+					placeholder="Cropbox height"
+					type="number"
+					(ngModelChange)="setCropBoxHeight($event)"
+					[ngModel]="cropBoxHeight">
+			</div>
+		</div>
+	</div>
+</div>

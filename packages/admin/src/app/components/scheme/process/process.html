@@ -1,0 +1,128 @@
+<div class="container-fluid mt-3">
+	<div class="row">
+		<div
+			class="col-8 pl-0 pr-0"
+			[class.col-12]="full">
+
+			<div class="card">
+				<div class="card-header p-2 d-flex justify-content-end">
+					<button
+						class="btn btn-sm"
+						(click)="full = !full">
+						<span *ngIf="full">Show Bar</span>
+						<span *ngIf="!full">Hide Bar</span>
+					</button>
+				</div>
+
+				<div style="height: 600px;">
+					<flow-tree
+						(selected)="select($event)">
+					</flow-tree>
+				</div>
+			</div>
+		</div>
+		<div
+			*ngIf="!full"
+			class="col-4 pr-0">
+			<form *ngIf="pipe">
+				<ul class="list-group">
+					<li class="list-group-item p-2">
+						<button
+							type="button"
+							class="btn btn-primary mr-1"
+							(click)="run()">
+							Run
+						</button>
+						<button
+							type="button"
+							class="btn btn-danger mr-1"
+							(click)="runPipe()">
+							Run Pipe
+						</button>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							(click)="watch()">
+							Watch
+						</button>
+					</li>
+					<li class="list-group-item p-2">
+						<input
+							class="form-control form-control-sm"
+							placeholder="Label"
+							name="label"
+							readonly
+							[(ngModel)]="pipe.label">
+					</li>
+					<li class="list-group-item p-2">
+						<label>Options</label>
+						<div
+							ace-editor
+							[(text)]="options"
+							[mode]="'json'"
+							[theme]="'eclipse'"
+							[readOnly]="false"
+							[autoUpdateContent]="true"
+							[durationBeforeCallback]="1000"
+							style="min-height: 50px; width:100%; overflow: auto;">
+						</div>
+					</li>
+					<li class="list-group-item p-2">
+						<label>Input</label>
+						<div
+							ace-editor
+							[(text)]="pipe.input"
+							[mode]="'json'"
+							[theme]="'eclipse'"
+							[readOnly]="false"
+							[autoUpdateContent]="true"
+							[durationBeforeCallback]="1000"
+							style="min-height: 50px; width:100%; overflow: auto;">
+						</div>
+					</li>
+					<li class="list-group-item p-2">
+						Type: {{pipe.type}}
+					</li>
+					<li class="list-group-item p-2">
+						Job: {{pipe.jobName}}
+					</li>
+					<li class="list-group-item p-2">
+						Services: {{pipe.services}}
+					</li>
+					<li class="list-group-item p-2">
+						Error: {{pipe.process.error}}
+					</li>
+					<li class="list-group-item p-2">
+						StartDate: {{pipe.process.startDate | date: 'M/d/yy h:mm:ss'}}
+					</li>
+					<li class="list-group-item p-2">
+						EndDate: {{pipe.process.endDate | date: 'M/d/yy h:mm:ss'}}
+					</li>
+					<li class="list-group-item p-2">
+						Exc Time: {{pipe.process.endDate - pipe.process.startDate}}
+					</li>
+					<li class="list-group-item p-2">
+						<div>Input:</div>
+						<div
+							mode="javascript"
+							style="height:80px;"
+							ace-editor
+							[readOnly]="true"
+							[options]="{showLineNumbers: false, fixedWidthGutter: true, fontSize: '10px', showGutter: false}"
+							[(text)]="input">
+						</div>
+						<div>Output:</div>
+						<div
+							mode="javascript"
+							style="height:80px;"
+							ace-editor
+							[readOnly]="true"
+							[options]="{showLineNumbers: false, fixedWidthGutter: true, fontSize: '10px', showGutter: false}"
+							[(text)]="output">
+						</div>
+					</li>
+				</ul>
+			</form>
+		</div>
+	</div>
+</div>

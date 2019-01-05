@@ -14,7 +14,7 @@ import { ProductAttributesRestService } from '@rest/product-attributes';
 import { ProductLinesRestService } from '@rest/product-lines';
 import { SearchRestService } from '@rest/search';
 
-import { AggregatedProductDto } from '@rest/products/product-full.dto';
+import { AggregatedProductDto, AggregatedProductItemDto } from '@rest/products/product-full.dto';
 
 @Component({
 	selector: 'root',
@@ -380,6 +380,55 @@ export class RootComponent {
 			});
 	}
 
+	getItems(p: AggregatedProductDto) {
+		const map = new Map<string, AggregatedProductItemDto[]>();
+
+		p.items.forEach(pm => {
+			const pa = pm.productAttributes[0];
+			if (pa) {
+				let list2 = map.get(pa.values[0]) || [];
+				list2.push(pm);
+				list2 = list2
+					.sort((a, b) => {
+						return a.price - b.price;
+					});
+				map.set(pa.values[0], list2);
+			}
+		});
+		const info = [];
+		if (!map.size) {
+			let prices = '';
+			if (p.items.length > 1) {
+				prices += p.items[0].price;
+				prices += '-' + p.items[p.items.length - 1].price;
+			} else {
+				prices += p.items[0].price;
+			}
+			info.push({
+				attr: null,
+				prices: prices
+			});
+			return info;
+		}
+
+
+		map.forEach((mps, key) => {
+			let prices = '';
+			if (mps.length > 1) {
+				prices += mps[0].price;
+				prices += '-' + mps[mps.length - 1].price;
+			} else {
+				prices += mps[0].price;
+			}
+
+			info.push({
+				attr: key,
+				prices: prices
+			});
+		});
+		return info;
+	}
+
 	fetchProducts() {
 		const available = true;
 		const products = this.productsService.list({
@@ -397,19 +446,12 @@ export class RootComponent {
 				this.products = list.items;
 				this.productsTotal = list.total;
 
-
 				if (this.productsTotal && this.queries.search) {
 					this.searchRestService.create({
 						query: this.queries.search
 					})
 					.subscribe();
 				}
-				this.products.forEach(p => {
-					p.items = p.items
-						.sort((a, b) => {
-							return a.price - b.price;
-						});
-				});
 			});
 	}
 }

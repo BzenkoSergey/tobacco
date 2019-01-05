@@ -1,0 +1,34 @@
+{
+	"options" : null,
+	"id": "5c044754db3e4a4cf36bfb88",
+	"type" : "LINE",
+	"label" : "",
+	"children" : [
+		{
+			"id" : "5c044754db3e4a4cf36bfb88",
+			"type" : "GROUP",
+			"label" : "",
+			"services" : [
+				"HTTP_STACK",
+				"STORE",
+				"EXT"
+			],
+			"children" : [
+				{
+					"id" : "5bf88047db3e4a4cf3e5b953",
+					"type" : "",
+					"label" : "",
+					"children" : [
+						{
+							"id" : "5c0446cbdb3e4a4cf36bf9e5",
+							"type" : "",
+							"label" : "",
+							"code": "DOM",
+							"children" : []
+						}
+					]
+				}
+			]
+		}
+	]
+}

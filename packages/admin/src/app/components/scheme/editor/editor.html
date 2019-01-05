@@ -1,0 +1,175 @@
+<div class="container-fluid mt-3">
+	<div class="row">
+		<div class="col col-8 pl-0 pr-0">
+			<div class="card">
+
+				<div
+					class="position-relative"
+					style="height: 300px;">
+					<flow-tree
+						[data]="view"
+						[current]="path"
+						(selected)="select($event)">
+					</flow-tree>
+
+					<div
+						class="position-absolute"
+						style="bottom: .5rem; right: 1rem;">
+						<button
+							type="button"
+							class="btn btn-link p-0 mr-2"
+							style="font-size: 2.8rem;"
+							(click)="runProcessWithInput()">
+							<i class="fas fa-cog"></i>
+						</button>
+						<button
+							type="button"
+							class="btn btn-link p-0"
+							style="font-size: 2.8rem;"
+							(click)="runProcess()">
+							<i class="far fa-play-circle"></i>
+						</button>
+					</div>
+				</div>
+				<ul
+					class="list-group list-group-flush"
+					style="height: 110px; overflow: auto">
+
+					<a
+						*ngFor="let p of processes"
+						class="list-group-item list-group-item-action p-2"
+						[class.text-danger]="p.process.status === 'ERROR'"
+						[class.text-warning]="p.process.status === 'IN_PROCESS'"
+						[routerLink]="[processPath, 'process', p._id]"
+						queryParamsHandling="merge">
+						{{p.process.createdTime | date: 'M/d/yy h:mm:ss'}}
+					</a>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 pr-0">
+			<form
+				*ngIf="pipe"
+				(submit)="saveScheme()">
+
+				<div class="form-group">
+					<input
+						class="form-control form-control-sm"
+						placeholder="Label"
+						name="label"
+						[(ngModel)]="pipe.label">
+				</div>
+				<div class="form-group">
+					<input
+						class="form-control form-control-sm"
+						placeholder="Code"
+						name="code"
+						[(ngModel)]="pipe.code">
+				</div>
+				<div class="form-group">
+					<label>Options</label>
+
+					<div
+						ace-editor
+						[(text)]="pipe.options"
+						[mode]="'json'"
+						[theme]="'eclipse'"
+						[readOnly]="false"
+						[autoUpdateContent]="true"
+						[durationBeforeCallback]="1000"
+						style="min-height: 80px; width:100%; overflow: auto;">
+					</div>
+				</div>
+				<div class="form-group">
+					<label>Input</label>
+
+					<div
+						ace-editor
+						[(text)]="pipe.input"
+						[mode]="'json'"
+						[theme]="'eclipse'"
+						[readOnly]="false"
+						[autoUpdateContent]="true"
+						[durationBeforeCallback]="1000"
+						style="min-height: 80px; width:100%; overflow: auto;">
+					</div>
+				</div>
+				<div class="form-group">
+					<select
+						class="form-control form-control-sm"
+						name="type"
+						placeholder="Type"
+						[(ngModel)]="pipe.type">
+
+						<option
+							*ngFor="let v of ['GROUP', 'LINE']"
+							[value]="v">
+							{{v}}
+						</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<select
+						class="form-control form-control-sm"
+						multiple
+						name="services"
+						placeholder="Services"
+						[(ngModel)]="pipe.services">
+						<option
+							*ngFor="let v of ['HTTP_STACK', 'STORE', 'EXT']"
+							[value]="v">
+							{{v}}
+						</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<select
+						class="form-control form-control-sm"
+						name="jobName"
+						placeholder="Job Name"
+						[(ngModel)]="pipe.id">
+
+						<option
+							*ngFor="let v of pipes"
+							[value]="v._id">
+							{{v.jobName}}
+						</option>
+					</select>
+				</div>
+
+				<div class="text-left">
+					<button
+						type="submit"
+						class="btn btn-primary mr-1">
+						<i class="fas fa-save"></i>
+					</button>
+					<button
+						type="button"
+						class="btn btn-secondary mr-1"
+						(click)="addChild(pipe)">
+
+						<i class="fas fa-code-branch"></i>
+						Child
+					</button>
+					<button
+						type="button"
+						class="btn btn-secondary mr-1"
+						[disabled]="!hasParent(pipe)"
+						(click)="addBefore(pipe)">
+
+						<i class="fas fa-code-branch"></i>
+						Before
+					</button>
+					<button
+						type="button"
+						class="btn btn-danger"
+						[disabled]="!hasParent(pipe)"
+						(click)="remove(pipe)">
+
+						<i class="fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

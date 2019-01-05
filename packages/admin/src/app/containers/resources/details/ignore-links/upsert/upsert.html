@@ -1,0 +1,45 @@
+<div class="modal-header">
+	<h4 class="modal-title h6">
+		Expression
+	</h4>
+</div>
+
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="modal-body">
+		<div class="form-group">
+			<label for="expression">Expression Url</label>
+			<input
+				class="form-control"
+				id="expression"
+				name="expression"
+				required
+				[(ngModel)]="item"
+				placeholder="Expression">
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button
+			type="button"
+			class="btn btn-outline-dark"
+			(click)="activeModal.close('Close click')">
+			Cancel
+		</button>
+
+		<button
+			type="submit"
+			class="btn btn-outline-primary"
+			[disabled]="form.invalid">
+			Save
+			<i
+				class="fas"
+				[class.fa-save]="!saving"
+				[class.fa-spinner]="saving"
+				[class.fa-spin]="saving">
+			</i>
+		</button>
+	</div>
+</form>

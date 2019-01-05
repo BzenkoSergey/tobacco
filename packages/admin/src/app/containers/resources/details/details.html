@@ -1,0 +1,55 @@
+<div class="page-content">
+	<h1 class="h4 mb-3">
+		Details
+	</h1>
+
+	<div class="card">
+		<div class="card-header">
+			<ul class="nav nav-tabs card-header-tabs">
+				<li class="nav-item">
+					<a
+						class="nav-link"
+						routerLinkActive="active"
+						[routerLink]="['info']">
+						Information
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link"
+						routerLinkActive="active"
+						[routerLink]="['ignore-links']">
+						Ignore Links
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link"
+						routerLinkActive="active"
+						[routerLink]="['structures']">
+						Structures
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link"
+						routerLinkActive="active"
+						[routerLink]="['settings']">
+						Settings
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link"
+						routerLinkActive="active"
+						[routerLink]="['schemes']">
+						Schemes
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="card-body">
+			<router-outlet></router-outlet>
+		</div>
+	</div>
+</div>

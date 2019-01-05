@@ -1,0 +1,144 @@
+<div
+	fxLayout="row wrap"
+	fxLayoutAlign="center start"
+	fxLayoutGap="1%">
+
+	<mat-card fxFlex="69%">
+		<flow-tree
+			(selected)="select($event)">
+		</flow-tree>
+	</mat-card>
+	<div fxFlex>
+		<mat-card>
+			<button
+				mat-flat-button
+				color="primary"
+				type="button"
+				(click)="run()">
+				Run Process
+			</button>
+			<button
+				mat-flat-button
+				color="primary"
+				type="button"
+				(click)="d()">
+				d
+			</button>
+			<button
+				mat-flat-button
+				color="primary"
+				type="button"
+				(click)="watch()">
+				Watch
+			</button>
+			<button
+				*ngIf="pipe"
+				mat-flat-button
+				color="primary"
+				type="button"
+				(click)="runPipe()">
+				Run Pipe
+			</button>
+
+			<form
+				*ngIf="pipe"
+				fxLayout="column"
+				fxLayoutAlign="space-around stretch">
+
+
+				<mat-list
+					class="card-unindent"
+					dense>
+
+					<mat-list-item>
+						Label: {{pipe.label}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<div
+						class="code-view"
+						fxLayout="column"
+						fxLayoutAlign="space-around stretch">
+
+						<div>Options:</div>
+						<div
+							mode="javascript"
+							style="height:50px;"
+							ace-editor
+							[readOnly]="true"
+							[options]="{showLineNumbers: false, fixedWidthGutter: true, fontSize: '10px', showGutter: false}"
+							[(text)]="pipe.options">
+						</div>
+					</div>
+					<mat-divider></mat-divider>
+					<div
+						class="code-view"
+						fxLayout="column"
+						fxLayoutAlign="space-around stretch">
+
+						<div>Pipe input:</div>
+						<div
+							mode="javascript"
+							style="height:50px;"
+							ace-editor
+							[readOnly]="true"
+							[options]="{showLineNumbers: false, fixedWidthGutter: true, fontSize: '10px', showGutter: false}"
+							[(text)]="pipe.input">
+						</div>
+					</div>
+					<mat-list-item>
+						Type: {{pipe.type}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<mat-list-item>
+						Job: {{pipe.jobName}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<mat-list-item>
+						Services: {{pipe.services | json}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<mat-list-item>
+						Error: {{pipe.process.error}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<mat-list-item>
+						StartDate: {{pipe.process.startDate | date: 'M/d/yy h:mm:ss'}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<mat-list-item>
+						EndDate: {{pipe.process.endDate | date: 'M/d/yy h:mm:ss'}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<mat-list-item>
+						Exc Time: {{pipe.process.endDate - pipe.process.startDate}}
+					</mat-list-item>
+					<mat-divider></mat-divider>
+					<div
+						class="code-view"
+						fxLayout="column"
+						fxLayoutAlign="space-around stretch">
+
+						<div>Input:</div>
+						<div
+							mode="javascript"
+							style="height:80px;"
+							ace-editor
+							[readOnly]="true"
+							[options]="{showLineNumbers: false, fixedWidthGutter: true, fontSize: '10px', showGutter: false}"
+							[(text)]="input">
+						</div>
+						<div>Output:</div>
+						<div
+							mode="javascript"
+							style="height:80px;"
+							ace-editor
+							[readOnly]="true"
+							[options]="{showLineNumbers: false, fixedWidthGutter: true, fontSize: '10px', showGutter: false}"
+							[(text)]="output">
+						</div>
+					</div>
+				</mat-list>
+			</form>
+		</mat-card>
+	</div>
+</div>

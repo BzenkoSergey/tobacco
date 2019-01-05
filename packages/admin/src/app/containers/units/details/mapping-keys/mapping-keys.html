@@ -1,0 +1,19 @@
+<form (submit)="save()">
+	<mapping-keys
+		name="mappingKeys"
+		[(ngModel)]="item.mappingKeys">
+	</mapping-keys>
+
+	<div class="form-group mt-2">
+		<button
+			class="btn btn-primary"
+			type="submit">
+			<i
+				class="fas"
+				[class.fa-save]="!loading"
+				[class.fa-spinner]="loading"
+				[class.fa-spin]="loading">
+			</i>
+		</button>
+	</div>
+</form>

@@ -26,7 +26,12 @@
 			  "src/styles.scss",
 			  "node_modules/cropperjs/src/css/cropper.scss"
             ],
-            "scripts": []
+            "scripts": [
+				"node_modules/ace-builds/src-min-noconflict/ace.js",
+				"node_modules/ace-builds/src-min-noconflict/ext-language_tools.js",
+				"node_modules/ace-builds/src-min-noconflict/mode-json.js",
+				"node_modules/ace-builds/src-min-noconflict/worker-json.js"
+			]
           },
           "configurations": {
             "production": {

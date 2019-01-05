@@ -1,0 +1,6 @@
+{
+	"ignore": ["**/*.test.ts", "**/*.spec.ts", ".git", "node_modules"],
+	"watch": ["src"],
+	"exec": "node --max_old_space_size=6096 --max-old-space-size=6096 --inspect -r ts-node/register src/api.ts",
+	"ext": "ts"
+}

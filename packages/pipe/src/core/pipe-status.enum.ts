@@ -1,0 +1,9 @@
+export enum PipeStatus {
+	PENDING = 'PENDING',
+	IN_PROCESS = 'IN_PROCESS',
+	SKIPPED_JOB = 'SKIPPED_JOB',
+	DONE = 'DONE',
+	ERROR = 'ERROR',
+	STOPPED = 'STOPPED',
+	PAUSED = 'PAUSED'
+}

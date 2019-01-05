@@ -1,0 +1,159 @@
+<div class="page-content d-flex justify-content-between">
+	<h1 class="h4 mb-3">
+		Companies
+	</h1>
+
+	<button
+		class="btn btn-primary"
+		type="submit"
+		(click)="createItem()">
+		Create
+		<i class="fas fa-plus"></i>
+	</button>
+</div>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-6">
+			<div class="list-group">
+				<div class="list-group-item">
+					<form
+						class="input-group"
+						(submit)="search(searchCtrl.value)">
+						<input
+							type="search"
+							class="form-control"
+							placeholder="Search"
+							#searchCtrl
+							(keyup)="search($event.target.value)">
+
+						<div class="input-group-append">
+							<button
+								class="btn btn-outline-secondary"
+								type="submit">
+								<i class="fas fa-search"></i>
+							</button>
+						</div>
+					</form>
+				</div>
+				<button
+					*ngFor="let company of items"
+					class="list-group-item list-group-item-action flex-column align-items-start"
+					[class.active]="itemId === company._id"
+					type="button"
+					(click)="select(company)">
+					<div class="d-flex w-100 justify-content-between align-items-center">
+						<div style="width: 30px;">
+							<img
+								[src]="company.logo"
+								class="img-thumbnail rounded-circle">
+						</div>
+						<h6 class="mb-1 ml-3">{{company.name}}</h6>
+					</div>
+				</button>
+			</div>
+		</div>
+		<div class="col-6 pl-0">
+			<form
+				*ngIf="item"
+				class="card"
+				(submit)="save(item)">
+
+				<div class="card-body">
+					<h4
+						*ngIf="item._id"
+						class="card-title">
+						Edit Company
+					</h4>
+					<h4
+						*ngIf="!item._id"
+						class="card-title">
+						Create Company
+					</h4>
+
+					<div class="text-center">
+						<img
+							*ngIf="item.logo"
+							class="img-fluid mb-2"
+							[src]="item.logo"
+							alt="image">
+					</div>
+
+					<div class="form-group">
+						<label for="name">
+							Name
+						</label>
+						<input
+							type="text"
+							class="form-control form-control-sm"
+							id="name"
+							name="name"
+							placeholder="Enter Name"
+							[(ngModel)]="item.name">
+					</div>
+
+					<div class="form-group">
+						<label for="code">
+							Code
+						</label>
+						<input
+							type="text"
+							class="form-control form-control-sm"
+							id="code"
+							name="code"
+							placeholder="Enter Code"
+							[(ngModel)]="item.code">
+					</div>
+
+					<div class="form-group">
+						<label for="logo">
+							Logo
+						</label>
+						<input
+							type="text"
+							class="form-control form-control-sm"
+							id="logo"
+							name="logo"
+							placeholder="Enter Logo"
+							[(ngModel)]="item.logo">
+					</div>
+					<div class="form-group">
+						<button
+							class="btn btn-primary mr-1"
+							type="submit">
+							<i class="fas fa-save"></i>
+						</button>
+						<button
+							*ngIf="item._id"
+							class="btn btn-danger"
+							type="button"
+							(click)="remove(item)">
+							<i class="fas fa-trash-alt"></i>
+						</button>
+					</div>
+				</div>
+			</form>
+
+			<div
+				*ngIf="item"
+				class="card mt-3">
+				<div class="card-body">
+					<form (submit)="save(item)">
+						<mapping-keys
+							name="mappingKeys"
+							[(ngModel)]="item.mappingKeys">
+						</mapping-keys>
+
+						<div class="form-group mt-2">
+							<button
+								class="btn btn-primary"
+								type="submit">
+								<i class="fas fa-save"></i>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

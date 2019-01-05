@@ -1,0 +1,16 @@
+<div class="page-content">
+	<h1 class="h4 mb-3">
+		Tools
+		<i
+			*ngIf="loading"
+			class="fas fa-spinner fa-spin">
+		</i>
+	</h1>
+
+	<div *ngFor="let scheme of schemes">
+		<scheme-editor
+			processPath="../../"
+			[item]="scheme">
+		</scheme-editor>
+	</div>
+</div>

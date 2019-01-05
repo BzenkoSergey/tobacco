@@ -1,0 +1,103 @@
+<div class="modal-header">
+	<h4 class="modal-title h6">
+		<span *ngIf="item._id; else elseBlock">Update</span>
+		<ng-template #elseBlock>Create</ng-template>
+		a Resource Group
+	</h4>
+</div>
+
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="modal-body">
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input
+				id="name"
+				class="form-control"
+				name="name"
+				placeholder="Name"
+				required
+				[(ngModel)]="item.name">
+		</div>
+
+		<div class="d-flex justify-content-between align-items-center mb-2">
+			<h1 class="h6">Resources</h1>
+			<div>
+				<div class="input-group input-group-sm">
+					<input
+						type="text"
+						class="form-control"
+						placeholder="Resource"
+						name="selectedResource"
+						[(ngModel)]="selectedResource"
+						[inputFormatter]="formatter"
+						[resultTemplate]="rt"
+						[ngbTypeahead]="search">
+
+					<div class="input-group-append">
+						<button
+							class="btn btn-outline-secondary"
+							type="button"
+							[disabled]="!selectedResource"
+							(click)="addResource()">
+							<i class="fas fa-plus"></i>
+						</button>
+					</div>
+					<ng-template #rt let-r="result" let-t="term">
+						<ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+					</ng-template>
+				</div>
+			</div>
+		</div>
+
+		<table class="table table-bordered table-sm table-striped">
+			<thead>
+				<tr>
+					<th scope="col">Name</th>
+					<th scope="col">Path</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let resource of getResources(item.resources)">
+					<td>
+						{{resource.name}}
+					</td>
+					<td>{{resource.path}}</td>
+					<td class="text-center">
+						<button
+							type="button"
+							class="btn btn-link text-danger p-0"
+							(click)="remove(resource)">
+							<i class="far fa-trash-alt"></i>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal-footer">
+		<button
+			type="button"
+			class="btn btn-outline-dark"
+			(click)="activeModal.close('Close click')">
+			Cancel
+		</button>
+
+		<button
+			type="submit"
+			class="btn btn-outline-primary"
+			[disabled]="form.invalid">
+			Save
+			<i
+				class="fas"
+				[class.fa-save]="!saving"
+				[class.fa-spinner]="saving"
+				[class.fa-spin]="saving">
+			</i>
+		</button>
+	</div>
+</form>

@@ -1,0 +1,27 @@
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="form-group">
+		<label for="itemsSync">Items Sync Schedule</label>
+		<input
+			id="itemsSync"
+			class="form-control"
+			placeholder="Items Sync Schedule"
+			name="itemsSync"
+			required
+			[(ngModel)]="item.settings.itemsSync">
+	</div>
+	<button
+		type="submit"
+		class="btn btn-primary"
+		[disabled]="form.invalid">
+		Save
+		<i
+			class="fas"
+			[class.fa-save]="!saving"
+			[class.fa-spinner]="saving"
+			[class.fa-spin]="saving">
+		</i>
+	</button>
+</form>

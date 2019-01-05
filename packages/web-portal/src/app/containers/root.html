@@ -1,127 +1,136 @@
-<div class="header clearfix">
-	<a
-		class="logo"
-		href="#">
-		<div class="name">
-			Hoogle
+<div class="header-wrap">
+	<header class="header clearfix">
+		<a
+			class="logo"
+			href="#">
+			<div class="name">
+				Hoogle
+			</div>
+			<div class="description">
+				Кальянный портал вещей
+			</div>
+		</a>
+		<div class="header-content">
+			<search
+				[query]="queries.search"
+				(changed)="performSearch($event)">
+			</search>
 		</div>
-		<div class="description">
-			Кальянный портал вещей
-		</div>
-	</a>
-	<div class="header-content">
-		<search
-			[query]="queries.search"
-			(changed)="performSearch($event)">
-		</search>
+	</header>
+
+	<div class="nav">
+		<ul class="items">
+			<li *ngFor="let i of filters">
+				<a
+					href="javascript:void(0)"
+					(click)="openFilter(i)">
+
+					{{i.label}}
+					<i
+						*ngIf="getChildrenByType(i.type).length"
+						class="fa fa-caret-down"
+						[class.fa-caret-up]="i.opened">
+					</i>
+				</a>
+
+				<div
+					*ngIf="getChildrenByType(i.type).length"
+					class="sub-items"
+					[class.open]="i.opened">
+
+					<filter-items
+						*ngIf="i.type === 'PRODUCT_ATTRIBUTE' && getProductAttribute(i.attribute)"
+						[items]="getProductAttribute(i.attribute).values"
+						[selectedItems]="getSelected(i.type, i.attribute)"
+						(selected)="handleQueries($event, i)">
+					</filter-items>
+					<filter-items
+						*ngIf="i.type !== 'PRODUCT_ATTRIBUTE'"
+						[items]="getChildrenByType(i.type)"
+						[selectedItems]="getSelected(i.type, null)"
+						(selected)="handleQueries($event, i)">
+					</filter-items>
+				</div>
+			</li>
+		</ul>
 	</div>
 </div>
 
-<div class="nav">
-	<ul class="items">
-		<li *ngFor="let i of filters">
-			<a
-				href="javascript:void(0)"
-				(click)="openFilter(i)">
-
-				{{i.label}}
-				<i
-					*ngIf="getChildrenByType(i.type).length"
-					class="fa fa-caret-down"
-					[class.fa-caret-up]="i.opened">
-				</i>
-			</a>
-
-			<div
-				*ngIf="getChildrenByType(i.type).length"
-				class="sub-items"
-				[class.open]="i.opened">
-
-				<filter-items
-					*ngIf="i.type === 'PRODUCT_ATTRIBUTE' && getProductAttribute(i.attribute)"
-					[items]="getProductAttribute(i.attribute).values"
-					[selectedItems]="getSelected(i.type, i.attribute)"
-					(selected)="handleQueries($event, i)">
-				</filter-items>
-				<filter-items
-					*ngIf="i.type !== 'PRODUCT_ATTRIBUTE'"
-					[items]="getChildrenByType(i.type)"
-					[selectedItems]="getSelected(i.type, null)"
-					(selected)="handleQueries($event, i)">
-				</filter-items>
-			</div>
-		</li>
-	</ul>
-</div>
-
-<div class="content containe2r center-layou2t">
-	<ul class="products clearfix">
-		<li
+<main class="content">
+	<div class="products">
+		<section
 			*ngFor="let product of products; let i = index"
-			class="product-li">
+			class="product">
 
-			<div class="product">
-				<!-- <div class="product-label">
-					<span *ngIf="getCompany(product.company) as company">
-						{{company.name}}
-					</span>
-					{{product.name}}
-				</div> -->
-				<div class="product-info">
-					<div class="product-logo-wrap">
-						<img class="product-logo" [src]="product.logo" alt="">
-					</div>
-
-					<div class="product-name">
-						<span *ngIf="product.company as company">
-							{{company.name}}
-						</span>
-						<span *ngIf="product.productLine as productLine">
-							{{productLine.name}}
-						</span>
-						{{product.name}}
-					</div>
+			<div class="product-main">
+				<div class="product-logo-wrap">
+					<img
+						class="product-logo"
+						[src]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + product.logo">
 				</div>
 
-				<ul class="products-items">
+				<div class="product-name">
+					<span *ngIf="product.company as company">
+						{{company.name}}
+					</span>
+					<span *ngIf="product.productLine as productLine">
+						{{productLine.name}}
+					</span>
+					{{product.name}}
+				</div>
+
+				<ul class="product-summary">
 					<li
-						*ngFor="let item of product.items"
-						class="products-item clearfix">
-						<a
-							class="products-item-info"
-							target="_blank"
-							[href]="item.url">
+						*ngFor="let item of getItems(product)"
+						class="product-summary-item">
 
-							<div
-								*ngIf="item.market as market"
-								class="market">
+						<div
+							*ngIf="item.attr"
+							class="attr">
 
-								<img *ngIf="market.logo" class="market-logo" [src]="market.logo">
-								<span *ngIf="!market.logo" class="market-name">{{market.name}}</span>
-							</div>
-							<div class="price">
-								<!-- Price: {{item.price}} -->
-								<span
-									*ngIf="item.productAttributes.length"
-									class="price-attr">
-									<span *ngFor="let attr of item.productAttributes">
-										<span *ngIf="attr.name === 'Weight'">
-											<span *ngFor="let v of attr.values">{{v}}</span>
-										</span>
-									</span>
-								</span>
-								<span class="price-value">
-									{{item.price}}
-								</span>
-							</div>
-						</a>
+							{{item.attr}}
+						</div>
+						<div class="price">
+							{{item.prices}}
+						</div>
+						грн
 					</li>
 				</ul>
 			</div>
 
-			<div class="row"></div>
-		</li>
-	</ul>
+			<ul class="product-items">
+				<li
+					*ngFor="let item of product.items"
+					class="product-item">
+					<a
+						class="product-item-info"
+						target="_blank"
+						[href]="item.url">
+
+						<div
+							*ngIf="item.market as market"
+							class="market">
+
+							<img *ngIf="market.logo" [src]="market.logo">
+							<span *ngIf="!market.logo">{{market.name}}</span>
+						</div>
+						<div class="attrs">
+							<span *ngIf="item.productAttributes.length">
+								<span *ngFor="let attr of item.productAttributes">
+									<span *ngIf="attr.name === 'Weight'">
+										<span *ngFor="let v of attr.values">{{v}}</span>
+									</span>
+								</span>
+							</span>
+						</div>
+						<div class="price">
+							{{item.price}}грн
+						</div>
+					</a>
+				</li>
+			</ul>
+		</section>
+	</div>
 
 	<pagination
 		class="pagination"
@@ -129,4 +138,4 @@
 		[page]="queries.page"
 		[total]="productsTotal">
 	</pagination>
-</div>
+</main>

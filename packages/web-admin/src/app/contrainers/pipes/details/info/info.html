@@ -1,0 +1,138 @@
+<div
+	fxLayout="row wrap"
+	fxLayoutAlign="center start"
+	fxLayoutGap="1%">
+
+	<mat-card fxFlex="48%">
+		<flow-tree
+			*ngIf="view"
+			[data]="view"
+			[current]="path"
+			(selected)="select($event)">
+		</flow-tree>
+	</mat-card>
+	<div fxFlex="25%">
+		<mat-card>
+			<form
+				*ngIf="pipe"
+				fxLayout="column"
+				fxLayoutAlign="space-around stretch"
+				(submit)="save()">
+
+				<mat-form-field>
+					<input
+						matInput
+						name="label"
+						placeholder="Label"
+						[(ngModel)]="pipe.label">
+				</mat-form-field>
+
+				<mat-form-field>
+					<input
+						matInput
+						name="options"
+						placeholder="Options"
+						[(ngModel)]="pipe.options">
+				</mat-form-field>
+
+				<mat-form-field>
+					<mat-select
+						matInput
+						name="type"
+						placeholder="Type"
+						[(ngModel)]="pipe.type">
+						<mat-option
+							*ngFor="let v of ['GROUP', 'LINE']"
+							[value]="v">
+							{{v}}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+
+				<mat-form-field>
+					<mat-select
+						matInput
+						name="services"
+						multiple
+						placeholder="Services"
+						[(ngModel)]="pipe.services">
+						<mat-option
+							*ngFor="let v of ['HTTP_STACK', 'STORE', 'EXT']"
+							[value]="v">
+							{{v}}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+
+				<div>
+					{{pipe.services | json}}
+				</div>
+
+				<mat-form-field>
+					<mat-select
+						matInput
+						name="jobName"
+						placeholder="Job Name"
+						[(ngModel)]="pipe.id">
+
+						<mat-option
+							*ngFor="let v of pipes"
+							[value]="v._id">
+							{{v.jobName}}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+
+				<div>
+					<div
+						fxLayout="row"
+						fxLayoutAlign="center start"
+						fxLayoutGap="2%">
+
+						<button
+							mat-flat-button
+							color="primary"
+							type="submit">
+							Save
+						</button>
+						<button
+							mat-flat-button
+							color="accent"
+							type="button"
+							(click)="addChild(pipe)">
+							Add child
+						</button>
+						<button
+							mat-flat-button
+							color="warn"
+							type="button"
+							[disabled]="!hasParent(pipe)"
+							(click)="remove(pipe)">
+							Remove
+						</button>
+					</div>
+				</div>
+			</form>
+		</mat-card>
+	</div>
+	<div fxFlex="25%">
+		<mat-card>
+			<button
+				mat-flat-button
+				color="primary"
+				type="button"
+				(click)="createProcess()">
+				Create Process
+			</button>
+
+			<mat-action-list>
+				<a
+					*ngFor="let p of processes"
+					mat-list-item
+					[routerLink]="['./../../../process', p._id]">
+					{{p.process.createdTime | date: 'M/d/yy h:mm:ss'}}
+				</a>
+			</mat-action-list>
+		</mat-card>
+	</div>
+</div>

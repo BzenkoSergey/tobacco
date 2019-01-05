@@ -1,0 +1,122 @@
+<div
+	class="clearfix wrap"
+	[class.closed]="closed">
+
+	<div class="sidebar">
+		<ul
+			*ngFor="let nav of navs"
+			class="sidebar-nav">
+			<li class="sidebar-header">
+				{{nav.name}}
+			</li>
+			<li
+				*ngFor="let item of nav.children"
+				class="sidebar-item">
+				<a
+					class="sidebar-link clearfix"
+					href="javascript:void(0)"
+					(click)="item.openned = !item.openned">
+
+					<i class="fas fa-angle-down float-right pt-1"></i>
+					<i class="fas {{item.icon}}"></i>
+					{{item.name}}
+				</a>
+				<ul
+					[ngbCollapse]="item.openned"
+					class="sidebar-dropdown list-unstyled">
+
+					<li
+						*ngFor="let link of item.children"
+						class="sidebar-item">
+						<a
+							class="sidebar-link"
+							routerLinkActive="active"
+							[routerLink]="link.url">
+							{{link.name}}
+						</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+	<div class="main">
+		<div class="top-bar clearfix">
+			<a
+				class="bar-menu top-bar-btn"
+				href="javascript:void(0)"
+				(click)="closed = !closed">
+				<i class="fas fa-bars"></i>
+			</a>
+			<div class="float-right position-relative">
+				<a
+					class="bar-notification top-bar-btn d-block"
+					href="javascript:void(0)"
+					(click)="showNotifications = !showNotifications">
+					<span
+						*ngIf="getNotificationsCount()"
+						class="badge badge-warning">
+						{{getNotificationsCount()}}
+					</span>
+					<i class="far fa-bell"></i>
+				</a>
+
+				<div
+					*ngIf="notifications.length && showNotifications"
+					class="notifications-box position-absolute top-100 right-0 border rounded bg-white">
+					<h6 class="m-0 p-3 bold">
+						<i class="far fa-bell"></i>
+						Notifications
+					</h6>
+					<ul class="notifications-list list-group list-group-flush">
+						<li
+							*ngFor="let n of notifications"
+							class="list-group-item p-2 small"
+							[class.list-group-item-light]="n.read"
+							[class.list-group-item-secondary]="!n.read"
+							(mouseenter)="setRead(n)">
+
+							<div class="d-flex justify-content-between">
+								<div class="bold">
+									<span *ngIf="n.code === 'AGGREGATED_UNIT'">
+										Successful auto-aggreggation
+									</span>
+								</div>
+								<div>
+									<i class="far fa-clock"></i>
+									{{n.createdDate | date}}
+								</div>
+							</div>
+							<span *ngIf="n.code === 'AGGREGATED_UNIT'">
+								Unit {{n.data.unitId}} is autoaggreggated!
+								<br>
+								Resource: {{n.data.resourceId}}
+							</span>
+						</li>
+					</ul>
+					<div class="text-center p-1">
+						<a
+							class="btn btn-link btn-sm"
+							href="">
+							All Messages
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="content">
+			<nav>
+				<ol class="breadcrumb m-0 rounded-0">
+					<li
+						*ngFor="let i of breadcrumb"
+						class="breadcrumb-item">
+						<a
+							[routerLink]="i.url">
+							{{i.breadcrumb}}
+						</a>
+					</li>
+				</ol>
+			</nav>
+			<router-outlet></router-outlet>
+		</div>
+	</div>
+</div>

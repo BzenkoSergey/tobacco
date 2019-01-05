@@ -1,0 +1,41 @@
+.scroll {
+	overflow-y: auto;
+}
+
+.arrow {
+	top: 10px;
+	right: 10px;
+	z-index: 1;
+}
+
+.unit-title {
+	top: 0;
+	left: 0;
+	background-color: rgba(255, 255, 255, 0.8703921568627451);
+	color: #000000;
+	text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6392156862745098);
+	font-weight: bold;
+	line-height: 1.4;
+}
+
+.processed-quality {
+	max-width: 12px;
+
+	&-value {
+		transform: rotate(-90deg);
+		transform-origin: center center;
+		line-height: 0;
+	}
+}
+
+.item-bg-success {
+	background-color: #6ed63b;
+}
+
+.item-bg-danger {
+	background-color: #d6663b;
+}
+
+.item-bg-warning {
+	background-color: #d6ad3b;
+}

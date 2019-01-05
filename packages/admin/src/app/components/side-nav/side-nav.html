@@ -1,0 +1,14 @@
+<div class="bar-wrap d-block d-md-none">
+	<a
+		class="bar"
+		href="javascript:void(0)"
+		(click)="opened = !opened">
+		<i class="fas fa-bars"></i>
+	</a>
+</div>
+
+<div
+	class="d-md-block"
+	[class.d-none]="!opened">
+	<ng-content></ng-content>
+</div>

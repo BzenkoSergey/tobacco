@@ -1,0 +1,476 @@
+<div class="container-fluid h-100">
+	<div class="row h-100">
+		<side-nav class="col-sm h-100">
+			<div class="p-3">
+				<form (submit)="applyFilters()">
+					<div class="form-group">
+						<a
+							class="btn btn-primary btn-block"
+							queryParamsHandling="merge"
+							[routerLink]="['new']">
+							Create
+							<i class="fas fa-plus"></i>
+						</a>
+					</div>
+					<div class="form-group">
+						<label
+							class="small text-uppercase text-muted"
+							for="search">
+							Search
+						</label>
+						<div class="input-group input-group-sm">
+							<input
+								id="search"
+								type="search"
+								class="form-control"
+								name="search"
+								placeholder="Search"
+								[(ngModel)]="searchQuery">
+
+							<div class="input-group-append">
+								<button
+									class="btn btn-outline-secondary"
+									type="submit">
+									<i class="fas fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label
+							class="small text-uppercase text-muted"
+							for="resource">
+							Resource
+						</label>
+						<select
+							id="resource"
+							name="resource"
+							class="form-control form-control-sm"
+							[(ngModel)]="resource"
+							(ngModelChange)="applyFilters()">
+							<option value="">All</option>
+							<option
+								*ngFor="let item of resources"
+								[value]="item._id">
+								{{item.name}}
+							</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label
+							class="small text-uppercase text-muted"
+							for="company">
+							Comapany
+						</label>
+						<select
+							id="company"
+							class="form-control form-control-sm"
+							name="company"
+							[(ngModel)]="company"
+							(ngModelChange)="selectCompany(company)">
+
+							<option value="">All</option>
+							<option
+								*ngFor="let c of companies"
+								[value]="c._id">
+								{{c.name}}
+							</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label
+							class="small text-uppercase text-muted"
+							for="sortBy">
+							Sort By
+						</label>
+						<div class="input-group input-group-sm">
+							<input
+								id="sortBy"
+								type="text"
+								class="form-control"
+								name="sortBy"
+								placeholder="Sort By"
+								[(ngModel)]="sortBy">
+
+							<div class="input-group-append">
+								<button
+									class="btn btn-outline-secondary"
+									type="button"
+									(click)="applyFilters()">
+									<i class="fas fa-chevron-circle-right"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="small text-uppercase text-muted">
+							Sort Direction
+						</label>
+						<div class="btn-group btn-group-sm">
+							<button
+								type="button"
+								class="btn"
+								[class.btn-secondary]="sortDirection !== 'up'"
+								[class.btn-primary]="sortDirection === 'up'"
+								(click)="sortDirection = 'up';applyFilters()">
+								Up
+							</button>
+							<button
+								type="button"
+								class="btn"
+								[class.btn-secondary]="sortDirection !== 'down'"
+								[class.btn-primary]="sortDirection === 'down'"
+								(click)="sortDirection = 'down';applyFilters()">
+								Down
+							</button>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="small text-uppercase text-muted">
+							Has Updates
+						</label>
+						<div class="btn-group btn-group-sm">
+							<button
+								type="button"
+								class="btn"
+								[class.btn-secondary]="hasUpdates !== null"
+								[class.btn-primary]="hasUpdates === null"
+								(click)="hasUpdates = null; applyFilters()">
+								All
+							</button>
+							<button
+								type="button"
+								class="btn btn-secondary"
+								[class.btn-secondary]="hasUpdates !== 1"
+								[class.btn-primary]="hasUpdates === 1"
+								(click)="hasUpdates = 1; applyFilters()">
+								Yes
+							</button>
+							<button
+								type="button"
+								class="btn btn-secondary"
+								[class.btn-secondary]="hasUpdates !== 0"
+								[class.btn-primary]="hasUpdates === 0"
+								(click)="hasUpdates = 0; applyFilters()">
+								No
+							</button>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label
+							class="small text-uppercase text-muted"
+							for="perPage">
+							Per Page
+						</label>
+						<select
+							id="perPage"
+							class="form-control form-control-sm"
+							name="perPage"
+							[(ngModel)]="perPage"
+							(ngModelChange)="applyFilters()">
+
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="30">30</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label class="small text-uppercase text-muted">Main</label>
+						<select class="form-control form-control-sm">
+							<option selected>Open this select menu</option>
+							<option value="1">One</option>
+							<option value="2">Two</option>
+							<option value="3">Three</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<h6 class="small text-uppercase text-muted">Options</h6>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="exampleCheck1">
+							<label class="form-check-label" for="exampleCheck1">Check me out</label>
+						</div>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="exampleCheck1">
+							<label class="form-check-label" for="exampleCheck1">Check me out</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<h6 class="small text-uppercase text-muted">Options</h6>
+
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+							<label class="form-check-label" for="exampleRadios1">
+								Default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+							<label class="form-check-label" for="exampleRadios2">
+								Second default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
+							<label class="form-check-label" for="exampleRadios3">
+								Disabled radio
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<h6 class="small text-uppercase text-muted">Options</h6>
+
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+							<label class="form-check-label" for="exampleRadios1">
+								Default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+							<label class="form-check-label" for="exampleRadios2">
+								Second default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
+							<label class="form-check-label" for="exampleRadios3">
+								Disabled radio
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<h6 class="small text-uppercase text-muted">Options</h6>
+
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+							<label class="form-check-label" for="exampleRadios1">
+								Default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+							<label class="form-check-label" for="exampleRadios2">
+								Second default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
+							<label class="form-check-label" for="exampleRadios3">
+								Disabled radio
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<h6 class="small text-uppercase text-muted">Options</h6>
+
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+							<label class="form-check-label" for="exampleRadios1">
+								Default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+							<label class="form-check-label" for="exampleRadios2">
+								Second default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
+							<label class="form-check-label" for="exampleRadios3">
+								Disabled radio
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<h6 class="small text-uppercase text-muted">Options</h6>
+
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+							<label class="form-check-label" for="exampleRadios1">
+								Default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+							<label class="form-check-label" for="exampleRadios2">
+								Second default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
+							<label class="form-check-label" for="exampleRadios3">
+								Disabled radio
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<h6 class="small text-uppercase text-muted">Options</h6>
+
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+							<label class="form-check-label" for="exampleRadios1">
+								Default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+							<label class="form-check-label" for="exampleRadios2">
+								Second default radio
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
+							<label class="form-check-label" for="exampleRadios3">
+								Disabled radio
+							</label>
+						</div>
+					</div>
+				</form>
+			</div>
+		</side-nav>
+		<div class="col pl-0 pr-0 h-100 scroll shadow">
+			<div class="list-group list-group-flush">
+				<div
+					*ngFor="let item of processedItems"
+					class="list-group-item list-group-item-action p-0">
+
+					<div class="container-fluid">
+						<div class="row flex-nowrap">
+							<div
+								class="col processed-quality p-0 item-bg-success text-white d-flex align-items-center justify-content-center"
+								[class.item-bg-success]="item.items[0].processedQuality > 90"
+								[class.item-bg-warning]="item.items[0].processedQuality > 49 && item.items[0].processedQuality < 91"
+								[class.item-bg-danger]="item.items[0].processedQuality < 50">
+								<small class="processed-quality-value">
+									{{item.items[0].processedQuality}}
+								</small>
+							</div>
+							<div class="col pr-0 pl-0 d-flex flex-nowrap scroll position-relative">
+								<div class="position-absolute arrow d-flex flex-column justify-content-center text-center">
+									<i
+										*ngIf="item.items.length > 1"
+										class="fas fa-angle-double-right">
+									</i>
+
+									<button
+										*ngIf="item.unitItem"
+										type="button"
+										class="btn btn-lg btn-link p-0"
+										[class.text-warning]="item.unitItem.autoAggregation"
+										[class.text-secondary]="!item.unitItem.autoAggregation"
+										(click)="setAutoSync(item)">
+										<i class="fas fa-coins"></i>
+									</button>
+								</div>
+
+								<div
+									*ngFor="let v of item.items"
+									class="col-12 p-0 pl-2 border-right"
+									[class.border]="item.assigned?._id === v._id"
+									[class.border-primary]="item.assigned?._id === v._id">
+									<div *ngIf="getProps(v) as props">
+										<div *ngFor="let prop of props">
+											<small [class.text-danger]="isUpdated(v, item.items, prop)">
+												<b>{{prop}}</b>: {{getValue(v, prop)}}
+											</small>
+										</div>
+									</div>
+									<b class="small">
+										Date: {{v.version | date: 'M/d/yy h:mm:ss'}}
+									</b>
+								</div>
+							</div>
+							<div class="col-1 p-0 align-self-center">
+								<div class="d-flex flex-column align-items-center justify-content-center">
+									<button
+										*ngIf="!item.assigned && item.item.productId"
+										type="button"
+										class="btn btn-lg btn-link text-success"
+										(click)="assign(item)">
+										<i class="fas fa-plus-circle"></i>
+									</button>
+									<button
+										*ngIf="item.assigned && item.item.productId"
+										type="button"
+										class="btn btn-lg btn-link text-danger"
+										(click)="unassign(item)">
+										<i class="fas fa-trash-alt"></i>
+									</button>
+									<button
+										*ngIf="item.assigned"
+										type="button"
+										class="btn btn-lg btn-link text-success"
+										(click)="update(item)">
+										<i class="fas fa-sync-alt"></i>
+									</button>
+									<button
+										type="button"
+										class="btn btn-lg btn-link"
+										[disabled]="isSync(item.item.url)"
+										(click)="sync(item)">
+										<i
+											class="fas"
+											[class.fa-project-diagram]="!isSync(item.item.url)"
+											[class.fa-spinner]="isSync(item.item.url)"
+											[class.fa-spin]="isSync(item.item.url)">
+										</i>
+									</button>
+								</div>
+							</div>
+							<div class="col-2 pl-0 align-self-center">
+								<div
+									*ngIf="getUnit(item.item.productId) as unit"
+									class="position-relative img-thumbnail">
+									<img
+										[src]="unit.logo"
+										class="rounded mw-100">
+
+									<div class="position-absolute w-100 unit-title p-1 text-center">
+										<div
+											*ngIf="getCompany(unit.company) as company"
+											class="text-info">
+											{{company.name}}
+										</div>
+										<div>{{unit.name}}</div>
+										<div
+											*ngIf="getLine(unit.productLine) as productLine"
+											class="text-secondary">
+											{{productLine.name}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="p-3 d-flex justify-content-center">
+				<ngb-pagination
+					maxSize="10"
+					[collectionSize]="total"
+					[pageSize]="perPage"
+					[(page)]="page"
+					(pageChange)="applyFilters()">
+				</ngb-pagination>
+			</div>
+		</div>
+	</div>
+</div>

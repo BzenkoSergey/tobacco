@@ -1,0 +1,64 @@
+<div class="page-content">
+	<h1 class="h4 mb-3">
+		Data Base
+		<i
+			*ngIf="loading"
+			class="fas fa-spinner fa-spin">
+		</i>
+	</h1>
+
+	<div class="card">
+		<form
+			class="card-body"
+			#form="ngForm"
+			(submit)="save(form.invalid)">
+
+			<div class="form-group">
+				<label for="ip">IP</label>
+				<input
+					id="ip"
+					class="form-control"
+					placeholder="IP"
+					name="ip"
+					required
+					[(ngModel)]="item.db.ip">
+			</div>
+
+			<div class="form-group">
+				<label for="port">Port</label>
+				<input
+					id="port"
+					type="number"
+					class="form-control"
+					placeholder="Port"
+					name="port"
+					required
+					[(ngModel)]="item.db.port">
+			</div>
+
+			<div class="form-group">
+				<label for="db">Data Base</label>
+				<input
+					id="db"
+					class="form-control"
+					placeholder="Data Base"
+					name="db"
+					required
+					[(ngModel)]="item.db.db">
+			</div>
+
+			<button
+				type="submit"
+				class="btn btn-primary"
+				[disabled]="form.invalid">
+				Save
+				<i
+					class="fas"
+					[class.fa-save]="!saving"
+					[class.fa-spinner]="saving"
+					[class.fa-spin]="saving">
+				</i>
+			</button>
+		</form>
+	</div>
+</div>

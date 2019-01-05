@@ -18,6 +18,13 @@ const routes: Routes = [
 				loadChildren: './markets/markets.module#MarketsModule'
 			},
 			{
+				path: 'pipes',
+				loadChildren: './pipes/pipes.module#PipesModule',
+				data: {
+					breadcrumb: 'Pipes'
+				}
+			},
+			{
 				path: 'market-products',
 				loadChildren: './market-products/market-products.module#MarketProductsModule'
 			},

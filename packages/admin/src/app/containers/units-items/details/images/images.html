@@ -1,0 +1,13 @@
+<input
+	type="text"
+	class="form-control"
+	name="externalUrl"
+	placeholder="External Image Url"
+	[(ngModel)]="externalUrl"
+	(ngModelChange)="updateImageUrl()">
+
+<ngx-image-editor
+	*ngIf="item.logo"
+	[config]="getConfigs()"
+	(file)="imageEditer($event)">
+</ngx-image-editor>

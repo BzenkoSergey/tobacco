@@ -52,6 +52,13 @@
 				</a>
 			</li>
 			<li>
+				<a [routerLink]="['pipes']">
+					<i class="fas fa-columns"></i>
+
+					Pipes
+				</a>
+			</li>
+			<li>
 				<a [routerLink]="['market-products']">
 					<i class="fas fa-columns"></i>
 
@@ -139,7 +146,14 @@
 		class="content"
 		fxFlex>
 
-		<breadcrumb [allowBootstrap]="false"></breadcrumb>
+		<div>
+			<a
+				*ngFor="let i of breadcrumb"
+				mat-button
+				[routerLink]="i.url">
+				{{i.breadcrumb}}
+			</a>
+		</div>
 
 		<router-outlet></router-outlet>
 	</div>

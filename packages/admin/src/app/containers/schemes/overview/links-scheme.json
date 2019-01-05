@@ -1,0 +1,72 @@
+{
+	"options" : null,
+	"type" : "LINE",
+	"label" : "",
+	"children" : [
+		{
+			"id" : "5c044754db3e4a4cf36bfb88",
+			"type" : "GROUP",
+			"label" : "",
+			"services" : [
+				"HTTP_STACK",
+				"STORE",
+				"EXT"
+			],
+			"children" : [
+				{
+					"id" : "5bf88047db3e4a4cf3e5b953",
+					"type" : "",
+					"label" : "",
+					"children" : [
+						{
+							"id" : "5c0446cbdb3e4a4cf36bf9e5",
+							"type" : "",
+							"label" : "",
+							"code": "DOM",
+							"children" : [
+								{
+									"id" : "5c0446d9db3e4a4cf36bf9f7",
+									"type" : "",
+									"label" : "",
+									"options" : "[{\"$\":{\"selector\":\"a\",\"type\":\"ATTR\",\"resource\":\"href\"}}]",
+									"children" : [
+										{
+											"id" : "5c0867fddb3e4a4cf3685def",
+											"type" : "",
+											"label" : "",
+											"options" : "[\"^[^.]+$|\\\\.(?!(jpeg|jpg|gif|png|pdf|doc|csv)$)([^.]+$)\"]",
+											"children" : [
+												{
+													"id" : "5c08727cdb3e4a4cf368ea62",
+													"type" : "",
+													"label" : "",
+													"code": "IGNORE_LINKS",
+													"options" : "[\"search/\",\"search/\",\"/login\",\"/create-account\",\"#\",\"/dostavka-i-oplata\",\"/sobytiya\",\"/dostavka-i-oplata-1\",\"/nashi-kontakty\",\"/index.php?route=error/not_found\",\"/compare-products\"]",
+													"children" : [
+														{
+															"id" : "5c0446e4db3e4a4cf36bfa05",
+															"type" : "",
+															"label" : "",
+															"children" : [
+																{
+																	"id" : "5c044676db3e4a4cf36bf937",
+																	"type" : "",
+																	"label" : "",
+																	"children" : []
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

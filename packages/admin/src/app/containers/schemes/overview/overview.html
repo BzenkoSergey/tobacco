@@ -1,0 +1,102 @@
+<div class="page-content">
+	<h1 class="h4 mb-3">
+		Schemes
+	</h1>
+
+	<div
+		*ngFor="let group of groups"
+		class="card mb-3">
+
+		<div class="card-header p-2 d-flex justify-content-between align-items-center">
+			{{group.name}} - {{group.code}}
+
+			<button
+				class="btn btn-primary btn-sm"
+				type="button"
+				(click)="create(group)">
+
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+
+		<ul class="list-group list-group-flush">
+			<li
+				*ngFor="let item of getSchemes(group)"
+				class="list-group-item p-2">
+
+				<div class="d-flex justify-content-between align-items-center">
+					<a
+						class="unstyled-link"
+						[routerLink]="[]"
+						[queryParams]="{openned: item._id}"
+						queryParamsHandling="merge">
+
+						{{item.label}} {{item.code}}
+						<i class="fas fa-caret-down"></i>
+					</a>
+
+					<!-- <button
+						class="btn btn-danger btn-sm"
+						type="button"
+						(click)="remove(item)">
+
+						<i class="far fa-trash-alt"></i>
+					</button> -->
+				</div>
+
+				<scheme-editor
+					*ngIf="openned === item._id"
+					processPath="../../"
+					[item]="item">
+				</scheme-editor>
+			</li>
+		</ul>
+	</div>
+
+	<div class="card">
+		<div class="card-header p-2 d-flex justify-content-between align-items-center">
+			Ungroupped
+
+			<button
+				class="btn btn-primary btn-sm"
+				type="button"
+				(click)="create()">
+
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+
+		<ul class="list-group list-group-flush">
+			<li
+				*ngFor="let item of getUngrouped()"
+				class="list-group-item p-2">
+
+				<div class="d-flex justify-content-between align-items-center">
+					<a
+						class="unstyled-link"
+						[routerLink]="[]"
+						[queryParams]="{openned: item._id}"
+						queryParamsHandling="merge">
+
+						{{item.label}} - {{item.code}}
+						<i class="fas fa-caret-down"></i>
+					</a>
+
+					<!-- <button
+						class="btn btn-danger btn-sm"
+						type="button"
+						(click)="remove(item)">
+
+						<i class="far fa-trash-alt"></i>
+					</button> -->
+				</div>
+
+				<scheme-editor
+					*ngIf="openned === item._id"
+					processPath="../../"
+					[item]="item">
+				</scheme-editor>
+			</li>
+		</ul>
+	</div>
+</div>

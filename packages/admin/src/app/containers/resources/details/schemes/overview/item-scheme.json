@@ -1,0 +1,94 @@
+{
+	"options" : "{\"$\":{\"selector\":\".product-info\"},\"title\":{\"$\":{\"selector\":\".image a\",\"type\":\"ATTR\",\"resource\":\"title\",\"transforms\":[{\"name\":\"TRIM\",\"option\":\"\"}]}},\"price\":{\"$\":{\"selector\":\".price|.discount, .reward, .price-old\",\"type\":\"TEXT\",\"transforms\":[{\"name\":\"NUMBERIFY\",\"option\":\"\"}]}},\"url\":{\"$\":{\"selector\":\"$url\"}},\"available\":{\"$\":{\"selector\":\".quantity_div input\",\"type\":\"ATTR\",\"resource\":\"data-maximum\",\"transforms\":[{\"name\":\"BOOLEANIFY\",\"option\":\"\"}]}}}",
+	"type" : "LINE",
+	"code": "STRUCTURE PARSE",
+	"label" : "",
+	"id" : "5c0446d9db3e4a4cf36bf9f7",
+	"children" : [
+		{
+			"id" : "5c0ff4e4dee83c1b3bf268e9",
+			"type" : "",
+			"label" : "",
+			"options" : "[\"title\"]",
+			"children" : [
+				{
+					"id" : "5c0ffb6bdee83c1b3bf32403",
+					"type" : "",
+					"label" : "Version",
+					"children" : [
+						{
+							"id" : "5c0ed996dee83c1b3bef2568",
+							"type" : "",
+							"label" : "",
+							"children" : [],
+							"options" : "{\"collection\": \"resource-item\"}"
+						},
+						{
+							"id" : "5c101561dee83c1b3bf39c35",
+							"type" : "",
+							"label" : "",
+							"children" : [
+								{
+									"id" : "5c101dfadee83c1b3bf50d70",
+									"type" : "",
+									"label" : "",
+									"children" : [
+										{
+											"id" : "5c10202edee83c1b3bf52f28",
+											"type" : "",
+											"label" : "",
+											"children" : [
+												{
+													"id" : "5c1022f1dee83c1b3bf55160",
+													"type" : "",
+													"label" : "",
+													"children" : [
+														{
+															"id" : "5c103339dee83c1b3bf678d5",
+															"type" : "",
+															"label" : "",
+															"children" : [
+																{
+																	"id" : "5c0ed996dee83c1b3bef2568",
+																	"type" : "",
+																	"label" : "",
+																	"options" : "{\"collection\": \"resource-processed-item\", \"dataPath\":\"data.0\"}",
+																	"children" : [
+																		{
+																			"id": "5c265bfcb1e0d83310ae0e21",
+																			"type": "",
+																			"label": "",
+																			"children": [
+																				{
+																					"id": "5c22370e631acded0fbdaa62",
+																					"type": "",
+																					"label": "",
+																					"children": [
+																						{
+																							"id": "5c26b59cb1e0d83310ae8700",
+																							"type": "",
+																							"label": "",
+																							"children": []
+																						}
+																					]
+																				}
+																			]
+																		}
+																	]
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

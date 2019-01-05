@@ -1,0 +1,40 @@
+<div
+	fxLayout="column"
+	fxLayoutAlign="space-around stretch">
+
+	<div class="text-center pos">
+		<button
+			class="pipe"
+			(click)="select()">
+
+			<div>
+				{{pipe.jobName}}
+				{{pipe.process.status}}
+			</div>
+			<!-- {{pipe.order}} - {{pipe.id}} -->
+		</button>
+		<ng-template #elseBlock>
+
+			<div class="pipe">0</div>
+				<span class="dd">
+					<!-- {{pipeInfo.id}} {{processId}} {{order}} -->
+				</span>
+		</ng-template>
+	</div>
+
+	<div
+		fxLayout="row"
+		fxLayoutAlign="center start"
+		fxLayoutGap="6%">
+
+		<div
+			fxFlex
+			*ngFor="let child of pipe.children">
+
+			<pipe
+				[pipe]="child"
+				(selected)="selectChild($event)">
+			</pipe>
+		</div>
+	</div>
+</div>

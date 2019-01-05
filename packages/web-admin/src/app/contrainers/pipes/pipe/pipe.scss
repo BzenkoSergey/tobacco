@@ -1,0 +1,24 @@
+.pipe {
+	background-color: yellow;
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	margin-bottom: 2px;
+}
+
+.pos {
+	position: relative;
+
+	&:hover .dd {
+		display: block;
+	}
+
+	.dd {
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 10;
+	}
+}

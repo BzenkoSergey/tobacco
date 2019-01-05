@@ -1,0 +1,70 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm">
+			<form
+				#form="ngForm"
+				(submit)="save(form.invalid)">
+
+				<div class="form-group">
+					<label for="name">Name</label>
+					<input
+						id="name"
+						class="form-control"
+						placeholder="Name"
+						name="name"
+						required
+						[(ngModel)]="item.name">
+				</div>
+				<div class="form-group">
+					<label for="code">Code</label>
+					<input
+						id="code"
+						class="form-control"
+						placeholder="Code"
+						required
+						name="code"
+						[(ngModel)]="item.code">
+				</div>
+				<div class="form-group">
+					<label for="logo">Logo</label>
+					<input
+						id="logo"
+						type="url"
+						class="form-control"
+						placeholder="Logo"
+						required
+						name="logo"
+						[(ngModel)]="item.logo">
+				</div>
+				<div class="form-group">
+					<label for="path">Path</label>
+					<input
+						id="path"
+						class="form-control"
+						placeholder="Path"
+						required
+						name="path"
+						[(ngModel)]="item.path">
+				</div>
+				<button
+					type="submit"
+					class="btn btn-primary"
+					[disabled]="form.invalid">
+					Save
+					<i
+						class="fas"
+						[class.fa-save]="!saving"
+						[class.fa-spinner]="saving"
+						[class.fa-spin]="saving">
+					</i>
+				</button>
+			</form>
+		</div>
+		<div class="col-sm">
+			<img
+				*ngIf="item.logo"
+				class="img-fluid"
+				[src]="item.logo">
+		</div>
+	</div>
+</div>

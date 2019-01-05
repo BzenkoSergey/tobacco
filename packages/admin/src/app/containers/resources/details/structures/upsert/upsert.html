@@ -1,0 +1,82 @@
+<div class="modal-header">
+	<h4 class="modal-title h6">
+		Structure
+	</h4>
+</div>
+
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="modal-body">
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input
+				type="text"
+				class="form-control"
+				id="name"
+				name="name"
+				required
+				[(ngModel)]="item.name"
+				placeholder="Name">
+		</div>
+		<div class="form-group">
+			<label for="code">Code</label>
+			<input
+				type="text"
+				class="form-control"
+				id="code"
+				name="name"
+				required
+				[(ngModel)]="item.code"
+				placeholder="Code">
+		</div>
+		<div class="form-group">
+			<label for="trigger">Trigger</label>
+			<input
+				type="text"
+				class="form-control"
+				id="trigger"
+				name="trigger"
+				required
+				[(ngModel)]="item.trigger"
+				placeholder="Trigger">
+		</div>
+
+		<div class="form-group">
+			<label>Structure</label>
+			<div
+				ace-editor
+				[(text)]="item.structure"
+				[mode]="'json'"
+				[theme]="'eclipse'"
+				[readOnly]="false"
+				[autoUpdateContent]="true"
+				[durationBeforeCallback]="1000"
+				style="min-height: 200px; width:100%; overflow: auto;">
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button
+			type="button"
+			class="btn btn-outline-dark"
+			(click)="activeModal.close('Close click')">
+			Cancel
+		</button>
+
+		<button
+			type="submit"
+			class="btn btn-outline-primary"
+			[disabled]="form.invalid">
+			Save
+			<i
+				class="fas"
+				[class.fa-save]="!saving"
+				[class.fa-spinner]="saving"
+				[class.fa-spin]="saving">
+			</i>
+		</button>
+	</div>
+</form>

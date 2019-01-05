@@ -1,0 +1,68 @@
+<div class="modal-header">
+	<h4 class="modal-title h6">
+		Create a Resource Group
+	</h4>
+</div>
+
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="modal-body">
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input
+				type="text"
+				class="form-control"
+				id="name"
+				name="name"
+				placeholder="Name"
+				required
+				[(ngModel)]="item.name">
+		</div>
+		<div class="form-group">
+			<label for="logo">Logo</label>
+			<input
+				type="url"
+				class="form-control"
+				id="logo"
+				name="logo"
+				placeholder="Logo"
+				required
+				[(ngModel)]="item.logo">
+		</div>
+		<div class="form-group">
+			<label for="path">Path</label>
+			<input
+				type="url"
+				class="form-control"
+				id="path"
+				name="path"
+				placeholder="Path"
+				required
+				[(ngModel)]="item.path">
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button
+			type="button"
+			class="btn btn-outline-dark"
+			(click)="activeModal.close('Close click')">
+			Cancel
+		</button>
+
+		<button
+			type="submit"
+			class="btn btn-outline-primary"
+			[disabled]="form.invalid">
+			Save
+			<i
+				class="fas"
+				[class.fa-save]="!saving"
+				[class.fa-spinner]="saving"
+				[class.fa-spin]="saving">
+			</i>
+		</button>
+	</div>
+</form>

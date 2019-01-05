@@ -1,0 +1,105 @@
+<div class="modal-header">
+	<h4 class="modal-title h6">
+		Create a Resource Group
+	</h4>
+</div>
+
+<div class="modal-body">
+	<form action="">
+		<div class="form-group">
+			<label for="exampleInputEmail1">Name</label>
+			<input
+				type="text"
+				class="form-control"
+				id="exampleInputEmail1"
+				placeholder="Name">
+		</div>
+	</form>
+
+	<div class="d-flex justify-content-between align-items-center mb-2">
+		<h1 class="h6">Resources</h1>
+		<div>
+			<div class="input-group input-group-sm">
+				<input
+					type="text"
+					class="form-control"
+					placeholder="Resource"
+					[(ngModel)]="model"
+					[ngbTypeahead]="search">
+
+				<div class="input-group-append">
+					<button
+						class="btn btn-outline-secondary"
+						type="button">
+						<i class="fas fa-plus"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<table class="table table-bordered table-sm table-striped">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Name</th>
+				<th scope="col">Path</th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th scope="row">1</th>
+				<td>Mark</td>
+				<td>Otto</td>
+				<td class="text-center">
+					<button
+						type="button"
+						class="btn btn-link text-danger p-0">
+						<i class="far fa-trash-alt"></i>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">2</th>
+				<td>Jacob</td>
+				<td>Thornton</td>
+				<td class="text-center">
+					<button
+						type="button"
+						class="btn btn-link text-danger p-0">
+						<i class="far fa-trash-alt"></i>
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">3</th>
+				<th scope="row">3</th>
+				<th scope="row">3</th>
+				<td class="text-center">
+					<button
+						type="button"
+						class="btn btn-link text-danger p-0">
+						<i class="far fa-trash-alt"></i>
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<div class="modal-footer">
+	<button
+		type="button"
+		class="btn btn-outline-dark"
+		(click)="activeModal.close('Close click')">
+		Close
+	</button>
+	<button
+		type="button"
+		class="btn btn-outline-primary"
+		(click)="activeModal.close('Close click')">
+		Save
+		<i class="fas fa-spinner fa-spin"></i>
+	</button>
+</div>

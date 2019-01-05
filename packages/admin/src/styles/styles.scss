@@ -1,0 +1,52 @@
+@import "./bootstrap/custom.scss";
+
+
+.node {
+	cursor: pointer;
+	position: relative;
+
+	.label {
+		position: absolute;
+		top: 0;
+		left: 0;
+		font-size: 14px;
+	}
+}
+
+.node circle {
+  fill: #90bbde;
+  stroke: steelblue;
+  stroke-width: 0px;
+  r: 4;
+  cursor: pointer;
+
+  &[status="DONE"] {
+	fill: #78d42e;
+  }
+  &[status="PENDING"] {
+	fill: #a5a2a2;
+  }
+  &[status="IN_PROCESS"] {
+	fill: #ffbd00;
+  }
+  &[status="SKIPPED_JOB"] {
+	fill: #9aa4e8;
+  }
+  &[status="ERROR"] {
+	fill: #ea0000;
+  }
+  &[state="selected"] {
+	fill: #000;
+  }
+}
+
+.node text {
+  font-size: 5px;
+  text-anchor: middle;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1px;
+}
