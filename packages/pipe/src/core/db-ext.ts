@@ -21,10 +21,12 @@ class QueryInfo {
 }
 
 import { DbManager } from './db-manager';
-const bbManager = new DbManager('mongodb://192.168.0.175:27017');
+// const bbManager = new DbManager('mongodb://192.168.0.175:27017');
+const bbManager = new DbManager('mongodb://localhost:27017');
 
 export class MongoExtDb {
-	private url = 'mongodb://192.168.0.175:27017';
+	private url = 'mongodb://localhost:27017';
+	// private url = 'mongodb://192.168.0.175:27017';
 	private connections: ConnectionInfo[] = [];
 	private queries: QueryInfo[] = [];
 	private queryReTryDelay = 100;
@@ -37,7 +39,8 @@ export class MongoExtDb {
 	) {
 		this.isolated = isolated;
 		if (isolated) {
-			this.manager = new DbManager('mongodb://192.168.0.175:27017');
+			// this.manager = new DbManager('mongodb://192.168.0.175:27017');
+			this.manager = new DbManager('mongodb://localhost:27017');
 		}
 	}
 
