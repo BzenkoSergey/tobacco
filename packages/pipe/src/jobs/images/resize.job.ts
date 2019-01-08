@@ -50,6 +50,7 @@ export class ImageResizeJob implements Job {
 	}
 
 	run(data: Input): Observable<Input> {
+		console.log(data);
 		const paths = data.paths;
 		const all = paths.map(p => {
 			return this.resizeAllSizes(p)
@@ -78,8 +79,9 @@ export class ImageResizeJob implements Job {
 	}
 
 	private resize(path: string, width: number, height: number, sizeCode: SizeCode) {
-		const input = this.getStorePath() + '/' + sizeCode + '-' + path;
+		const input = this.getStorePath() + '/' + path;
 		const output = this.getResizedStorePath() + '/' + sizeCode + '-' + path;
+
 		return sharp(input)
 			.resize({
 				width: width,
@@ -89,10 +91,10 @@ export class ImageResizeJob implements Job {
 	}
 
 	private getStorePath() {
-		return path.resolve(__dirname + './../../store/');
+		return path.resolve(__dirname + './../../../store/');
 	}
 
 	private getResizedStorePath() {
-		return path.resolve(__dirname + './../../store-resized')
+		return path.resolve(__dirname + './../../../store-resized')
 	}
 }

@@ -23,4 +23,22 @@ export class ImagesRestService {
 				}
 			);
 	}
+
+	resize(paths: string[]) {
+		return this.restService
+			.runSchemeOptions<any, any>(
+				'IMG_RESIZE',
+				{
+					paths: paths
+				}
+			);
+	}
+
+	upload(d: any) {
+		return this.restService
+			.runSchemeOptions<any, any>(
+				'IMG_UPLOAD',
+				d
+			);
+	}
 }

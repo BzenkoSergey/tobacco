@@ -30,24 +30,29 @@ export class ImageNamesJob implements Job {
 		return this;
 	}
 
-	run(data: Input): Observable<string[]> {
+	run(data: Input): Observable<any> {
 		const unitIds = data.unitIds;
+		console.log(unitIds);
 
 		return this.getUnits(unitIds)
 			.pipe(
 				mergeMap(units => {
+					console.log(0);
 					const companiesIds = units
 						.map(u => u.company)
 						.filter(u => !!u);
 
+						console.log(companiesIds);
 					return this.getCompanies(companiesIds)
 						.pipe(
 							map(companies => {
+								console.log(1);
 								return [units, companies];
 							})
 						);
 				}),
 				mergeMap(d => {
+					console.log(2);
 					const units = d[0];
 					const companies = d[1];
 
@@ -58,16 +63,18 @@ export class ImageNamesJob implements Job {
 					return this.getlines(linesIds)
 						.pipe(
 							map(lines => {
+								console.log(3);
 								return [units, companies, lines];
 							})
 						);
 				}),
 				map(d => {
+					console.log(4);
 					const units = d[0] || [];
 					const companies = d[1] || [];
 					const lines = d[2] || [];
 
-					return units.map(u => {
+					const a = units.map(u => {
 						const company = companies.find(c => c._id.toString() === u.company);
 						const line = lines.find(l => l._id.toString() === u.productLine);
 						let name = this.makeReadable(u.name);
@@ -79,6 +86,11 @@ export class ImageNamesJob implements Job {
 						}
 						return name;
 					});
+					console.log(5);
+					return {
+						...data,
+						names: a
+					}
 				})
 			);
 	}
@@ -91,22 +103,28 @@ export class ImageNamesJob implements Job {
 
 	private getUnits(unitIds: string[]) {
 		return new MongoExtDb('products', true)
-			.findOne({
-				$in: unitIds.map(i => ObjectId(i))
+			.find({
+				_id: {
+					$in: unitIds.map(i => ObjectId(i))
+				}
 			})
 	}
 
 	private getlines(linesIds: string[]) {
 		return new MongoExtDb('product-lines', true)
-			.findOne({
-				_id: linesIds.map(i => ObjectId(i))
+			.find({
+				_id: {
+					$in: linesIds.map(i => ObjectId(i))
+				}
 			})
 	}
 
 	private getCompanies(companiesIds: string[]) {
 		return new MongoExtDb('companies', true)
-			.findOne({
-				$in: companiesIds.map(i => ObjectId(i))
+			.find({
+				_id: {
+					$in: companiesIds.map(i => ObjectId(i))
+				}
 			})
 	}
 }

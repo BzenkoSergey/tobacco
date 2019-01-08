@@ -31,7 +31,10 @@ export class UpsertComponent {
 					.filter(v => {
 						return !this.item.schemes.includes(v._id);
 					})
-					.filter(v => v.label || ''.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 30);
+					.filter(v => {
+						return (v.label || '').toLowerCase().indexOf(term.toLowerCase()) > -1;
+					})
+					.slice(0, 30);
 			})
 		);
 	}

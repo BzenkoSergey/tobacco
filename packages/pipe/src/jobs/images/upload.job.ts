@@ -6,7 +6,8 @@ import { map } from 'rxjs/operators';
 import { Job } from './../job.interface';
 
 type Input = {
-	files: any[];
+	files: string[];
+	names: string[];
 };
 
 type Output = {
@@ -36,7 +37,8 @@ export class ImageUploadJob implements Job {
 
 	run(data: Input): Observable<Output> {
 		const files = data.files;
-		return this.uploadAll(files)
+		const names = data.names;
+		return this.uploadAll(files, names)
 			.pipe(
 				map(paths => {
 					return {
@@ -46,21 +48,25 @@ export class ImageUploadJob implements Job {
 			);
 	}
 
-	private uploadAll(files: any[]) {
+	private uploadAll(files: string[], names: string[]) {
 		const all = files
-			.map(file => {
-				return this.upload(file);
+			.map((file, i) => {
+				return this.upload(file, names[i]);
 			});
 		return combineLatest(...all);
 	}
 
-	private upload(file: any) {
+	private upload(file: string, name: string) {
 		const store = this.getStorePath();
-		const name = file.originalname;
+		name = name + '.jpg';
 		let f = store + '/' + name;
+		const str = file;
+
+		var data = str.replace(/^data:image\/\w+;base64,/, "");
+		var buf = new Buffer(data, 'base64');
 
 		const subj = new Subject<string>();
-		fs.writeFile(f, file.buffer, e => {
+		fs.writeFile(f, buf, e => {
 			if (e) {
 				subj.error(e);
 				return;
@@ -72,6 +78,6 @@ export class ImageUploadJob implements Job {
 	}
 
 	private getStorePath() {
-		return path.resolve(__dirname + './../../store/');
+		return path.resolve(__dirname + './../../../store/');
 	}
 }

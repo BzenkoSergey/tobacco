@@ -60,9 +60,16 @@ export class ImagesComponent implements OnDestroy {
 
 	sync(path: string) {
 		this.syncing = path;
-		this.service.sync([path])
+
+		this.service.resize([path])
 			.subscribe(
-				d => this.syncing = null,
+				() => {
+					this.service.sync([path])
+						.subscribe(
+							d => this.syncing = null,
+							() => this.syncing = null
+						);
+				},
 				() => this.syncing = null
 			);
 	}

@@ -8,6 +8,7 @@ import { CategoriesRestService, CategoryDto } from '@rest/categories';
 import { UnitLinesRestService, UnitLineDto } from '@rest/unit-lines';
 import { UnitAttributesRestService, UnitAttributeDto } from '@rest/unit-attributes';
 import { UnitsRestService, UnitDto } from '@rest/units';
+import { PipeRestService } from '@rest/pipes';
 
 @Component({
 	templateUrl: './info.html',
@@ -16,7 +17,8 @@ import { UnitsRestService, UnitDto } from '@rest/units';
 		UnitLinesRestService,
 		UnitAttributesRestService,
 		CompaniesRestService,
-		CategoriesRestService
+		CategoriesRestService,
+		PipeRestService
 	]
 })
 
@@ -38,6 +40,7 @@ export class UnitsDetailsInfoComponent implements OnDestroy {
 		private companiesService: CompaniesRestService,
 		private categoriesService: CategoriesRestService,
 		private service: UnitsRestService,
+		private pipesService: PipeRestService,
 		private router: Router,
 		private route: ActivatedRoute
 	) {
@@ -79,6 +82,16 @@ export class UnitsDetailsInfoComponent implements OnDestroy {
 			});
 	}
 
+	getImageUrl() {
+		let url = this.item.logo;
+		if (url.includes('http')) {
+			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_EXTERNAL_DOWNLOAD/options?loadImage=true&path=' + url;
+		} else {
+			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_DOWMLOAD/options?path=' + this.item.logo + '&isFile=true';
+		}
+		return url;
+	}
+
 	save(invalid: boolean) {
 		if (invalid) {
 			return;
@@ -103,6 +116,18 @@ export class UnitsDetailsInfoComponent implements OnDestroy {
 				() => this.loading = false,
 				() => this.loading = false
 			);
+	}
+
+	aggregate() {
+		this.pipesService.runSchemeOptions<any, any>(
+			'PRODUCT_AGGREGATE',
+			{
+				data: {
+					productId: this.itemId
+				}
+			}
+		)
+		.subscribe();
 	}
 
 	private fetch() {

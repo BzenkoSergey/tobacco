@@ -58,6 +58,8 @@ export class NgxImageEditorComponent implements AfterViewInit, OnInit, OnDestroy
 	  this.loading         = true;
 	  this.canvasFillColor = '#fff';
 	  this.state           = new EditorOptions();
+
+	  window['d'] = this;
 	}
 
 	public ngOnInit() {
@@ -178,19 +180,25 @@ export class NgxImageEditorComponent implements AfterViewInit, OnInit, OnDestroy
 
 	private initializeCropper() {
 	  this.cropper = new Cropper(this.previewImage.nativeElement, {
-		zoomOnWheel: true,
+		zoomOnWheel: false,
 		viewMode: 1,
 		autoCropArea: 1,
+		aspectRatio: NGX_DEFAULT_RATIOS[0].value,
+		// minContainerHeight: this.imageHeight,
+		// minContainerWidth: this.imageWidth,
+		// minCanvasHeight: this.imageHeight,
+		// minCanvasWidth: this.imageWidth,
 		center: true,
 		ready: () => this.loading = false,
 		// dragMode: 'move',
 		crop: (e: CustomEvent) => {
 		  this.imageHeight   = Math.round(e.detail.height);
 		  this.imageWidth    = Math.round(e.detail.width);
-		  this.cropBoxWidth  = Math.round(this.cropper.getCropBoxData().width);
-		  this.cropBoxHeight = Math.round(this.cropper.getCropBoxData().height);
-		  this.canvasWidth   = Math.round(this.cropper.getCanvasData().width);
-		  this.canvasHeight  = Math.round(this.cropper.getCanvasData().height);
+		  console.log(this.imageHeight, this.imageWidth);
+		  this.cropBoxWidth  = this.imageWidth || Math.round(this.cropper.getCropBoxData().width);
+		  this.cropBoxHeight = this.imageHeight || Math.round(this.cropper.getCropBoxData().height);
+		  this.canvasWidth   = this.imageWidth || Math.round(this.cropper.getCanvasData().width);
+		  this.canvasHeight  = this.imageHeight || Math.round(this.cropper.getCanvasData().height);
 		}
 	  });
 
@@ -317,7 +325,7 @@ export class NgxImageEditorComponent implements AfterViewInit, OnInit, OnDestroy
 	AspectRatios?: Array<RatioType>;
   }
 
-  export type RatioType = '16:9' | '4:3' | '1:1' | '2:3' | 'Default';
+  export type RatioType = '0.84:1' | '16:9' | '4:3' | '1:1' | '2:3' | 'Default';
 
   export class EditorOptions implements IEditorOptions {
 	ImageName: string;
@@ -336,6 +344,9 @@ export class NgxImageEditorComponent implements AfterViewInit, OnInit, OnDestroy
 
 
   export const NGX_DEFAULT_RATIOS: Array<NgxAspectRatio> = [
+	{
+	  value: 0.84 / 1, text: '0.84:1'
+	},
 	{
 	  value: 16 / 9, text: '16:9'
 	},

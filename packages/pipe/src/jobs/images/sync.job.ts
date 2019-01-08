@@ -4,6 +4,12 @@ import * as cloudinary from 'cloudinary';
 import { Subject, Observable } from 'rxjs';
 import { Job } from './../job.interface';
 
+cloudinary.config({ 
+	cloud_name: 'dwkakr4wt', 
+	api_key: '513693319966298', 
+	api_secret: 'IVqT7p5HgvhjJN5W5pmmtfET24M' 
+});
+
 type Size = {
 	width: number;
 	height: number;
@@ -78,12 +84,18 @@ export class ImageSyncJob implements Job {
 
 	private sync(path: string, sizeCode: SizeCode) {
 		const filePath = this.getResizedStorePath() + '/' + sizeCode + '-' + path;
-		const publicIp = sizeCode + '-' + path;
+		const publicIp = (sizeCode + '-' + path)
+			.replace('.jpg', '')
+			.replace('.jpeg', '')
+			.replace('.png', '')
+			.replace('.gif', '');
 
 		const subj = new Subject<string>();
+		console.log('INVALIDATE', publicIp);
 		cloudinary.v2.uploader.upload(
 			filePath, 
 			{
+				invalidate: true,
 				public_id: publicIp
 			},
 			function(error) {
@@ -99,6 +111,6 @@ export class ImageSyncJob implements Job {
 	}
 
 	private getResizedStorePath() {
-		return path.resolve(__dirname + './../../store-resized')
+		return path.resolve(__dirname + './../../../store-resized')
 	}
 }

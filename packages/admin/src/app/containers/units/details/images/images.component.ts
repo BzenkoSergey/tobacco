@@ -3,9 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
+import { ImagesRestService } from '@rest/images';
 import { CompaniesRestService, CompanyDto } from '@rest/companies';
 import { UnitLinesRestService, UnitLineDto } from '@rest/unit-lines';
 import { UnitsRestService, UnitDto } from '@rest/units';
+import { PipeRestService } from '@rest/pipes';
+
 import { NgxImageEditorComponent } from '@components/ngx-image-editor/ngx-image-editor.component';
 
 @Component({
@@ -13,7 +16,9 @@ import { NgxImageEditorComponent } from '@components/ngx-image-editor/ngx-image-
 	providers: [
 		UnitsRestService,
 		CompaniesRestService,
-		UnitLinesRestService
+		UnitLinesRestService,
+		ImagesRestService,
+		PipeRestService
 	]
 })
 
@@ -33,7 +38,7 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 	externalUrl = '';
 	imageConfig = {
 		ImageName: 'Some image',
-		AspectRatios: ['4:3', '16:9'],
+		AspectRatios: ['0.84:1', '4:3', '16:9'],
 		ImageUrl: '',
 		ImageType: 'image/jpeg'
 	};
@@ -41,6 +46,8 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 	constructor(
 		private companiesService: CompaniesRestService,
 		private linesService: UnitLinesRestService,
+		private imagesRestService: ImagesRestService,
+		private pipesService: PipeRestService,
 		private service: UnitsRestService,
 		route: ActivatedRoute
 	) {
@@ -62,9 +69,26 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 		this.loading = true;
 		this.service.update(this.itemId, this.item)
 			.subscribe(
-				() => this.loading = false,
+				() => {
+					this.aggregate(this.itemId)
+						.subscribe(
+							() => this.loading = false,
+							() => this.loading = false
+						);
+				},
 				() => this.loading = false
 			);
+	}
+
+	aggregate(unitId: string) {
+		return this.pipesService.runSchemeOptions<any, any>(
+			'PRODUCT_AGGREGATE',
+			{
+				data: {
+					productId: unitId
+				}
+			}
+		);
 	}
 
 	getConfigs() {
@@ -89,10 +113,22 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 		return this.imageConfig;
 	}
 
-	makeR(str: string) {
-		return str.toLowerCase()
-		.replace(/ /g, '-')
-		.replace(/[^\w-]+/g, '');
+	imageEditer(file: File) {
+		const d2 = {
+			unitIds: [this.itemId],
+			files: [this.imageEditor.croppedImage]
+		};
+		this.imagesRestService.upload(d2)
+			.subscribe(d => {
+				this.item.logo = d.paths[0];
+				this.imagesRestService.resize(d.paths)
+					.subscribe(() => {
+						this.imagesRestService.sync(d.paths)
+							.subscribe(() => {
+								this.save();
+							});
+					});
+			});
 	}
 
 	updateImageUrl() {
@@ -102,13 +138,18 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 		}, 100);
 	}
 
+	makeR(str: string) {
+		return str.toLowerCase()
+		.replace(/ /g, '-')
+		.replace(/[^\w-]+/g, '');
+	}
+
 	private getImageUrl() {
 		let url = this.externalUrl || this.item.logo;
 		if (url.includes('http')) {
-			//http://192.168.0.175:3330/scheme/code/IMG_EXTERNAL_DOWNLOAD/options?path=https://www.tornado-hs.com.ua/image/data/ALOGO/logo_small_new_year.png&loadImage=true
 			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_EXTERNAL_DOWNLOAD/options?loadImage=true&path=' + url;
 		} else {
-			url = 'http://' + window.location.hostname + ':3330/images/' + this.item._id;
+			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_DOWMLOAD/options?path=' + this.item.logo + '&isFile=true';
 		}
 		return url;
 	}

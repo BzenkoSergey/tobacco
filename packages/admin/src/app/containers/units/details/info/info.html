@@ -6,7 +6,8 @@
 		<img
 			*ngIf="item.logo"
 			class="img-fluid mb-2"
-			[src]="item.logo"
+			style="max-height: 300px"
+			[src]="getImageUrl()"
 			alt="image">
 	</div>
 
@@ -33,7 +34,6 @@
 			class="form-control form-control-sm"
 			id="translate"
 			name="translate"
-			required
 			placeholder="Enter translate"
 			[(ngModel)]="item.translate">
 	</div>
@@ -171,6 +171,14 @@
 				[class.fa-spinner]="loading"
 				[class.fa-spin]="loading">
 			</i>
+		</button>
+
+		<button
+			class="btn btn-info mr-1"
+			type="button"
+			[disabled]="!item._id"
+			(click)="aggregate()">
+			<i class="fas fa-database"></i>
 		</button>
 
 		<button

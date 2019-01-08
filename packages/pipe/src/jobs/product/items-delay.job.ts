@@ -49,13 +49,14 @@ export class ItemsDelayJob implements Job {
 
 	run(data: any[]) {
 		const now = moment(new Date())
-		const end = moment().utc().endOf('day');
+		const end = moment(new Date()).hours(23).minutes(59);
+		// const end = moment().utc().endOf('day');
 		const diffs = end.valueOf() - now.valueOf();
 
 		const count = data.length;
 		const delay = diffs / count;
 		let last = now.valueOf();
-debugger;
+
 		const list = data.map((v, i) => {
 			if (i) {
 				last = last + delay;
