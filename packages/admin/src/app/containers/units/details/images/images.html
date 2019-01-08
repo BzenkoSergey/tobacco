@@ -7,7 +7,7 @@
 	(ngModelChange)="updateImageUrl()">
 
 <ngx-image-editor
-	*ngIf="item.logo"
+	*ngIf="item.logo && showEditor"
 	[config]="getConfigs()"
 	(file)="imageEditer($event)">
 </ngx-image-editor>

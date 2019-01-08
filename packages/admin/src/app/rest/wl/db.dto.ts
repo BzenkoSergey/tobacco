@@ -3,6 +3,7 @@ export class WlDbDto {
 	ip: string;
 	port: string;
 	db: string;
+	query: string;
 
 	constructor(d?: WlDbDto) {
 		if (!d) {
@@ -12,5 +13,6 @@ export class WlDbDto {
 		this.ip = d.ip;
 		this.port = d.port;
 		this.db = d.db;
+		this.query = d.query;
 	}
 }

@@ -179,7 +179,7 @@ export class AggregateJob implements Job {
 							available: i.available,
 							price: i.price,
 							url: i.url,
-							productAttributes: i.productAttributes,
+							productAttributes: i.attributes,
 							market: resources
 								.filter(r => r._id.toString() === i.resource)
 								.map(r => {
@@ -246,9 +246,11 @@ export class AggregateJob implements Job {
 					return d[0].db;
 				}),
 				mergeMap(db => {
-					const url = 'mongodb://' + db.ip + ':' + db.port;
-
-					return new MongoDb('aggregated-item', true, url, db.db)
+					let url = 'mongodb://' + db.ip + ':' + db.port;
+					if (db.query) {
+						url = url + '/?' + db.query;
+					}
+					return new MongoDb('aggregated-products2', true, url, db.db)
 						.replaceOne(
 							{
 								productId: agg.productId

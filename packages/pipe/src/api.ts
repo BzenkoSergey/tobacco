@@ -131,7 +131,7 @@ app.get('/pipes-line/:id', function (req, res) {
 });
 
 app.get('/pipes-line', function (req, res) {
-	const mongoDb = new MongoDb('pipes-line');
+	const mongoDb = new MongoDb('pipes-line', true);
 	mongoDb.find({})
 		.subscribe(
 			d => res.send(d),
@@ -140,7 +140,7 @@ app.get('/pipes-line', function (req, res) {
 });
 
 app.get('/pipes-group', function (req, res) {
-	const mongoDb = new MongoDb('pipes-group');
+	const mongoDb = new MongoDb('pipes-group', true);
 	mongoDb.find({})
 		.subscribe(
 			d => res.send(d),
@@ -149,7 +149,7 @@ app.get('/pipes-group', function (req, res) {
 });
 
 app.get('/pipes', function (req, res) {
-	const mongoDb = new MongoDb('pipes');
+	const mongoDb = new MongoDb('pipes', true);
 	mongoDb.find({})
 		.subscribe(
 			d => res.send(d),
@@ -162,7 +162,7 @@ app.get('/process/:processId/paths/:paths', function (req, res) {
 	const processId = req.params.processId;
 	const paths = req.params.paths.split(',');
 
-	const mongoDb = new MongoDb('scheme-processes');
+	const mongoDb = new MongoDb('scheme-processes', true);
 		mongoDb
 			.findOne({
 				_id: ObjectId(processId)
@@ -194,7 +194,7 @@ app.get('/process/:processId/paths/:paths', function (req, res) {
 
 app.get('/process/:processId', function (req, res) {
 	const processId = req.params.processId;
-	const mongoDb = new MongoDb('scheme-processes');
+	const mongoDb = new MongoDb('scheme-processes', true);
 		mongoDb
 			.findOne({
 				_id: ObjectId(processId)
@@ -513,6 +513,10 @@ app.get('/scheme/code/:code/options', function (req, res) {
 		)
 		.subscribe(
 			(d: string) => {
+				if (options.loadImage) {
+					request.get(d).pipe(res);
+					return;
+				}
 				if (options.isFile) {
 					res.sendFile(d);
 					return;
@@ -566,7 +570,6 @@ app.get('/scheme/:schemeId', function (req, res) {
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
-				debugger;
 				const pipe = new Pipe(null, false)
 					.setSchemeProcessId(snapshot._id)
 					.setDI(new DI());

@@ -2,6 +2,7 @@ import * as request from 'request';
 
 import { Observable } from 'rxjs';
 import { Job } from './../job.interface';
+import { async } from './../../async';
 
 type Input = {
 	path: string;
@@ -29,6 +30,6 @@ export class ImageExternlDownloadJob implements Job {
 	}
 
 	run(data: Input): Observable<string> {
-		return request.get(data.path);
+		return async(encodeURI(data.path));
 	}
 }

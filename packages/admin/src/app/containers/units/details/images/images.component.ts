@@ -26,6 +26,7 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 	private companies: CompanyDto[] = [];
 	private lines: UnitLineDto[] = [];
 
+	showEditor = true;
 	item = new UnitDto();
 	loading = false;
 
@@ -94,10 +95,18 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 		.replace(/[^\w-]+/g, '');
 	}
 
+	updateImageUrl() {
+		this.showEditor = false;
+		setTimeout(() => {
+			this.showEditor = true;
+		}, 100);
+	}
+
 	private getImageUrl() {
 		let url = this.externalUrl || this.item.logo;
 		if (url.includes('http')) {
-			url = 'http://' + window.location.hostname + ':3330/images/external/' + url;
+			//http://192.168.0.175:3330/scheme/code/IMG_EXTERNAL_DOWNLOAD/options?path=https://www.tornado-hs.com.ua/image/data/ALOGO/logo_small_new_year.png&loadImage=true
+			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_EXTERNAL_DOWNLOAD/options?loadImage=true&path=' + url;
 		} else {
 			url = 'http://' + window.location.hostname + ':3330/images/' + this.item._id;
 		}

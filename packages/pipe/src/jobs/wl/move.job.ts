@@ -54,7 +54,10 @@ export class MoveJob implements Job {
 				menu: info.items
 			}
 		};
-		const url = 'mongodb://' + dbConfigs.ip + ':' + dbConfigs.port;
+		let url = 'mongodb://' + dbConfigs.ip + ':' + dbConfigs.port;
+		if (dbConfigs.query) {
+			url = url + '/?' + dbConfigs.query;
+		}
 		const collection = this.options.collection;
 		return new MongoDb(collection, true, url, dbConfigs.db)
 			.find({})

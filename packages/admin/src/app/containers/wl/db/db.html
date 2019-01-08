@@ -37,6 +37,18 @@
 			</div>
 
 			<div class="form-group">
+				<label for="query">Query</label>
+				<input
+					id="query"
+					type="text"
+					class="form-control"
+					placeholder="Query"
+					name="query"
+					required
+					[(ngModel)]="item.db.query">
+			</div>
+
+			<div class="form-group">
 				<label for="db">Data Base</label>
 				<input
 					id="db"

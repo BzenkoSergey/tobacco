@@ -55,10 +55,10 @@ export class ItemsDelayJob implements Job {
 		const count = data.length;
 		const delay = diffs / count;
 		let last = now.valueOf();
-
+debugger;
 		const list = data.map((v, i) => {
 			if (i) {
-				last = last + 10000; //delay;
+				last = last + delay;
 			}
 			return {
 				delay: new Date(last).toString(),

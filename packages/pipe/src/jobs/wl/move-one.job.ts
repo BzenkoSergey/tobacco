@@ -56,7 +56,10 @@ export class MoveOneJob implements Job {
 		const toSave = {
 			$set: info.aggregated
 		};
-		const url = 'mongodb://' + dbConfigs.ip + ':' + dbConfigs.port;
+		let url = 'mongodb://' + dbConfigs.ip + ':' + dbConfigs.port;
+		if (dbConfigs.query) {
+			url = url + '/?' + dbConfigs.query;
+		}
 		const collection = this.options.collection;
 		const query: any = {};
 		query[prop] = info.aggregated[prop];
