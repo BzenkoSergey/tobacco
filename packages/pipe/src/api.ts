@@ -514,7 +514,12 @@ app.get('/scheme/code/:code/options', function (req, res) {
 		.subscribe(
 			(d: string) => {
 				if (options.loadImage) {
-					request.get(d).pipe(res);
+					try {
+						request.get(d).pipe(res);
+					} catch(e) {
+						console.log(e);
+						res.send('');
+					}
 					return;
 				}
 				if (options.isFile) {

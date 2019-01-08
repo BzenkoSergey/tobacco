@@ -51,6 +51,9 @@ export class UnitsComponent implements OnDestroy {
 
 	getImageUrl(item: UnitDto) {
 		let url = item.logo;
+		if (!url) {
+			return '';
+		}
 		if (url.includes('http')) {
 			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_EXTERNAL_DOWNLOAD/options?loadImage=true&path=' + url;
 		} else {
