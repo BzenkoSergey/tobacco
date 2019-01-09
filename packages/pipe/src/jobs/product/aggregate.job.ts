@@ -184,7 +184,8 @@ export class AggregateJob implements Job {
 								.filter(r => r._id.toString() === i.resource)
 								.map(r => {
 									return {
-										id: r._id.toString(),
+										code: r.code,
+										// id: r._id.toString(),
 										logo: r.logo,
 										name: r.name
 									};
@@ -207,16 +208,19 @@ export class AggregateJob implements Job {
 					categories: categories.map(c => {
 						return {
 							name: c.name,
-							id: c._id.toString()
+							code: c.code
+							// id: c._id.toString()
 						};
 					}),
 					company: {
 						name: company.name,
 						logo: company.logo,
-						id: company._id.toString()
+						code: company.code
+						// id: company._id.toString()
 					},
 					productLine: line? {
-						id: line._id.toString(),
+						// id: line._id.toString(),
+						code: line.code,
 						logo: line.logo,
 						name: line.name
 					}: null

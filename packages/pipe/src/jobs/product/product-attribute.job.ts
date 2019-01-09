@@ -94,6 +94,7 @@ export class ProductAttributesJob implements Job {
 
 						item.attributes.push({
 							name: a.name,
+							code: a.code,
 							value: values[0]
 						});
 					});
