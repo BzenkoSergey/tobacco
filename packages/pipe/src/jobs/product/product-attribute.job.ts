@@ -88,14 +88,14 @@ export class ProductAttributesJob implements Job {
 								const status = v.mappingKeys.some(k => {
 									return !!item.title.match(new RegExp(k.value, 'i'));
 								});
-								return status ? v.value : null;
+								return status ? v : null;
 							})
 							.filter(i => !!i);
 
 						item.attributes.push({
 							name: a.name,
-							code: a.code,
-							value: values[0]
+							code: values[0].code,
+							value: values[0].value
 						});
 					});
 					return async({
