@@ -24,7 +24,7 @@ import { DbManager } from './db-manager';
 const bbManager = new DbManager();
 
 export class MongoDb {
-	private url = 'mongodb://localhost:27017';
+	private url = 'mongodb://127.0.0.1:27017';
 	private queryReTryDelay = 100;
 	private manager = bbManager;
 	private isolated = false;
@@ -54,13 +54,12 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
-						debugger;
 						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -83,13 +82,13 @@ export class MongoDb {
 						// 	this.updateOne(filter, update, subj);
 						// }, this.queryReTryDelay);
 
-						subj.error(err);
 						db[1]();
+						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		},
@@ -110,16 +109,15 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
-						debugger;
 						subj.error(err);
 						// setTimeout(() => {
 						// 	this.remove(selector, subj);
 						// }, this.queryReTryDelay);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -134,16 +132,15 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
-						debugger;
 						subj.error(err);
 						// setTimeout(() => {
 						// 	this.count(query, subj);
 						// }, this.queryReTryDelay);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -159,16 +156,15 @@ export class MongoDb {
 					(err, result) => {
 						if (err) {
 							db[1]();
-							debugger;
 							subj.error(err);
 							// setTimeout(() => {
 							// 	this.find(query, subj);
 							// }, this.queryReTryDelay);
 							return;
 						}
+						db[1]();
 						subj.next(result);
 						subj.complete();
-						db[1]();
 					}
 				);
 		});
@@ -191,16 +187,16 @@ export class MongoDb {
 			
 			find.toArray((err, result) => {
 				if (err) {
-					subj.error(err);
 					db[1]();
+					subj.error(err);
 					// setTimeout(() => {
 					// 	this.find(query, subj, limit, skip);
 					// }, this.queryReTryDelay);
 					return;
 				}
+				db[1]();
 				subj.next(result);
 				subj.complete();
-				db[1]();
 			});
 		});
 		return subj;
@@ -223,16 +219,15 @@ export class MongoDb {
 			find.toArray((err, result) => {
 				if (err) {
 					db[1]();
-					debugger;
 					subj.error(err);
 					// setTimeout(() => {
 					// 	this.find(query, subj, limit, skip);
 					// }, this.queryReTryDelay);
 					return;
 				}
+				db[1]();
 				subj.next(result);
 				subj.complete();
-				db[1]();
 			});
 		});
 		return subj;
@@ -245,8 +240,8 @@ export class MongoDb {
 				.aggregate(query)
 				.toArray((err, result) => {
 					if (err) {
-						subj.error(err);
 						db[1]();
+						subj.error(err);
 						return;
 
 						// setTimeout(() => {
@@ -254,9 +249,9 @@ export class MongoDb {
 						// }, this.queryReTryDelay);
 						// return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				});
 		});
 		return subj;
@@ -268,12 +263,13 @@ export class MongoDb {
 			db[0].collection(this.collection)
 				.bulkWrite(list, {}, (err, result) => {
 					if (err) {
-						subj.error(err);
 						db[1]();
+						subj.error(err);
 						return;
+					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				});
 		});
 		return subj;
@@ -295,15 +291,16 @@ export class MongoDb {
 						// console.log('======');
 						// console.log(result);
 						if (err) {
+							db[1]();
 							subj.error(err);
 							// setTimeout(() => {
 							// 	this.insertOne(docs, subj);
 							// }, this.queryReTryDelay);
 							return;
 						}
+						db[1]();
 						subj.next(result);
 						subj.complete();
-						db[1]();
 					}
 				);
 			});
@@ -321,16 +318,15 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
-						debugger;
 						subj.error(err);
 						// setTimeout(() => {
 						// 	this.insertMany(docs, subj);
 						// }, this.queryReTryDelay);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -354,9 +350,9 @@ export class MongoDb {
 						// }, this.queryReTryDelay);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
