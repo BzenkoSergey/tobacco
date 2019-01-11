@@ -262,6 +262,23 @@ export class MongoDb {
 		return subj;
 	}
 
+	bulkWrite(list: Object[], subj?: Subject<any>): Subject<any> {
+		subj = subj || new Subject<any>();
+		this.getDb().subscribe(db => {
+			db[0].collection(this.collection)
+				.bulkWrite(list, {}, (err, result) => {
+					if (err) {
+						subj.error(err);
+						db[1]();
+						return;
+					subj.next(result);
+					subj.complete();
+					db[1]();
+				});
+		});
+		return subj;
+	}
+
 	insertOne(docs: Object, subj?: Subject<InsertOneWriteOpResult>): Subject<InsertOneWriteOpResult> {
 		subj = subj || new Subject<InsertOneWriteOpResult>();
 		try {

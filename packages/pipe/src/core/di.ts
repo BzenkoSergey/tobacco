@@ -3,20 +3,22 @@ import { Navigator } from './navigator';
 import { Manipulator } from './manipulator';
 import { Store } from './store';
 import { ExtService } from './ext.service';
+import { SchemeProcessService } from './scheme-process.service';
 
 export enum DIService {
 	HTTP_STACK = 'HTTP_STACK',
 	NAVIGATOR = 'NAVIGATOR',
 	MANIPULATOR = 'MANIPULATOR',
 	STORE = 'STORE',
-	EXT = 'EXT'
+	EXT = 'EXT',
+	SCHEME_PROCESS = 'SCHEME_PROCESS'
 }
 
 export class DI {
 	private services = new Map<DIService, any>();
 	private register = new Map<string, DIService[]>();
 	private created = new Map<string, any[]>();
-	private rootAllowed = [DIService.NAVIGATOR, DIService.MANIPULATOR];
+	private rootAllowed = [DIService.NAVIGATOR, DIService.MANIPULATOR, DIService.SCHEME_PROCESS];
 
 	constructor() {
 		this.services.set(DIService.HTTP_STACK, HttpStack);
@@ -24,6 +26,8 @@ export class DI {
 		this.services.set(DIService.MANIPULATOR, Manipulator);
 		this.services.set(DIService.STORE, Store);
 		this.services.set(DIService.EXT, ExtService);
+		this.services.set(DIService.EXT, ExtService);
+		this.services.set(DIService.SCHEME_PROCESS, SchemeProcessService);
 	}
 
 	registrate(path: string, service: DIService) {

@@ -14,6 +14,7 @@ import { Navigator } from './navigator';
 import { PipeInput } from './pipe-input.interface';
 import { Process } from './pipe-process.interface';
 import { ProcessPipeInput } from './process-pipe-input.interface';
+import { SchemeProcessService } from './scheme-process.service';
 
 const ar = [];
 
@@ -54,7 +55,8 @@ export abstract class PipeBase {
 	abstract init(processInput: ProcessPipeInput): Observable<any>;
 
 	getDbProcesses() {
-		return new MongoDb('scheme-processes', true);
+		return this.di.get<SchemeProcessService>(this.path, DIService.SCHEME_PROCESS);
+		// return new MongoDb('scheme-processes', true);
 	}
 
 	getDbProcessesPipe() {
@@ -94,6 +96,7 @@ export abstract class PipeBase {
 
 	setDI(di: DI) {
 		this.di = di;
+		this.children.forEach(c => c.setDI(di));
 		return this;
 	}
 
@@ -164,7 +167,7 @@ export abstract class PipeBase {
 	}
 
 	getScheme(): PipeInput {
-		console.log(this.schemeProcessId);
+		// console.log(this.schemeProcessId);
 		return {
 			id: this.id,
 			entityId: this.entityId,
@@ -269,18 +272,19 @@ export abstract class PipeBase {
 		// console.error('==================');
 		// console.error(this.schemeProcessId, processPipeId, path);
 		ar.push(path);
-		console.log(path);
+		// console.log(path);
 
 		update.$set[path] = {
 			id: processPipeId,
 			children: []
 		};
-		return this.getDbProcesses().updateOne(
-			{
-				_id: ObjectId(this.schemeProcessId)
-			},
-			update
-		);
+		return this.getDbProcesses().update(this.schemeProcessId, update);
+		// return this.getDbProcesses().updateOne(
+		// 	{
+		// 		_id: ObjectId(this.schemeProcessId)
+		// 	},
+		// 	update
+		// );
 	}
 
 	protected defineMeta(scheme: PipeInput, parentPath: string, nextIndex: number) {

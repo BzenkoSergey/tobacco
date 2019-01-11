@@ -45,7 +45,8 @@ export class Pipe extends PipeBase {
 						return async();
 					}
 					this.children = processInput.children.map(c => {
-						return new Pipe(null, this.isolated);
+						return new Pipe(null, this.isolated)
+							.setDI(this.di);
 					});
 					const subjs = this.children.map((c, i) => {
 						return c.init(processInput.children[i]);
@@ -186,6 +187,7 @@ export class Pipe extends PipeBase {
 
 		const inst = this.createEntities([scheme])[0];
 		inst.setSchemeProcessId(this.schemeProcessId);
+		inst.setDI(this.di);
 		inst.setDelayInput(input);
 		this.children.push(inst);
 

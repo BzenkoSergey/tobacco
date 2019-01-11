@@ -86,6 +86,9 @@ export class ProcessesJob implements Job {
 	}
 
 	private genChildren(process: any, pipes: Map<string, any>) {
+		if (!process.id) {
+			return {};
+		}
 		const id = process.id.toString();
 		const pipe = pipes.get(id);
 		if (!pipe) {
