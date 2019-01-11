@@ -91,6 +91,9 @@ export class ProductAttributesJob implements Job {
 								return status ? v : null;
 							})
 							.filter(i => !!i);
+						if (!values.length) {
+							return;
+						}
 
 						item.attributes.push({
 							name: a.name,

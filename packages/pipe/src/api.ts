@@ -523,7 +523,13 @@ app.get('/scheme/code/:code/options', function (req, res) {
 					return;
 				}
 				if (options.isFile) {
-					res.sendFile(d);
+					try {
+						res.sendFile(d);
+					} catch(e) {
+						console.log(e);
+						res.send('');
+					}
+					
 					return;
 				}
 				res.send(d);

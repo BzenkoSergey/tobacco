@@ -83,7 +83,8 @@ export class CheckAutoAggregationJob implements Job {
 					return async({
 						data: {
 							productId: item.productId,
-							resourceId: item.resource
+							resourceId: item.resource,
+							url: url
 						}
 					});
 				})

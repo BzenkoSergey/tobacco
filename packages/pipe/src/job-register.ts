@@ -41,6 +41,7 @@ import { AssignedItemsJob } from './jobs/product/assigned-items.job';
 import { ItemsDelayJob } from './jobs/product/items-delay.job';
 import { CheckAutoAggregationJob } from './jobs/product/check-auto-aggregation.job';
 import { NotificationJob } from './jobs/product/notification.job';
+import { AssignItemJob } from './jobs/product/assign-item.job';
 
 import { ImageDownloadJob } from './jobs/images/download.job';
 import { ImageExternlDownloadJob } from './jobs/images/external.job';
@@ -73,6 +74,7 @@ export enum JobRegister {
 	PRODUCT_PROCESSED_QUALITY = 'PRODUCT_PROCESSED_QUALITY',
 	PRODUCT_AGGREGATE = 'PRODUCT_AGGREGATE',
 	PRODUCT_ASSIGNED_ITEMS = 'PRODUCT_ASSIGNED_ITEMS',
+	PRODUCT_ASSIGN_ITEM = 'PRODUCT_ASSIGN_ITEM',
 	PRODUCT_ITEMS_DELAY = 'PRODUCT_ITEMS_DELAY',
 	PRODUCT_CHECK_AUTO_AGGREGATION = 'PRODUCT_CHECK_AUTO_AGGREGATION',
 	PRODUCT_NOTIFICATION = 'PRODUCT_NOTIFICATION',
@@ -145,6 +147,7 @@ export namespace JobRegister {
 	map.set(JobRegister.PRODUCT_PROCESSED_QUALITY, ProcessedQualityJob);
 	map.set(JobRegister.PRODUCT_AGGREGATE, AggregateJob);
 	map.set(JobRegister.PRODUCT_ASSIGNED_ITEMS, AssignedItemsJob);
+	map.set(JobRegister.PRODUCT_ASSIGN_ITEM, AssignItemJob);
 	map.set(JobRegister.PRODUCT_ITEMS_DELAY, ItemsDelayJob);
 	map.set(JobRegister.PRODUCT_CHECK_AUTO_AGGREGATION, CheckAutoAggregationJob);
 	map.set(JobRegister.PRODUCT_NOTIFICATION, NotificationJob);

@@ -162,16 +162,20 @@ export class AggregateJob implements Job {
 					search = search + ' ' + company.name;
 				}
 
+				let readableName = this.makeReadable(unit.name);
+				if (line) {
+					readableName = this.makeReadable(line.name) + '_' + name;
+				}
+				if (company) {
+					readableName = this.makeReadable(company.name) + '_' + name;
+				}
 				const agg = {
 					logo: unit.logo,
 					productId: unit._id.toString(),
 					visible: unit.visible,
 					search: search,
 					name: unit.translate ? unit.translate + ' / ' + unit.name : unit.name,
-					readableName: unit.name
-						.toLowerCase()
-						.replace(/ /g, '-')
-						.replace(/[^\w-]+/g, ''),
+					readableName: readableName,
 
 					items: items.map(i => {
 						return {
@@ -383,5 +387,11 @@ export class AggregateJob implements Job {
 			.findOne({
 				_id: ObjectId(unitId)
 			})
+	}
+
+	makeReadable(str: string) {
+		return str.toLowerCase()
+			.replace(/ /g, '-')
+			.replace(/[^\w-]+/g, '');
 	}
 }

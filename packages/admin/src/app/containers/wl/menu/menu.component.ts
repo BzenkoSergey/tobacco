@@ -143,7 +143,7 @@ export class MenuComponent {
 					const line = this.lines.find(l => l.code === o.code);
 					const company = this.companies.find(c => c._id === line.company);
 					o.dependOn = {
-						item: MenuItem.COMPANY,
+						item: 'company',
 						option: company.code
 					};
 				});
