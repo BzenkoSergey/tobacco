@@ -16,7 +16,6 @@ import { Process } from './pipe-process.interface';
 import { ProcessPipeInput } from './process-pipe-input.interface';
 import { SchemeProcessService } from './scheme-process.service';
 
-const ar = [];
 
 export abstract class PipeBase {
 	protected runPaths: string[] = [];
@@ -42,6 +41,7 @@ export abstract class PipeBase {
 	protected children: PipeBase[] = [];
 	protected isolated = false;
 	protected delayInput: any;
+	protected parent: ObjectId;
 
 	constructor(d?: PipeInput, isolated = false) {
 		this.isolated = isolated;
@@ -54,10 +54,10 @@ export abstract class PipeBase {
 	abstract cloneChild(childPath: string, input: any, run?: boolean);
 	abstract init(processInput: ProcessPipeInput): Observable<any>;
 
-	getDbProcesses() {
-		return this.di.get<SchemeProcessService>(this.path, DIService.SCHEME_PROCESS);
-		// return new MongoDb('scheme-processes', true);
-	}
+	// getDbProcesses() {
+	// 	return this.di.get<SchemeProcessService>(this.path, DIService.SCHEME_PROCESS);
+	// 	// return new MongoDb('scheme-processes', true);
+	// }
 
 	getDbProcessesPipe() {
 		return new MongoDb('scheme-processes-pipe', true);
@@ -67,9 +67,9 @@ export abstract class PipeBase {
 		return new MongoDb('scheme-processes-data', true);
 	}
 
-	getDbProcessesOptions() {
-		return new MongoDb('scheme-processes-options', true);
-	}
+	// getDbProcessesOptions() {
+	// 	return new MongoDb('scheme-processes-options', true);
+	// }
 
 	resetStatus() {
 		this.process.status = PipeStatus.PENDING;
@@ -113,15 +113,19 @@ export abstract class PipeBase {
 		if (!this.options) {
 			return async();
 		}
-		return this.getDbProcessesOptions()
-			.findOne({
-				_id: ObjectId(this.options)
-			})
-			.pipe(
-				map(d => {
-					return JSON.parse(d.content);
-				})
-			);
+		return async(JSON.parse(this.options));
+		// if (!this.options) {
+		// 	return async();
+		// }
+		// return this.getDbProcessesOptions()
+		// 	.findOne({
+		// 		_id: ObjectId(this.options)
+		// 	})
+		// 	.pipe(
+		// 		map(d => {
+		// 			return JSON.parse(d.content);
+		// 		})
+		// 	);
 	}
 
 	getPath() {
@@ -176,6 +180,7 @@ export abstract class PipeBase {
 			type: this.type,
 			jobName: this.jobName,
 			label: this.label,
+			parent: this.parent,
 			services: this.services,
 			// children: this.children.map(c => c.p),
 			children: this.children.map(c => c.getScheme()),
@@ -194,15 +199,21 @@ export abstract class PipeBase {
 		// console.error('RUN SYNC', scheme.path);
 		return this.createProcessPipe(scheme)
 			.pipe(
+				// mergeMap(processPipeId => {
+				// 	this.processPipeId = processPipeId;
+				// 	return this.updateChildScheme(processPipeId, scheme.path)
+				// }),
 				mergeMap(processPipeId => {
-					this.processPipeId = processPipeId;
-					return this.updateChildScheme(processPipeId, scheme.path)
-				}),
-				mergeMap(() => {
+					this.processPipeId = processPipeId.toString();
 					if (!this.children.length) {
 						return async();
 					}
-					const subjs = this.children.map(c => c.sync());
+					const subjs = this.children
+						.map(c => {
+							c.parent = processPipeId;
+							return c;
+						})
+						.map(c => c.sync());
 					return combineLatest(...subjs);
 				})
 			);
@@ -221,6 +232,7 @@ export abstract class PipeBase {
 		this.input = d.input;
 		this.path = d.path;
 		this.children = [];
+		this.parent = d.parent;
 	}
 
 	protected fetchProcessPipe() {
@@ -260,32 +272,31 @@ export abstract class PipeBase {
 		clone.children = [];
 		return this.getDbProcessesPipe().insertOne(clone)
 			.pipe(
-				map(r => r.insertedId.toString())
+				map(r => r.insertedId)
 			);
 	}
 
-	protected updateChildScheme(processPipeId: string, path: string) {
-		const update = {
-			$set: {}
-		};
+	// protected updateChildScheme(processPipeId: string, path: string) {
+	// 	const update = {
+	// 		$set: {}
+	// 	};
 
-		// console.error('==================');
-		// console.error(this.schemeProcessId, processPipeId, path);
-		ar.push(path);
-		// console.log(path);
+	// 	// console.error('==================');
+	// 	// console.error(this.schemeProcessId, processPipeId, path);
+	// 	// console.log(path);
 
-		update.$set[path] = {
-			id: processPipeId,
-			children: []
-		};
-		return this.getDbProcesses().update(this.schemeProcessId, update);
-		// return this.getDbProcesses().updateOne(
-		// 	{
-		// 		_id: ObjectId(this.schemeProcessId)
-		// 	},
-		// 	update
-		// );
-	}
+	// 	update.$set[path] = {
+	// 		id: processPipeId,
+	// 		children: []
+	// 	};
+	// 	return this.getDbProcesses().update(this.schemeProcessId, update);
+	// 	// return this.getDbProcesses().updateOne(
+	// 	// 	{
+	// 	// 		_id: ObjectId(this.schemeProcessId)
+	// 	// 	},
+	// 	// 	update
+	// 	// );
+	// }
 
 	protected defineMeta(scheme: PipeInput, parentPath: string, nextIndex: number) {
 		const path = parentPath + '.children.' + nextIndex;

@@ -19,6 +19,7 @@ export class ProcessesJob implements Job {
 	private messager: Messager;
 	private di: DI;
 	private pipePath: string;
+	private map = new Map<any, any[]>();
 
 	constructor(
 		options: any,
@@ -54,8 +55,18 @@ export class ProcessesJob implements Job {
 					if (!list.length) {
 						return async(list);
 					}
-					const subjs = list.map(i => this.genOne(i));
-					return combineLatest(...subjs);
+					list.forEach(i => {
+						const parent = i.parent ? i.parent.toString() : null;
+						const f = this.map.get(parent) || [];
+						f.push(i);
+						this.map.set(parent, f);
+					});
+					const r = list
+						.filter(i => !i.parent)
+						.map(i => this.getTree(i));
+					return async(r);
+					// const subjs = list.map(i => this.genOne(i));
+					// return combineLatest(...subjs);
 				})
 			);
 	}
@@ -64,8 +75,17 @@ export class ProcessesJob implements Job {
 		return this;
 	}
 
+	private getTree(item: any) {
+		item.children = this.map.get(item._id.toString()) || [];
+		if (!item.children.length) {
+			return item;
+		}
+		item.children.forEach(i => this.getTree(i));
+		return item;
+	}
+
 	private getList(queries: any) {
-		return new MongoDb('scheme-processes', true)
+		return new MongoDb('scheme-processes-pipe', true)
 			.find(this.processQueries(queries));
 	}
 

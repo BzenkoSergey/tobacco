@@ -4,6 +4,7 @@ import { Process } from './pipe-process.interface';
 import { DIService } from './di';
 
 export interface PipeInput {
+	_id?: any;
 	id: string,
 	options: any,
 	input: any;
@@ -17,4 +18,5 @@ export interface PipeInput {
 	children: PipeInput[],
 	services: DIService[],
 	path: string;
+	parent?: any;
 }

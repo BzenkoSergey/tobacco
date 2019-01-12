@@ -13,6 +13,7 @@ import { tap, mergeMap, catchError, map } from 'rxjs/operators';
 import { PipesLine } from './pipes/pipes-line';
 import { SnapshotCreator } from './core/snapshot.creator';
 import { SnapshotPipesCreator } from './core/snapshot-pipes.creator';
+import { SnapshotPipesCreator2 } from './core/snapshot-pipes.creator2';
 import { Pipe } from './core/pipe';
 import { DI } from './core/di';
 
@@ -420,13 +421,13 @@ app.get('/get/scheme/:schemeId', function (req, res) {
 
 app.post('/scheme/:schemeId/options', function (req, res) {
 	const schemeId = req.params.schemeId;
-	const creator = new SnapshotPipesCreator(schemeId);
+	const creator = new SnapshotPipesCreator2(schemeId);
 
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
 				const pipe = new Pipe(null, true)
-					.setSchemeProcessId(snapshot._id)
+					.setSchemeProcessId(snapshot.id)
 					.setDI(new DI());
 
 				return pipe.init(snapshot)
@@ -455,7 +456,7 @@ app.post('/scheme/:schemeId/options', function (req, res) {
 app.post('/scheme/code/:code/options', function (req, res) {
 	const schemeCode = req.params.code;
 
-	const creator = new SnapshotPipesCreator(null, schemeCode);
+	const creator = new SnapshotPipesCreator2(null, schemeCode);
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
@@ -463,7 +464,7 @@ app.post('/scheme/code/:code/options', function (req, res) {
 				// console.log(snapshot.id);
 
 				const pipe = new Pipe(null, true)
-					.setSchemeProcessId(snapshot._id)
+					.setSchemeProcessId(snapshot.id)
 					.setDI(new DI());
 
 				return pipe.init(snapshot)
@@ -495,12 +496,12 @@ app.get('/scheme/code/:code/options', function (req, res) {
 	const schemeCode = req.params.code;
 	const options = req.query;
 
-	const creator = new SnapshotPipesCreator(null, schemeCode);
+	const creator = new SnapshotPipesCreator2(null, schemeCode);
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
 				const pipe = new Pipe(null, true)
-					.setSchemeProcessId(snapshot._id)
+					.setSchemeProcessId(snapshot.id)
 					.setDI(new DI());
 
 				return pipe.init(snapshot)
@@ -543,13 +544,13 @@ app.get('/scheme/code/:code/options', function (req, res) {
 
 app.post('/scheme/:schemeId/options', function (req, res) {
 	const schemeId = req.params.schemeId;
-	const creator = new SnapshotPipesCreator(schemeId);
+	const creator = new SnapshotPipesCreator2(schemeId);
 
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
 				const pipe = new Pipe(null, false)
-					.setSchemeProcessId(snapshot._id)
+					.setSchemeProcessId(snapshot.id)
 					.setDI(new DI());
 
 				return pipe.init(snapshot)
@@ -577,12 +578,12 @@ app.post('/scheme/:schemeId/options', function (req, res) {
 
 app.get('/scheme/:schemeId', function (req, res) {
 	const schemeId = req.params.schemeId;
-	const creator = new SnapshotPipesCreator(schemeId);
+	const creator = new SnapshotPipesCreator2(schemeId);
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
 				const pipe = new Pipe(null, false)
-					.setSchemeProcessId(snapshot._id)
+					.setSchemeProcessId(snapshot.id)
 					.setDI(new DI());
 
 				return pipe.init(snapshot)

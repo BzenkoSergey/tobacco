@@ -26,7 +26,8 @@ export class SchemeProcessesRestService {
 			.runSchemeOptions<any, any>(
 				'PROCESSES',
 				{
-					_id: '$' + id
+					processId: id
+					// _id: '$' + id
 				}
 			)
 			.pipe(

@@ -196,7 +196,8 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	private fetchProcesses() {
 		this.schemeProcessesRestService
 			.list({
-				entityId: this.item._id
+				schemeId: this.item._id,
+				parent: null
 			})
 			.subscribe(d => {
 				this.processes = d.reverse();
