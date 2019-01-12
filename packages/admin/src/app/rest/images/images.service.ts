@@ -41,4 +41,12 @@ export class ImagesRestService {
 				d
 			);
 	}
+
+	uploadOrigin(d: any) {
+		return this.restService
+			.runSchemeOptions<any, any>(
+				'IMG_UPLOAD_ORIGIN',
+				d
+			);
+	}
 }

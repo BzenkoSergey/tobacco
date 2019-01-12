@@ -30,6 +30,7 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 
 	private companies: CompanyDto[] = [];
 	private lines: UnitLineDto[] = [];
+	private original: string;
 
 	showEditor = true;
 	item = new UnitDto();
@@ -114,18 +115,25 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 	}
 
 	imageEditer(file: File) {
+		const original = {
+			unitIds: [this.itemId],
+			files: [this.original]
+		};
 		const d2 = {
 			unitIds: [this.itemId],
 			files: [this.imageEditor.croppedImage]
 		};
-		this.imagesRestService.upload(d2)
-			.subscribe(d => {
-				this.item.logo = d.paths[0];
-				this.imagesRestService.resize(d.paths)
-					.subscribe(() => {
-						this.imagesRestService.sync(d.paths)
+		this.imagesRestService.uploadOrigin(original)
+			.subscribe(() => {
+				this.imagesRestService.upload(d2)
+					.subscribe(d => {
+						this.item.logo = d.paths[0];
+						this.imagesRestService.resize(d.paths)
 							.subscribe(() => {
-								this.save();
+								this.imagesRestService.sync(d.paths)
+									.subscribe(() => {
+										this.save();
+									});
 							});
 					});
 			});
@@ -136,6 +144,9 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 		setTimeout(() => {
 			this.showEditor = true;
 		}, 100);
+		this.getDataUri(this.getImageUrl(), (dataUrl) => {
+			this.original = dataUrl;
+		});
 	}
 
 	makeR(str: string) {
@@ -149,7 +160,9 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 		if (url.includes('http')) {
 			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_EXTERNAL_DOWNLOAD/options?loadImage=true&path=' + url;
 		} else {
-			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_DOWMLOAD/options?path=' + this.item.logo + '&isFile=true';
+			// http://localhost:3330/scheme/code/IMG_DOWNLOAD_ORIGIN/options?path=darkside_soft_cookie.jpg&isFile=true
+			// url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_DOWMLOAD/options?path=' + this.item.logo + '&isFile=true';
+			url = 'http://' + window.location.hostname + ':3330/scheme/code/IMG_DOWNLOAD_ORIGIN/options?path=' + this.item.logo + '&isFile=true';
 		}
 		return url;
 	}
@@ -174,5 +187,19 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 	private fetchLines() {
 		this.linesService.list()
 			.subscribe(d => this.lines = d);
+	}
+
+	private getDataUri(url, callback) {
+		const xhr = new XMLHttpRequest();
+		xhr.onload = function() {
+			const reader = new FileReader();
+			reader.onloadend = function() {
+				callback(reader.result);
+			};
+			reader.readAsDataURL(xhr.response);
+		};
+		xhr.open('GET', url);
+		xhr.responseType = 'blob';
+		xhr.send();
 	}
 }

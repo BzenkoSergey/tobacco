@@ -51,6 +51,8 @@ import { ImageResizeJob } from './jobs/images/resize.job';
 import { ImageSyncJob } from './jobs/images/sync.job';
 import { ImageUploadJob } from './jobs/images/upload.job';
 import { ImageGetJob } from './jobs/images/get.job';
+import { ImageDownloadOriginJob } from './jobs/images/download-origin.job';
+import { ImageUploadOriginJob } from './jobs/images/upload-origin.job';
 
 import { DbConfigsJob } from './jobs/wl/db-configs.job';
 import { GetAllJob } from './jobs/wl/get-all.job';
@@ -109,6 +111,8 @@ export enum JobRegister {
 	IMG_SYNC = 'IMG_SYNC',
 	IMG_UPLOAD = 'IMG_UPLOAD',
 	IMG_GET = 'IMG_GET',
+	IMG_DOWNLOAD_ORIGIN = 'IMG_DOWNLOAD_ORIGIN',
+	IMG_UPLOAD_ORIGIN = 'IMG_UPLOAD_ORIGIN',
 
 	WL_GET_ALL = 'WL_GET_ALL',
 	WL_DB_CONFIGS = 'WL_DB_CONFIGS',
@@ -126,6 +130,8 @@ export namespace JobRegister {
 	map.set(JobRegister.IMG_SYNC, ImageSyncJob);
 	map.set(JobRegister.IMG_UPLOAD, ImageUploadJob);
 	map.set(JobRegister.IMG_GET, ImageGetJob);
+	map.set(JobRegister.IMG_DOWNLOAD_ORIGIN, ImageDownloadOriginJob);
+	map.set(JobRegister.IMG_UPLOAD_ORIGIN, ImageUploadOriginJob);
 
 	map.set(JobRegister.NONE, NoneJob);
 	map.set(JobRegister.NONE, NoneJob);
