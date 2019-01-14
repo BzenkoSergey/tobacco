@@ -54,6 +54,10 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
+						if (this.needRetry(err)) {
+							this.update(filter, update, options, subj)
+							return;
+						}
 						subj.error(err);
 						return;
 					}
@@ -83,6 +87,10 @@ export class MongoDb {
 						// }, this.queryReTryDelay);
 
 						db[1]();
+						if (this.needRetry(err)) {
+							this.updateOne(filter, update, subj)
+							return;
+						}
 						subj.error(err);
 						return;
 					}
@@ -109,6 +117,10 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
+						if (this.needRetry(err)) {
+							this.remove(selector, subj)
+							return;
+						}
 						subj.error(err);
 						// setTimeout(() => {
 						// 	this.remove(selector, subj);
@@ -132,6 +144,10 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
+						if (this.needRetry(err)) {
+							this.count(query, subj)
+							return;
+						}
 						subj.error(err);
 						// setTimeout(() => {
 						// 	this.count(query, subj);
@@ -156,6 +172,10 @@ export class MongoDb {
 					(err, result) => {
 						if (err) {
 							db[1]();
+							if (this.needRetry(err)) {
+								this.findOne(query, subj)
+								return;
+							}
 							subj.error(err);
 							// setTimeout(() => {
 							// 	this.find(query, subj);
@@ -188,6 +208,10 @@ export class MongoDb {
 			find.toArray((err, result) => {
 				if (err) {
 					db[1]();
+					if (this.needRetry(err)) {
+						this.find(query, subj, limit, skip, sort)
+						return;
+					}
 					subj.error(err);
 					// setTimeout(() => {
 					// 	this.find(query, subj, limit, skip);
@@ -219,6 +243,10 @@ export class MongoDb {
 			find.toArray((err, result) => {
 				if (err) {
 					db[1]();
+					if (this.needRetry(err)) {
+						this.findSort(query, subj, limit, skip);
+						return;
+					}
 					subj.error(err);
 					// setTimeout(() => {
 					// 	this.find(query, subj, limit, skip);
@@ -241,6 +269,10 @@ export class MongoDb {
 				.toArray((err, result) => {
 					if (err) {
 						db[1]();
+						if (this.needRetry(err)) {
+							this.aggregate(query, subj);
+							return;
+						}
 						subj.error(err);
 						return;
 
@@ -264,6 +296,10 @@ export class MongoDb {
 				.bulkWrite(list, {}, (err, result) => {
 					if (err) {
 						db[1]();
+						if (this.needRetry(err)) {
+							this.bulkWrite(list, subj);
+							return;
+						}
 						subj.error(err);
 						return;
 					}
@@ -292,6 +328,10 @@ export class MongoDb {
 						// console.log(result);
 						if (err) {
 							db[1]();
+							if (this.needRetry(err)) {
+								this.insertOne(docs, subj);
+								return;
+							}
 							subj.error(err);
 							// setTimeout(() => {
 							// 	this.insertOne(docs, subj);
@@ -318,6 +358,10 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
+						if (this.needRetry(err)) {
+							this.insertMany(docs, subj);
+							return;
+						}
 						subj.error(err);
 						// setTimeout(() => {
 						// 	this.insertMany(docs, subj);
@@ -343,6 +387,10 @@ export class MongoDb {
 				(err, result) => {
 					if (err) {
 						db[1]();
+						if (this.needRetry(err)) {
+							this.replaceOne(filter, doc, options, subj);
+							return;
+						}
 						subj.error(err);
 
 						// setTimeout(() => {
@@ -374,6 +422,11 @@ export class MongoDb {
 			});
 		});
 		return subj;
+	}
+
+	private needRetry(err: any) {
+		console.warn(err);
+		return !!~err.message.indexOf('failed to connect to server ');
 	}
 
 	private getDb(subj? :Subject<[Db, () => void]>) {

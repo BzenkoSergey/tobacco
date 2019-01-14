@@ -60,8 +60,8 @@ export class Manipulator {
 					}
 
 					console.log('Manipulator: reapeat', child.getPath());
-					parent.cloneChild(child.getPath(), input, isDirectChild);
-					return async(true);
+					return parent.cloneChild(child.getPath(), input, isDirectChild);
+					// return async(true);
 				})
 			);
 	}

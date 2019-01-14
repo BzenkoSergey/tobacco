@@ -26,7 +26,7 @@ export class SchemeProcessService {
 			this.interval = setTimeout(() => {
 				this.interval = null;
 				this.run();
-			}, 1000);
+			}, 3000);
 		}
 		return async(true);
 	}

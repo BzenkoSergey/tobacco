@@ -196,7 +196,7 @@ export abstract class PipeBase {
 			return async();
 		}
 		const scheme = this.getScheme();
-		// console.error('RUN SYNC', scheme.path);
+		console.log(scheme.path);
 		return this.createProcessPipe(scheme)
 			.pipe(
 				// mergeMap(processPipeId => {

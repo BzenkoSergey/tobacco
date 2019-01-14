@@ -164,10 +164,10 @@ export class AggregateJob implements Job {
 
 				let readableName = this.makeReadable(unit.name);
 				if (line) {
-					readableName = this.makeReadable(line.name) + '_' + name;
+					readableName = this.makeReadable(line.name) + '_' + readableName;
 				}
 				if (company) {
-					readableName = this.makeReadable(company.name) + '_' + name;
+					readableName = this.makeReadable(company.name) + '_' + readableName;
 				}
 				const agg = {
 					logo: unit.logo,

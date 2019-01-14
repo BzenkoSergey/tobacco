@@ -160,6 +160,9 @@ export class FlowTreeService {
 		// Update the nodes...
 		const node = this.svg.selectAll('g.node')
 			.data(nodes, (d) => {
+				if (!d.data.process) {
+					return '';
+				}
 				return d.data.path + '-' + d.data.process.status + '-' + d.data.label + '-' + d.data.jobName;
 			});
 
@@ -171,6 +174,9 @@ export class FlowTreeService {
 		// Add Circle for the nodes
 		nodeEnter.append('circle')
 			.attr('status', function(d) {
+				if (!d.data.process) {
+					return '';
+				}
 				return d.data.process.status;
 			})
 			.attr('state', (d) => {

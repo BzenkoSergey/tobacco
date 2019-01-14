@@ -46,7 +46,6 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 		private pipeRestService: PipeRestService,
 		private schemeProcessesRestService: SchemeProcessesRestService,
 		private schemeProcessesDataRestService: SchemeProcessesDataRestService,
-		private schemeProcessesOptionsRestService: SchemeProcessesOptionsRestService,
 		private schemesRestService: SchemesRestService,
 		private route: ActivatedRoute
 	) {
@@ -143,17 +142,6 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 			);
 	}
 
-	private defineOptions() {
-		if (!this.pipe || !this.pipe.options) {
-			this.options = '';
-			return;
-		}
-		this.schemeProcessesOptionsRestService.get(this.pipe.options)
-			.subscribe(d => {
-				this.options = JSON.stringify(d.content);
-			});
-	}
-
 	private defineProcessData() {
 		if (!this.pipe) {
 			return;
@@ -171,13 +159,11 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 	private definePipe() {
 		if (!this.item) {
 			this.defineProcessData();
-			this.defineOptions();
 			return;
 		}
 		if (!this.path) {
 			this.pipe = this.item;
 			this.defineProcessData();
-			this.defineOptions();
 			return;
 		}
 		let obj = this.item;
@@ -188,6 +174,5 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 			});
 		this.pipe = obj;
 		this.defineProcessData();
-		this.defineOptions();
 	}
 }

@@ -15,10 +15,10 @@ export class DbManager {
 
 	queue: any[] = [];
 	connections: any[] = [];
-	limit = 1;
+	limit = 20;
 
 	constructor(
-		private url = 'mongodb://localhost:27017',
+		private url = 'mongodb://127.0.0.1:27017',
 		private dbName = 'tobacco'
 	) {
 	}
@@ -27,8 +27,10 @@ export class DbManager {
 		const subj = new Subject<[Db, () => void]>();
 		const fn = () => {
 			++this.waitCount;
-			const i = this.queue.indexOf(fn);
-			this.queue.splice(i, 1);
+			this.queue = this.queue.filter(q => q !== fn);
+			
+			//const i = this.queue.indexOf(fn);
+			//this.queue.splice(i, 1);
 			this.getDb(subj);
 		};
 		this.add(fn);
@@ -60,11 +62,15 @@ export class DbManager {
 	private getDb(subj? :Subject<[Db, () => void]>) {
 		subj = subj || new Subject<[Db, () => void]>();
 
+		const a = setInterval(() => {
+			console.log('WAIT CONNECTION');
+			console.log(this.waitCount);
+		}, 5000);
 		MongoClient.connect(
 			this.url, 
 			{
 
-				// connectTimeoutMS: 5000,
+				//connectTimeoutMS: 50000,
 				// socketTimeoutMS: 30000,
 				// poolSize: 20000,
 				useNewUrlParser: true
@@ -73,7 +79,13 @@ export class DbManager {
 				// reconnectTries: Number.MAX_VALUE
 			}, 
 			(err, client) => {
+				clearInterval(a);
 				if (err) {
+					setTimeout(() => {
+						this.getDb(subj);
+						console.error('SOME MONGO ERROR', err);
+					}, (Math.random() * 700) + 3000);
+					return;
 					if (err.errorLabels && err.errorLabels.indexOf('TransientTransactionError') >= 0) {
 						console.error('TransientTransactionError, retrying transaction ...');
 						setTimeout(() => {
@@ -86,7 +98,11 @@ export class DbManager {
 				}
 				// console.log('Success MOngod Db Connection');
 				const dbs = client.db(this.dbName);
+				const b = setInterval(() => {
+					console.error('AM NOIT CLOSED');
+				}, 5000);
 				subj.next([dbs, () => {
+					clearInterval(b);
 					client.close();
 					--this.waitCount;
 					this.runNext();
