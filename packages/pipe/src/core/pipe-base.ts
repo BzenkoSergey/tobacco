@@ -60,11 +60,11 @@ export abstract class PipeBase {
 	// }
 
 	getDbProcessesPipe() {
-		return new MongoDb('scheme-processes-pipe', true);
+		return new MongoDb('scheme-processes-pipe', false);
 	}
 
 	getDbProcessesData() {
-		return new MongoDb('scheme-processes-data', true);
+		return new MongoDb('scheme-processes-data', false);
 	}
 
 	// getDbProcessesOptions() {

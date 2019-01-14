@@ -59,7 +59,6 @@ export class RepeatManyJob implements Job {
 		const pipe = this.navigator.getPipe(this.pipePath);
 		const pipeToRepeat = this.navigator.getChildOf(group, pipe);
 
-		a = a + 1;
 		const subj = new Subject();
 		this.next(group, pipeToRepeat, input, subj);
 		// from(input.slice(0, 3))
