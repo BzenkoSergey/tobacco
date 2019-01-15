@@ -176,6 +176,7 @@ export class AggregateJob implements Job {
 					search: search,
 					name: unit.translate ? unit.translate + ' / ' + unit.name : unit.name,
 					readableName: readableName,
+					seo: unit.seo,
 
 					items: items.map(i => {
 						return {

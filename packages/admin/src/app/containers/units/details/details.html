@@ -34,6 +34,18 @@
 					Mapping Keys
 				</a>
 			</li>
+			<li
+				*ngIf="itemId !== 'new'"
+				class="nav-item">
+
+				<a
+					class="nav-link"
+					routerLinkActive="active"
+					queryParamsHandling="merge"
+					[routerLink]="['seo']">
+					Seo
+				</a>
+			</li>
 		</ul>
 	</div>
 

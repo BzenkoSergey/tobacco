@@ -1,4 +1,6 @@
-import { MappingKeyDto } from '../shared';
+import { MappingKeyDto } from './../shared';
+
+import { UnitSeoDto } from './seo.dto';
 
 export class UnitDto {
 	_id: string;
@@ -11,6 +13,7 @@ export class UnitDto {
 	productAttributes: string[] = [];
 	categories: string[] = [];
 	visible = false;
+	seo = new UnitSeoDto();
 
 	constructor(d?: UnitDto) {
 		if (!d) {
@@ -25,6 +28,7 @@ export class UnitDto {
 		this.productAttributes = d.productAttributes;
 		this.categories = d.categories;
 		this.visible = d.visible;
+		this.seo = new UnitSeoDto(d.seo);
 
 		if (d.mappingKeys) {
 			this.mappingKeys = d.mappingKeys.map(m => new MappingKeyDto(m));

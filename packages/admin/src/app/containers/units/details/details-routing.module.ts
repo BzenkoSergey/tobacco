@@ -32,6 +32,13 @@ const routes: Routes = [
 				data: {
 					breadcrumb: 'Images'
 				}
+			},
+			{
+				path: 'seo',
+				loadChildren: './units-details-seo.module#UnitsDetailsSeoModule',
+				data: {
+					breadcrumb: 'SEO'
+				}
 			}
 		]
 	}

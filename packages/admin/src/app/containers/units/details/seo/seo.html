@@ -1,0 +1,67 @@
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="form-group">
+		<label for="name">
+			Title
+		</label>
+		<input
+			type="text"
+			class="form-control form-control-sm"
+			id="title"
+			name="title"
+			placeholder="Enter Title"
+			[(ngModel)]="item.seo.title">
+	</div>
+
+	<div class="form-group">
+		<label for="description">
+			Description
+		</label>
+		<input
+			type="text"
+			class="form-control form-control-sm"
+			id="description"
+			name="description"
+			placeholder="Enter Description"
+			[(ngModel)]="item.seo.description">
+	</div>
+
+	<div class="form-group">
+		<label for="keywords">
+			Keywords
+		</label>
+		<input
+			type="text"
+			class="form-control form-control-sm"
+			id="keywords"
+			name="keywords"
+			placeholder="Enter Keywords"
+			[(ngModel)]="item.seo.keywords">
+	</div>
+
+	<div class="form-group">
+		<button
+			class="btn btn-primary mr-1"
+			type="submit"
+			[disabled]="form.invalid">
+			<i
+				class="fas"
+				[class.fa-save]="!loading"
+				[class.fa-spinner]="loading"
+				[class.fa-spin]="loading">
+			</i>
+		</button>
+
+		<button
+			class="btn btn-info mr-1"
+			type="button"
+			[disabled]="!item._id"
+			(click)="aggregate()">
+			<i class="fas fa-database"></i>
+		</button>
+	</div>
+</form>
+
+
