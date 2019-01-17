@@ -7,7 +7,7 @@ export class DbService {
 		if (this.map.has(collection)) {
 			return this.map.get(collection);
 		}
-		const db = new MongoDb(collection, false);
+		const db = new MongoDb(collection, true);
 		this.map.set(collection, db);
 		return db;
 	}
