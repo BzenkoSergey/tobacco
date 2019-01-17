@@ -16,7 +16,6 @@ import { Process } from './pipe-process.interface';
 import { ProcessPipeInput } from './process-pipe-input.interface';
 import { SchemeProcessService } from './scheme-process.service';
 
-
 export abstract class PipeBase {
 	protected runPaths: string[] = [];
 	protected runOptions: any;
@@ -40,7 +39,6 @@ export abstract class PipeBase {
 	protected input: any;
 	protected children: PipeBase[] = [];
 	protected isolated = false;
-	protected delayInput: any;
 	protected parent: ObjectId;
 
 	constructor(d?: PipeInput, isolated = false) {
@@ -75,15 +73,6 @@ export abstract class PipeBase {
 		this.process.status = PipeStatus.PENDING;
 		this.children.forEach(c => c.resetStatus());
 		return this;
-	}
-
-	setDelayInput(delayInput: any) {
-		this.delayInput = delayInput;
-		return this;
-	}
-
-	getDelayInput() {
-		return this.delayInput;
 	}
 
 	getChildren() {

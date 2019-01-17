@@ -48,7 +48,7 @@ export class LinkerJob implements Job {
 	run(links: any) {
 		this.store = this.di.get<Store>(this.pipePath, DIService.STORE);
 		const added = [];
-		const allLinks = this.store.get('LINKS') || [];
+		const allLinks = this.store.get('LINKS') || new Map<string, boolean>();
 		const urlInfo = URL.parse(links.url);
 
 		console.log(links.data);
@@ -87,11 +87,16 @@ export class LinkerJob implements Job {
 				return !!l;
 			})
 			.forEach(l => {
-				if (allLinks.includes(l)) {
+				if (allLinks.has(l)) {
 					return;
 				}
-				allLinks.push(l);
+				allLinks.set(l, true);
 				added.push(l);
+				// if (allLinks.includes(l)) {
+				// 	return;
+				// }
+				// allLinks.push(l);
+				// added.push(l);
 			});
 
 		this.store.set('LINKS', allLinks);

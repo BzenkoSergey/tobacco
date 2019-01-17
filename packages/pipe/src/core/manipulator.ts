@@ -22,10 +22,6 @@ export class Manipulator {
 									if (options) {
 										return async(options);
 									}
-									const delayInput = c.getDelayInput();
-									if (delayInput) {
-										return async(delayInput);
-									}
 									return c.getProcessInput();
 								})
 								return combineLatest(...obs);
@@ -81,10 +77,6 @@ export class Manipulator {
 									const options = c.getInput();
 									if (options) {
 										return async<[any, any]>([options, c]);
-									}
-									const delayInput = c.getDelayInput();
-									if (delayInput) {
-										return async<[any, any]>([delayInput, c]);
 									}
 									return c.getProcessInput()
 										.pipe(

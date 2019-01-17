@@ -182,13 +182,13 @@ export class Pipe extends PipeBase {
 	cloneChild(childPath: string, input: any, run = true) {
 		const child = this.children.find(c => c.path === childPath);
 		const scheme = child.getScheme();
+		scheme.input = input;
 
 		this.defineMeta(scheme, this.path, this.children.length);
 
 		const inst = this.createEntities([scheme])[0];
 		inst.setSchemeProcessId(this.schemeProcessId);
 		inst.setDI(this.di);
-		inst.setDelayInput(input);
 		this.children.push(inst);
 
 		const subj = new Subject<any>();
