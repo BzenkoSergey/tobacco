@@ -56,7 +56,7 @@ export class RepeatChildJob implements Job {
 		const group = this.navigator.getPipe(this.pipePath);
 		const pipeToRepeat = group.getChildren()[0];
 
-		pipeToRepeat.setDelayInput({});
+		// pipeToRepeat.setDelayInput({});
 
 		const obs = input.map(r => {
 			return this.manipulator.repeatOrPerform(group, pipeToRepeat, r || input, false, this.options.field || 'data');
