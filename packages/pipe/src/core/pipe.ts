@@ -137,18 +137,16 @@ export class Pipe extends PipeBase {
 				delay(this.delay),
 				catchError(e => this.handleError(e)),
 				mergeMap(() => {
-					if (this.delayInput) {
-						const delayInput = this.delayInput;
-						this.setDelayInput(undefined);
-						return async(delayInput);
-					}
 					if (input) {
 						return async(input);
+					}
+					if (this.input) {
+						return async(this.input);
 					}
 					if (this.process.input) {
 						return this.getProcessInput();
 					}
-					return async(this.input);
+					return async(null);
 				}),
 				mergeMap(input => {
 					return this.getOptions()

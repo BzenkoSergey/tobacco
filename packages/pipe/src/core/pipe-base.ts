@@ -15,6 +15,7 @@ import { PipeInput } from './pipe-input.interface';
 import { Process } from './pipe-process.interface';
 import { ProcessPipeInput } from './process-pipe-input.interface';
 import { SchemeProcessService } from './scheme-process.service';
+import { DbService } from './db.service';
 
 export abstract class PipeBase {
 	protected runPaths: string[] = [];
@@ -58,11 +59,13 @@ export abstract class PipeBase {
 	// }
 
 	getDbProcessesPipe() {
-		return new MongoDb('scheme-processes-pipe', false);
+		return this.di.get<DbService>(this.path, DIService.DB).get('scheme-processes-pipe');
+		// return new MongoDb('scheme-processes-pipe', false);
 	}
 
 	getDbProcessesData() {
-		return new MongoDb('scheme-processes-data', false);
+		return this.di.get<DbService>(this.path, DIService.DB).get('scheme-processes-data');
+		// return new MongoDb('scheme-processes-data', false);
 	}
 
 	// getDbProcessesOptions() {

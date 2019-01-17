@@ -4,6 +4,7 @@ import { Manipulator } from './manipulator';
 import { Store } from './store';
 import { ExtService } from './ext.service';
 import { SchemeProcessService } from './scheme-process.service';
+import { DbService } from './db.service';
 
 export enum DIService {
 	HTTP_STACK = 'HTTP_STACK',
@@ -11,14 +12,15 @@ export enum DIService {
 	MANIPULATOR = 'MANIPULATOR',
 	STORE = 'STORE',
 	EXT = 'EXT',
-	SCHEME_PROCESS = 'SCHEME_PROCESS'
+	SCHEME_PROCESS = 'SCHEME_PROCESS',
+	DB = 'DB'
 }
 
 export class DI {
 	private services = new Map<DIService, any>();
 	private register = new Map<string, DIService[]>();
 	private created = new Map<string, any[]>();
-	private rootAllowed = [DIService.NAVIGATOR, DIService.MANIPULATOR, DIService.SCHEME_PROCESS];
+	private rootAllowed = [DIService.NAVIGATOR, DIService.MANIPULATOR, DIService.SCHEME_PROCESS, DIService.DB];
 
 	constructor() {
 		this.services.set(DIService.HTTP_STACK, HttpStack);
@@ -28,6 +30,7 @@ export class DI {
 		this.services.set(DIService.EXT, ExtService);
 		this.services.set(DIService.EXT, ExtService);
 		this.services.set(DIService.SCHEME_PROCESS, SchemeProcessService);
+		this.services.set(DIService.DB, DbService);
 	}
 
 	registrate(path: string, service: DIService) {
