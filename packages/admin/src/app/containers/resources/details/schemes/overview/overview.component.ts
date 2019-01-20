@@ -113,7 +113,8 @@ export class OverviewComponent implements OnDestroy {
 		return this.item.structures.map(s => {
 			const st = JSON.parse(JSON.stringify(itemScheme));
 			st.services = ['EXT'];
-			st.options = s.structure;
+			const fetchDom = this.getByCode(st, 'DOM_PARSE');
+			fetchDom.options = s.structure;
 			st.label = this.item.name + ' ' + s.name;
 			st.code = s.code;
 			return st;

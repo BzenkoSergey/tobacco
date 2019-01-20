@@ -6,6 +6,7 @@ import { replace } from './replace';
 import { replaceRegexp } from './replace-regexp';
 import { prefix } from './prefix';
 import { postfix } from './postfix';
+import { match } from './match';
 
 export class TransformsService {
 	perform(value: string, transform: GrabberTransform, options: any) {
@@ -32,6 +33,9 @@ export class TransformsService {
 		}
 		if(transform === GrabberTransform.POSTFIX) {
 			return postfix(value, options);
+		}
+		if(transform === GrabberTransform.MATCH) {
+			return match(value || '', options.split('|'));
 		}
 
 		return value;

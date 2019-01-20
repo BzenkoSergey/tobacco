@@ -42,7 +42,7 @@ export class StructuresComponent implements OnDestroy {
 	}
 
 	create() {
-		const modalRef = this.modalService.open(UpsertComponent);
+		const modalRef = this.modalService.open(UpsertComponent, { size: 'lg' });
 		modalRef.componentInstance.submitted.subscribe(l => {
 			this.item.structures.unshift(this.handleStructure(l));
 			this.save()
@@ -56,7 +56,7 @@ export class StructuresComponent implements OnDestroy {
 	}
 
 	performEdit(structure: ResourceStructureDto) {
-		const modalRef = this.modalService.open(UpsertComponent);
+		const modalRef = this.modalService.open(UpsertComponent, { size: 'lg' });
 		const index = this.item.structures.indexOf(structure);
 		modalRef.componentInstance.item = structure;
 		modalRef.componentInstance.submitted.subscribe(l => {

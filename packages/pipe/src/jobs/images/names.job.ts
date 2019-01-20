@@ -4,6 +4,7 @@ import { map, mergeMap } from 'rxjs/operators';
 
 import { MongoExtDb } from './../../core/db-ext';
 import { Job } from './../job.interface';
+import { async } from './../../async';
 
 type Input = {
 	unitIds: string[];
@@ -63,7 +64,6 @@ export class ImageNamesJob implements Job {
 					return this.getlines(linesIds)
 						.pipe(
 							map(lines => {
-								console.log(3);
 								return [units, companies, lines];
 							})
 						);
@@ -111,6 +111,9 @@ export class ImageNamesJob implements Job {
 	}
 
 	private getlines(linesIds: string[]) {
+		if (linesIds && linesIds.length) {
+			return async<any>([]);
+		}
 		return new MongoExtDb('product-lines', true)
 			.find({
 				_id: {

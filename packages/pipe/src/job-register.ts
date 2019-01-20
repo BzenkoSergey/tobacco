@@ -58,6 +58,7 @@ import { DbConfigsJob } from './jobs/wl/db-configs.job';
 import { GetAllJob } from './jobs/wl/get-all.job';
 import { MoveJob } from './jobs/wl/move.job';
 import { MoveOneJob } from './jobs/wl/move-one.job';
+import { NeedCheckJob } from './jobs/product/need-check.job';
 
 export enum JobRegister {
 	NONE = 'NONE',
@@ -117,7 +118,9 @@ export enum JobRegister {
 	WL_GET_ALL = 'WL_GET_ALL',
 	WL_DB_CONFIGS = 'WL_DB_CONFIGS',
 	WL_MOVE = 'WL_MOVE',
-	WL_MOVE_ONE = 'WL_MOVE_ONE'
+	WL_MOVE_ONE = 'WL_MOVE_ONE',
+
+	PRODUCT_NEED_CHECK = 'PRODUCT_NEED_CHECK'
 }
 
 export namespace JobRegister {
@@ -157,6 +160,7 @@ export namespace JobRegister {
 	map.set(JobRegister.PRODUCT_ITEMS_DELAY, ItemsDelayJob);
 	map.set(JobRegister.PRODUCT_CHECK_AUTO_AGGREGATION, CheckAutoAggregationJob);
 	map.set(JobRegister.PRODUCT_NOTIFICATION, NotificationJob);
+	map.set(JobRegister.PRODUCT_NEED_CHECK, NeedCheckJob);
 
 	map.set(JobRegister.UTILS_FILTER, UtilsFilterJob);
 	map.set(JobRegister.UTILS_FILTER_PROPS, UtilsFilterPropsJob);

@@ -309,6 +309,12 @@ export class UnitsItemsComponent implements OnDestroy {
 					s.$sort['item.' + this.sortBy] = this.sortDirection === 'down' ? 1 : -1;
 				}
 				r.push(s);
+			} else {
+				// r.push({
+				// 	$sort: {
+				// 		'item.version': -1
+				// 	}
+				// });
 			}
 
 			if (typeof this.hasUpdates === 'number') {
@@ -339,7 +345,7 @@ export class UnitsItemsComponent implements OnDestroy {
 			this.processedItemsRestService.aggregate(r2)
 		)
 		.subscribe(d => {
-			this.total = d[0][0].total;
+			this.total = d[0][0]? d[0][0].total : 0;
 			this.processedItems = d[1];
 			const unitsIds = d[1]
 				.filter(i => i.item.productId)

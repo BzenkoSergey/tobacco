@@ -6,6 +6,7 @@ import { PipeInjector } from './../../pipes/pipe-injector.interface';
 import { Messager } from './../../pipes/messager.interface';
 import { Job } from './../job.interface';
 import { DI } from './../../core/di';
+import * as URL from 'URL';
 
 export class DomScrapJob implements Job {
 	private options: any;
@@ -101,14 +102,40 @@ export class DomScrapJob implements Job {
 			return obj;
 		}
 		const $el = this.find(dom, config.$.selector);
+
 		if (config.$.type === 'ATTR') {
 			if ($el.length > 1) {
 				return $el.toArray()
-					.map(f => cheerio(f).attr(config.$.resource));
+					.map(f => this.checkValue(cheerio(f).attr(config.$.resource), config.$.selector, url));
 			}
-			return this.runTransforms($el.attr(config.$.resource), config.$.transforms);
+			return this.runTransforms(this.checkValue($el.attr(config.$.resource), config.$.selector, url), config.$.transforms);
 		}
-		return this.runTransforms($el.text(), config.$.transforms);
+		const text = config.$.contentType !== 'HTML' ? $el.text() : $el.html();
+		return this.runTransforms(this.checkValue(text, config.$.selector, url), config.$.transforms);
+	}
+
+	private checkValue(value: string, selector: string, url: string) {
+		if (!value || !(value.trim())) {
+			return value;
+		}
+		const adds = selector.split('&&');
+		if (adds.length === 1) {
+			return value;
+		}
+		const vars = adds[1].split(',');
+		console.log(vars, '0000000');
+		vars.forEach(v => {
+			if (!!~v.indexOf('$lastUriPath')) {
+				const info = URL.parse(url);
+				const h = info.path.lastIndexOf('/');
+				const uri = info.path.substr(h).trim();
+				//if (uri && uri !=='/' && uri !== '/index.php') {
+					const f = v.replace('$lastUriPath', uri);
+					value = value + f;
+				//}
+			}
+		});
+		return value;
 	}
 
 	private runTransforms(value: any, transforms: any) {
@@ -125,6 +152,8 @@ export class DomScrapJob implements Job {
 	}
 
 	private find($root: any, selector: string) {
+		const adds = selector.split('&&');
+		selector = adds[0];
 		const config = selector.split('|');
 		const selectorInfo = config[0].split(':::');
 		selector = selectorInfo[0];

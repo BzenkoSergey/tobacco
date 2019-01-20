@@ -46,7 +46,7 @@ export class MongoDb {
 
 	update(filter: Object, update: Object, options: ReplaceOneOptions & { multi?: boolean }, subj?: Subject<WriteOpResult>): Subject<WriteOpResult> {
 		subj = subj || new Subject<WriteOpResult>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'update', filter).subscribe(db => {
 			db[0].collection(this.collection).update(
 				filter,
 				update,
@@ -72,7 +72,7 @@ export class MongoDb {
 
 	updateOne(filter: Object, update: Object, subj?: Subject<UpdateWriteOpResult>): Subject<UpdateWriteOpResult> {
 		subj = subj || new Subject<UpdateWriteOpResult>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'updateOne', filter).subscribe(db => {
 			db[0].collection(this.collection).updateOne(
 				filter,
 				update,
@@ -111,7 +111,7 @@ export class MongoDb {
 
 	remove(selector: Object, subj?: Subject<WriteOpResult>): Subject<WriteOpResult> {
 		subj = subj || new Subject<WriteOpResult>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'remove').subscribe(db => {
 			db[0].collection(this.collection).deleteMany(
 				selector,
 				(err, result) => {
@@ -138,7 +138,7 @@ export class MongoDb {
 
 	count(query: Object, subj?: Subject<number>): Subject<number> {
 		subj = subj || new Subject<number>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'count').subscribe(db => {
 			db[0].collection(this.collection).count(
 				query,
 				(err, result) => {
@@ -165,7 +165,7 @@ export class MongoDb {
 
 	findOne(query: any, subj?: Subject<any>): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'findOne', query).subscribe(db => {
 			let find = db[0].collection(this.collection)
 				.findOne(
 					query,
@@ -193,7 +193,7 @@ export class MongoDb {
 
 	find(query: Object, subj?: Subject<any>, limit?: number, skip?: number, sort?: any): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'find', query).subscribe(db => {
 			let find = db[0].collection(this.collection).find(query);
 			if (sort) {
 				find = find.sort(sort);
@@ -228,7 +228,7 @@ export class MongoDb {
 
 	findSort(query: Object, subj?: Subject<any>, limit?: number, skip?: number): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'findSort').subscribe(db => {
 			let find = db[0].collection(this.collection)
 				.find(query)
 				.project({ score: { $meta: "textScore" } })
@@ -263,9 +263,9 @@ export class MongoDb {
 
 	aggregate(query: Object[], subj?: Subject<any>): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'aggregate').subscribe(db => {
 			db[0].collection(this.collection)
-				.aggregate(query)
+				.aggregate(query, { allowDiskUse: true })
 				.toArray((err, result) => {
 					if (err) {
 						db[1]();
@@ -291,7 +291,7 @@ export class MongoDb {
 
 	bulkWrite(list: Object[], subj?: Subject<any>): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'bulkWrite').subscribe(db => {
 			db[0].collection(this.collection)
 				.bulkWrite(list, {}, (err, result) => {
 					if (err) {
@@ -314,7 +314,7 @@ export class MongoDb {
 	insertOne(docs: Object, subj?: Subject<InsertOneWriteOpResult>): Subject<InsertOneWriteOpResult> {
 		subj = subj || new Subject<InsertOneWriteOpResult>();
 		try {
-			this.getDb().subscribe(db => {
+			this.getDb(null, 'insertOne', docs).subscribe(db => {
 				db[0].collection(this.collection).insertOne(
 					docs,
 					{
@@ -352,7 +352,7 @@ export class MongoDb {
 
 	insertMany(docs: Object[], subj?: Subject<InsertWriteOpResult>): Subject<InsertWriteOpResult> {
 		subj = subj || new Subject<InsertWriteOpResult>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'insertMany').subscribe(db => {
 			db[0].collection(this.collection).insertMany(
 				docs,
 				(err, result) => {
@@ -379,7 +379,7 @@ export class MongoDb {
 	
 	replaceOne(filter: Object, doc: Object, options: ReplaceOneOptions, subj?: Subject<UpdateWriteOpResult>): Subject<UpdateWriteOpResult> {
 		subj = subj || new Subject<UpdateWriteOpResult>();
-		this.getDb().subscribe(db => {
+		this.getDb(null, 'replaceOne').subscribe(db => {
 			db[0].collection(this.collection).replaceOne(
 				filter,
 				doc,
@@ -429,8 +429,8 @@ export class MongoDb {
 		return !!~err.message.indexOf('failed to connect to server ');
 	}
 
-	private getDb(subj? :Subject<[Db, () => void]>) {
-		return this.manager.get();
+	private getDb(subj? :Subject<[Db, () => void]>, code?: string, args?: any) {
+		return this.manager.get(code, args);
 		subj = subj || new Subject<[Db, () => void]>();
 
 		MongoClient.connect(

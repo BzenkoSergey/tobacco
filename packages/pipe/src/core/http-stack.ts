@@ -43,6 +43,12 @@ export class HttpStack {
 		this.runNext();
 	}
 
+	private isEncoded(uri: string) {
+		uri = uri || '';
+	  
+		return uri !== decodeURI(uri);
+	}
+
 	private make(urlResource: string, data: any, end: any, error: any, httpType: string, withAgent: boolean): Function {
 		return () => {
 			this.stack.splice(0, 1);
@@ -62,16 +68,22 @@ export class HttpStack {
 			try {
 				const urlInfo = url.parse(urlResource);
 				let method: any = (urlInfo.protocol === 'https:')? https : http;
+				const encoded = this.isEncoded(urlInfo.path);
+				let uri = urlInfo.path;
 
-				console.log(urlInfo.protocol);
-				console.log(urlInfo.protocol === 'https:');
+				if (encoded) {
+					uri = decodeURI(uri);
+				}
+				uri = encodeURI(uri);
+
 				console.log(urlInfo.hostname);
-				console.log(encodeURI(urlInfo.path));
+				console.log(encoded);
+				console.log(uri);
 				console.log(urlInfo.protocol);
 
 				method.get({
 					hostname: urlInfo.hostname,
-					path: encodeURI(urlInfo.path),
+					path: uri,
 					protocol: urlInfo.protocol,
 					agent: agent,
 				}, (res: any) => {

@@ -22,10 +22,10 @@ class QueryInfo {
 
 import { DbManager } from './db-manager';
 // const bbManager = new DbManager('mongodb://192.168.0.175:27017');
-const bbManager = new DbManager('mongodb://localhost:27017');
+const bbManager = new DbManager('mongodb://127.0.0.1:27017');
 
 export class MongoExtDb {
-	private url = 'mongodb://localhost:27017';
+	private url = 'mongodb://127.0.0.1:27017';
 	// private url = 'mongodb://192.168.0.175:27017';
 	private connections: ConnectionInfo[] = [];
 	private queries: QueryInfo[] = [];
@@ -40,15 +40,11 @@ export class MongoExtDb {
 		this.isolated = isolated;
 		if (isolated) {
 			// this.manager = new DbManager('mongodb://192.168.0.175:27017');
-			this.manager = new DbManager('mongodb://localhost:27017');
+			this.manager = new DbManager('mongodb://127.0.0.1:27017');
 		}
 	}
 
 	update(filter: Object, update: Object, options: ReplaceOneOptions & { multi?: boolean }, subj?: Subject<WriteOpResult>): Subject<WriteOpResult> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [filter, update, options];
-		queryInfo.req = 'update';
-		this.queries.push(queryInfo);
 
 		subj = subj || new Subject<WriteOpResult>();
 		this.getDb().subscribe(db => {
@@ -57,18 +53,24 @@ export class MongoExtDb {
 				update,
 				options,
 				(err, result) => {
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						this.error(queryInfo);
-						setTimeout(() => {
+			
+						db[1]();
+						if (this.needRetry(err)) {
 							this.update(filter, update, options, subj);
-						}, this.queryReTryDelay);
+							return;
+						}
+						subj.error(err);
+						//queryInfo.error = err;
+						//this.error(queryInfo);
+						//setTimeout(() => {
+						//	this.update(filter, update, options, subj);
+						//}, this.queryReTryDelay);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -76,10 +78,7 @@ export class MongoExtDb {
 	}
 
 	updateOne(filter: Object, update: Object, subj?: Subject<UpdateWriteOpResult>): Subject<UpdateWriteOpResult> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [filter, update];
-		queryInfo.req = 'updateOne';
-		this.queries.push(queryInfo);
+
 
 		subj = subj || new Subject<UpdateWriteOpResult>();
 		this.getDb().subscribe(db => {
@@ -91,20 +90,21 @@ export class MongoExtDb {
 				// 	writeConcern: { w: "majority", wtimeout: 5000 }
 				// },
 				(err, result) => {
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						debugger;
-						this.error(queryInfo);
+						db[1]();
+						if (this.needRetry(err)) {
+							this.updateOne(filter, update, subj);
+							return;
+						}
 						// setTimeout(() => {
 						// 	this.updateOne(filter, update, subj);
 						// }, this.queryReTryDelay);
 						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -112,28 +112,23 @@ export class MongoExtDb {
 	}
 
 	remove(selector: Object, subj?: Subject<WriteOpResult>): Subject<WriteOpResult> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [selector];
-		queryInfo.req = 'remove';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<WriteOpResult>();
 		this.getDb().subscribe(db => {
 			db[0].collection(this.collection).remove(
 				selector,
 				(err, result) => {
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						this.error(queryInfo);
-						setTimeout(() => {
+						db[1]();
+						if (this.needRetry(err)) {
 							this.remove(selector, subj);
-						}, this.queryReTryDelay);
+							return;
+						}
+						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -141,28 +136,23 @@ export class MongoExtDb {
 	}
 
 	count(query: Object, subj?: Subject<number>): Subject<number> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [query];
-		queryInfo.req = 'count';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<number>();
 		this.getDb().subscribe(db => {
 			db[0].collection(this.collection).count(
 				query,
 				(err, result) => {
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						this.error(queryInfo);
-						setTimeout(() => {
+						db[1]();
+						if (this.needRetry(err)) {
 							this.count(query, subj);
-						}, this.queryReTryDelay);
+							return;
+						}
+						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -170,29 +160,24 @@ export class MongoExtDb {
 	}
 
 	findOne(query: any, subj?: Subject<any>): Subject<any> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [query];
-		queryInfo.req = 'find';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<any>();
 		this.getDb().subscribe(db => {
 			let find = db[0].collection(this.collection)
 				.findOne(
 					query,
 					(err, result) => {
-						queryInfo.result = result;
 						if (err) {
-							queryInfo.error = err;
-							this.error(queryInfo);
-							setTimeout(() => {
-								this.find(query, subj);
-							}, this.queryReTryDelay);
+							db[1]();
+							if (this.needRetry(err)) {
+								this.findOne(query, subj);
+								return;
+							}
+							subj.error(err);
 							return;
 						}
+						db[1]();
 						subj.next(result);
 						subj.complete();
-						db[1]();
 					}
 				);
 		});
@@ -200,11 +185,6 @@ export class MongoExtDb {
 	}
 
 	find(query: Object, subj?: Subject<any>, limit?: number, skip?: number, sort?: any): Subject<any> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [query];
-		queryInfo.req = 'find';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<any>();
 		this.getDb().subscribe(db => {
 			let find = db[0].collection(this.collection).find(query);
@@ -219,29 +199,24 @@ export class MongoExtDb {
 			}
 			
 			find.toArray((err, result) => {
-				queryInfo.result = result;
 				if (err) {
-					queryInfo.error = err;
-					this.error(queryInfo);
-					setTimeout(() => {
-						this.find(query, subj, limit, skip);
-					}, this.queryReTryDelay);
+					db[1]();
+					if (this.needRetry(err)) {
+						this.find(query, subj, limit, skip, sort);
+						return;
+					}
+					subj.error(err);
 					return;
 				}
+				db[1]();
 				subj.next(result);
 				subj.complete();
-				db[1]();
 			});
 		});
 		return subj;
 	}
 
 	findSort(query: Object, subj?: Subject<any>, limit?: number, skip?: number): Subject<any> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [query];
-		queryInfo.req = 'find';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<any>();
 		this.getDb().subscribe(db => {
 			let find = db[0].collection(this.collection)
@@ -256,57 +231,47 @@ export class MongoExtDb {
 			}
 			
 			find.toArray((err, result) => {
-				queryInfo.result = result;
 				if (err) {
-					queryInfo.error = err;
-					this.error(queryInfo);
-					setTimeout(() => {
-						this.find(query, subj, limit, skip);
-					}, this.queryReTryDelay);
+					db[1]();
+					if (this.needRetry(err)) {
+						this.findSort(query, subj, limit, skip);
+						return;
+					}
+					subj.error(err);
 					return;
 				}
+				db[1]();
 				subj.next(result);
 				subj.complete();
-				db[1]();
 			});
 		});
 		return subj;
 	}
 
 	aggregate(query: Object[], subj?: Subject<any>): Subject<any> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [query];
-		queryInfo.req = 'aggregate';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<any>();
 		this.getDb().subscribe(db => {
 			db[0].collection(this.collection)
 				.aggregate(query)
 				.toArray((err, result) => {
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						this.error(queryInfo);
-						setTimeout(() => {
+						db[1]();
+						if (this.needRetry(err)) {
 							this.aggregate(query, subj);
-						}, this.queryReTryDelay);
+							return;
+						}
+						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				});
 		});
 		return subj;
 	}
 
 	insertOne(docs: Object, subj?: Subject<InsertOneWriteOpResult>): Subject<InsertOneWriteOpResult> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [docs];
-		queryInfo.req = 'insertOne';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<InsertOneWriteOpResult>();
 		this.getDb().subscribe(db => {
 			db[0].collection(this.collection).insertOne(
@@ -315,18 +280,18 @@ export class MongoExtDb {
 					// console.log(err);
 					// console.log('======');
 					// console.log(result);
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						this.error(queryInfo);
-						setTimeout(() => {
+						db[1]();
+						if (this.needRetry(err)) {
 							this.insertOne(docs, subj);
-						}, this.queryReTryDelay);
+							return;
+						}
+						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -334,28 +299,23 @@ export class MongoExtDb {
 	}
 
 	insertMany(docs: Object[], subj?: Subject<InsertWriteOpResult>): Subject<InsertWriteOpResult> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [docs];
-		queryInfo.req = 'insertMany';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<InsertWriteOpResult>();
 		this.getDb().subscribe(db => {
 			db[0].collection(this.collection).insertMany(
 				docs,
 				(err, result) => {
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						this.error(queryInfo);
-						setTimeout(() => {
+						db[1]();
+						if (this.needRetry(err)) {
 							this.insertMany(docs, subj);
-						}, this.queryReTryDelay);
+							return;
+						}
+						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -363,11 +323,6 @@ export class MongoExtDb {
 	}
 	
 	replaceOne(filter: Object, doc: Object, options: ReplaceOneOptions, subj?: Subject<UpdateWriteOpResult>): Subject<UpdateWriteOpResult> {
-		const queryInfo = new QueryInfo();
-		queryInfo.data = [filter, doc, options];
-		queryInfo.req = 'replaceOne';
-		this.queries.push(queryInfo);
-
 		subj = subj || new Subject<UpdateWriteOpResult>();
 		this.getDb().subscribe(db => {
 			db[0].collection(this.collection).replaceOne(
@@ -375,18 +330,18 @@ export class MongoExtDb {
 				doc,
 				options,
 				(err, result) => {
-					queryInfo.result = result;
 					if (err) {
-						queryInfo.error = err;
-						this.error(queryInfo);
-						setTimeout(() => {
+						db[1]();
+						if (this.needRetry(err)) {
 							this.replaceOne(filter, doc, options, subj);
-						}, this.queryReTryDelay);
+							return;
+						}
+						subj.error(err);
 						return;
 					}
+					db[1]();
 					subj.next(result);
 					subj.complete();
-					db[1]();
 				}
 			);
 		});
@@ -408,6 +363,11 @@ export class MongoExtDb {
 			});
 		});
 		return subj;
+	}
+
+	private needRetry(err: any) {
+		console.warn(err);
+		return !!~err.message.indexOf('failed to connect to server ');
 	}
 
 	private error(info: QueryInfo|ConnectionInfo) {
