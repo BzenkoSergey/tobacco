@@ -101,6 +101,10 @@ export abstract class PipeBase {
 		return this.input;
 	}
 
+	setInput(input: any) {
+		this.input = input;
+	}
+
 	getOptions() {
 		if (!this.options) {
 			return async();
@@ -191,10 +195,6 @@ export abstract class PipeBase {
 		console.log(scheme.path);
 		return this.createProcessPipe(scheme)
 			.pipe(
-				// mergeMap(processPipeId => {
-				// 	this.processPipeId = processPipeId;
-				// 	return this.updateChildScheme(processPipeId, scheme.path)
-				// }),
 				mergeMap(processPipeId => {
 					this.processPipeId = processPipeId.toString();
 					if (!this.children.length) {
@@ -330,7 +330,7 @@ export abstract class PipeBase {
 		}
 	}
 
-	protected saveProcessOutput(output: any) {
+	protected saveProcessOutput(output: any): Observable<any> {
 		if (!this.process.output) {
 			return this.getDbProcessesData()
 				.insertOne({
@@ -382,29 +382,67 @@ export abstract class PipeBase {
 		);
 	}
 
+	private updateObj = {};
+	private times: any;
+	private updating = false;
+	private runNext2 = false;
+	private performUpdate() {
+		if (this.updating) {
+			this.runNext2 = true;
+			return async();
+		}
+		if(this.times) {
+			clearTimeout(this.times);
+		}
+		if (!Object.keys(this.updateObj).length) {
+			return async();
+		}
+		this.times = setTimeout(() => {
+			this.updating = true;
+			this.getDbProcessesPipe()
+				.updateOne(
+					{
+						_id: ObjectId(this.processPipeId)
+					},
+					{
+						$set: this.updateObj
+					}
+				)
+				.subscribe(
+					() => {
+						this.updating = false;
+						this.updateObj = {};
+						if (this.runNext2) {
+							this.runNext2 = false;
+							this.performUpdate();
+						}
+					}
+				);
+		}, 3000);
+
+		return async();
+	}
+
 	protected update(fields: (keyof Process)[]) {
-		const update = {
-			$set: {}
-		};
-
-		const toUpdate = {};
 		const pathProcess = 'process';
-		const set: any = {};
 		fields.forEach(p => {
-			set[pathProcess + '.' + p] = this.process[p];
+			this.updateObj[pathProcess + '.' + p] = this.process[p];
 		});
-		// toUpdate.input = toUpdate.input;
-		// toUpdate.output = toUpdate.output;
+		return this.performUpdate();
 
-		update.$set['process'] = toUpdate;
-		return this.getDbProcessesPipe().updateOne(
-			{
-				_id: ObjectId(this.processPipeId)
-			},
-			{
-				$set: set
-			}
-		);
+		// const pathProcess = 'process';
+		// const set: any = {};
+		// fields.forEach(p => {
+		// 	set[pathProcess + '.' + p] = this.process[p];
+		// });
+		// return this.getDbProcessesPipe().updateOne(
+		// 	{
+		// 		_id: ObjectId(this.processPipeId)
+		// 	},
+		// 	{
+		// 		$set: set
+		// 	}
+		// );
 	}
 
 	// protected update(fields: (keyof Process)[]) {

@@ -60,7 +60,23 @@ export class RepeatManyJob implements Job {
 		const pipeToRepeat = this.navigator.getChildOf(group, pipe);
 
 		const subj = new Subject();
-		this.next(group, pipeToRepeat, input, subj);
+		async(pipeToRepeat.getInput())
+			.pipe(
+				mergeMap(d => {
+					if (d) {
+						return async(d);
+					} else {
+						return pipeToRepeat.getProcessInput();
+					}
+				})
+			)
+			.subscribe(
+				(d) => {
+					pipeToRepeat.setInput(d);
+					this.next(group, pipeToRepeat, input, subj);
+				}
+			);
+
 		// from(input.slice(0, 3))
 		// 	.pipe(
 		// 		mergeMap(r => {

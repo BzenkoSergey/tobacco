@@ -16,7 +16,7 @@ export class Pipe extends PipeBase {
 	
 	private waitCount = 0;
 	private queue: any[] = [];
-	private limit = 1;
+	private limit = 20;
 	private delay = 0; /// for visualization
 	private optionsData: any;
 
@@ -144,6 +144,7 @@ export class Pipe extends PipeBase {
 						return async(this.input);
 					}
 					if (this.process.input) {
+						debugger;
 						return this.getProcessInput();
 					}
 					return async(null);
@@ -233,7 +234,7 @@ export class Pipe extends PipeBase {
 	}
 
 	private perform(input: any) {
-		return this.saveProcessInput(input)
+		return (this.saveProcessInput(input) as Observable<any>)
 			.pipe(
 				mergeMap(() => {
 					if (!this.canRun()) {
@@ -250,18 +251,6 @@ export class Pipe extends PipeBase {
 							.setPipePath(this.path);
 						
 						return this.jobInstance.run(input);
-
-						// return this.getOptions()
-						// 	.pipe(
-						// 		mergeMap(options => {
-						// 			this.jobInstance = new this.job(options || {})
-						// 				.setDI(this.di)
-						// 				.setSchemeId(this.schemeId)
-						// 				.setPipePath(this.path);
-			
-						// 			return this.jobInstance.run(input);
-						// 		})
-						// 	);
 					}
 				}),
 				mergeMap(d => {
@@ -274,7 +263,7 @@ export class Pipe extends PipeBase {
 								map((r) => r)
 							);
 					}
-					return this.saveProcessOutput(d)
+					return (this.saveProcessOutput(d) as Observable<any>)
 						.pipe(
 							mergeMap(() => {
 								return this.performChildren(d)
