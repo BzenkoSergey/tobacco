@@ -43,7 +43,7 @@ export class DomScrapJob implements Job {
 		console.log('////////==========');
 		let res;
 		try {
-			const d = cheerio.load(dom.dom).root().find('html');
+			const d = cheerio.load(dom.dom || dom.html).root().find('html');
 			// console.log('START');
 			res = this.parse(d, this.options, dom.url);
 			// console.log('END');

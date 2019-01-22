@@ -59,8 +59,11 @@ import { GetAllJob } from './jobs/wl/get-all.job';
 import { MoveJob } from './jobs/wl/move.job';
 import { MoveOneJob } from './jobs/wl/move-one.job';
 import { NeedCheckJob } from './jobs/product/need-check.job';
+import { PhantomJob } from './jobs/scrap/phantom.job';
+
 
 export enum JobRegister {
+	PHANTOM = 'PHANTOM',
 	NONE = 'NONE',
 	HTTP = 'HTTP',
 	T = 'T',
@@ -125,6 +128,8 @@ export enum JobRegister {
 
 export namespace JobRegister {
 	const map = new Map<JobRegister, JobConstructor>();
+
+	map.set(JobRegister.PHANTOM, PhantomJob);
 	map.set(JobRegister.IMG_DOWMLOAD, ImageDownloadJob);
 	map.set(JobRegister.IMG_EXTERNAL_DOWNLOAD, ImageExternlDownloadJob);
 	map.set(JobRegister.IMG_FILTER, ImageFilterJob);
