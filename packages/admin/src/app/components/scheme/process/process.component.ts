@@ -78,6 +78,13 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 		}
 	}
 
+	toJSONString(d: any) {
+		if (typeof d !== 'string') {
+			return JSON.stringify(d);
+		}
+		return d;
+	}
+
 	select(pipe: any) {
 		this.router.navigate([], {
 			queryParams: {

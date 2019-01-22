@@ -137,11 +137,11 @@ export class Pipe extends PipeBase {
 				delay(this.delay),
 				catchError(e => this.handleError(e)),
 				mergeMap(() => {
-					if (input) {
-						return async(input);
-					}
 					if (this.input) {
 						return async(this.input);
+					}
+					if (input) {
+						return async(input);
 					}
 					if (this.process.input) {
 						debugger;

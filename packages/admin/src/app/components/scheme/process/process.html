@@ -71,7 +71,7 @@
 						<label>Input</label>
 						<div
 							ace-editor
-							[(text)]="pipe.input"
+							[text]="toJSONString(pipe.input)"
 							[mode]="'json'"
 							[theme]="'eclipse'"
 							[readOnly]="false"
