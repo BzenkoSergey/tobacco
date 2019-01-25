@@ -64,10 +64,10 @@ export class LinkerJob implements Job {
 				if (l.startsWith('tel:')) {
 					return false;
 				}
+				if (!info.path) {
+					return false;
+				}
 				if (!info.hostname) {
-					if (!info.path) {
-						debugger;
-					}
 					const path = info.path.startsWith('/') ? info.path : '/' + info.path;
 					return urlInfo.protocol.replace(':', '') + '://' + urlInfo.hostname + path;
 				}
