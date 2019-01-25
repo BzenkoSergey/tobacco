@@ -173,13 +173,45 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 			this.defineProcessData();
 			return;
 		}
-		let obj = this.item;
-		this.path
-			.split('.')
-			.forEach(s => {
-				obj = obj[s];
-			});
-		this.pipe = obj;
+
+		// let obj = this.item;
+		// this.path
+		// 	.split('.')
+		// 	.forEach(s => {
+		// 		if (!obj[s]) {
+		// 			debugger;
+		// 			console.log(this.item);
+		// 		}
+		// 		obj = obj[s];
+		// 	});
+		// 	this.pipe = obj;
+		this.pipe = this.lookup(this.item, this.path);
+		console.log(this.pipe.jobName, this.pipe.path === this.path);
 		this.defineProcessData();
 	}
+
+	private lookup(item: any, path: string) {
+		if (item.path === path) {
+			return item;
+		}
+		const r = path.startsWith(item.path);
+		if (r) {
+			const children = item.children || [];
+			if (children.length) {
+				return children.map(c => this.lookup(c, path))
+					.find(i => !!i);
+			}
+			return null;
+		}
+		return null;
+	}
 }
+
+// children.0.
+// children.0.
+// children.0.
+// children.0.
+// children.0.
+// children.0.
+// children.0.
+// children.1.children.0.children.0

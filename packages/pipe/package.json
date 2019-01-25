@@ -4,17 +4,21 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.16.4",
     "expressjs": "1.0.1",
+    "form-data": "^2.3.3",
     "moment": "^2.23.0",
     "node-schedule": "^1.3.1",
     "nodemon": "^1.18.4",
-    "rxjs": "^6.3.3"
+    "phantom": "^6.0.3",
+    "rxjs": "^6.3.3",
+    "save": "^2.3.3"
   },
   "devDependencies": {
     "@types/node": "10.10.1",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
-    "cors": "^2.8.4",
+    "cors": "^2.8.5",
     "express-cluster": "0.0.5",
     "html-minifier": "^3.5.21",
     "method-override": "^3.0.0",
@@ -25,6 +29,7 @@
   },
   "scripts": {
     "start": "nodemon",
+    "s": "node --max_old_space_size=6096 --max-old-space-size=6096 --inspect -r ts-node/register src/api.ts",
     "build": "tsc"
   }
 }

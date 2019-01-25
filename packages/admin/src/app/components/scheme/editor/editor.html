@@ -67,6 +67,20 @@
 						[(ngModel)]="pipe.code">
 				</div>
 				<div class="form-group">
+					<label>Config</label>
+
+					<div
+						ace-editor
+						[(text)]="pipe.config"
+						[mode]="'json'"
+						[theme]="'eclipse'"
+						[readOnly]="false"
+						[autoUpdateContent]="true"
+						[durationBeforeCallback]="1000"
+						style="min-height: 80px; width:100%; overflow: auto;">
+					</div>
+				</div>
+				<div class="form-group">
 					<label>Options</label>
 
 					<div

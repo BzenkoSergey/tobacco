@@ -28,6 +28,8 @@ import { LinkerJob } from './jobs/scrap/linker.job';
 import { IngoreLinksJob } from './jobs/scrap/ignore-links.job';
 import { VersionJob } from './jobs/version.job';
 import { DelayJob } from './jobs/delay.job';
+import { SitemapJob } from './jobs/wl/sitemap.job';
+import { RemoveSitemapJob } from './jobs/wl/remove-sitemap';
 
 import { ProcessesJob } from './jobs/processes/processes.job';
 
@@ -72,6 +74,7 @@ export enum JobRegister {
 	REPEAT = 'REPEAT',
 	VERSION = 'VERSION',
 	DELAY = 'DELAY',
+	SITEMAP = 'SITEMAP',
 
 	PRODUCT_COMPANY = 'PRODUCT_COMPANY',
 	PRODUCT_LINE = 'PRODUCT_LINE',
@@ -123,7 +126,8 @@ export enum JobRegister {
 	WL_MOVE = 'WL_MOVE',
 	WL_MOVE_ONE = 'WL_MOVE_ONE',
 
-	PRODUCT_NEED_CHECK = 'PRODUCT_NEED_CHECK'
+	PRODUCT_NEED_CHECK = 'PRODUCT_NEED_CHECK',
+	REMOVE_SITEMAP = 'REMOVE_SITEMAP'
 }
 
 export namespace JobRegister {
@@ -140,6 +144,9 @@ export namespace JobRegister {
 	map.set(JobRegister.IMG_GET, ImageGetJob);
 	map.set(JobRegister.IMG_DOWNLOAD_ORIGIN, ImageDownloadOriginJob);
 	map.set(JobRegister.IMG_UPLOAD_ORIGIN, ImageUploadOriginJob);
+	map.set(JobRegister.SITEMAP, SitemapJob);
+	map.set(JobRegister.REMOVE_SITEMAP, RemoveSitemapJob);
+	
 
 	map.set(JobRegister.NONE, NoneJob);
 	map.set(JobRegister.NONE, NoneJob);

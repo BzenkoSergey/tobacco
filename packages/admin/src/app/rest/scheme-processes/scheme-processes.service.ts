@@ -14,6 +14,8 @@ export class SchemeProcessesRestService {
 	) {}
 
 	list(query?: any) {
+		query = query || {};
+		// query.modes = ['DB_NO_SYNC'];
 		return this.restService
 			.runSchemeOptions<any[], any>(
 				'PROCESSES',
@@ -26,7 +28,8 @@ export class SchemeProcessesRestService {
 			.runSchemeOptions<any, any>(
 				'PROCESSES',
 				{
-					processId: id
+					processId: id,
+					modes: ['DB_NO_SYNC']
 					// _id: '$' + id
 				}
 			)

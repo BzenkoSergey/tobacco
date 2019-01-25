@@ -118,7 +118,7 @@ export class SnapshotPipesCreator {
 
 	private createSchemeInput(scheme: Scheme, pipe?: Scheme, processId?: string): Observable<ProcessPipeInput> {
 		const input: PipeInput = {
-			id: scheme.id,
+			// id: scheme.id,
 			processId: processId,
 			schemeId: this.schemeId,
 			entityId: scheme._id.toString(),

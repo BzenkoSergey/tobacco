@@ -15,7 +15,8 @@ export class NotificationRestService {
 				'GET_LIST',
 				{
 					collection: 'notification',
-					query: query || {}
+					query: query || {},
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -31,7 +32,8 @@ export class NotificationRestService {
 				'GET',
 				{
 					collection: 'notification',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -59,7 +61,8 @@ export class NotificationRestService {
 				{
 					collection: 'notification',
 					id: id,
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -70,7 +73,8 @@ export class NotificationRestService {
 				'REMOVE',
 				{
 					collection: 'notification',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}

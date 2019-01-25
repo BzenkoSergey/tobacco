@@ -14,7 +14,8 @@ export class SchemeProcessesDataRestService {
 				'GET',
 				{
 					collection: 'scheme-processes-data',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}

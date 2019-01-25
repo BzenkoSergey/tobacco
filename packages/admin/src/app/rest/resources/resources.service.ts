@@ -15,7 +15,8 @@ export class ResourcesRestService {
 				'GET_LIST',
 				{
 					collection: 'resource',
-					query: {}
+					query: {},
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -31,7 +32,8 @@ export class ResourcesRestService {
 				'GET',
 				{
 					collection: 'resource',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(

@@ -4,23 +4,22 @@ import { tap, mergeMap, catchError, delay, map } from 'rxjs/operators';
 import { async } from './../async';
 import { PipeStatus } from './pipe-status.enum';
 import { PipeInput } from './pipe-input.interface';
-import { PipeBase } from './pipe-base';
-import { ProcessPipeInput } from './process-pipe-input.interface';
+import { PipeDb } from './pipe-db';
+import { Queue } from './queue';
 
-export class Pipe extends PipeBase {
+export class Pipe extends PipeDb {
 	private stream: Subject<any>;
 	private streams: Observable<any>[] = [];
 	private subscribtion = new Subscription();
 	private childrenOutputs: any[] = [];
 	protected children: Pipe[];
-	
-	private waitCount = 0;
-	private queue: any[] = [];
-	private limit = 20;
+
+	private queue: Queue;
+	private limit = 1;
 	private delay = 0; /// for visualization
 	private optionsData: any;
 
-	constructor(d?: PipeInput, isolated = false) {
+	constructor(d: PipeInput, isolated = false) {
 		super(d, isolated);
 	}
 
@@ -32,37 +31,39 @@ export class Pipe extends PipeBase {
 		}
 	}
 
-	init(processInput: ProcessPipeInput) {
-		this.processPipeId = processInput.id;
+	// init(processInput: PipeInput) {
+	// 	this.processPipeId = processInput._id;
 
-		return this.fetchProcessPipe()
-			.pipe(
-				tap(pipe => {
-					this.defineProperties(pipe, true);
-				}),
-				mergeMap(() => {
-					if (!processInput.children.length) {
-						return async();
-					}
-					this.children = processInput.children.map(c => {
-						return new Pipe(null, this.isolated)
-							.setDI(this.di);
-					});
-					const subjs = this.children.map((c, i) => {
-						return c.init(processInput.children[i]);
-					});
-					return combineLatest(...subjs);
-				})
-			);
-	}
+	// 	return async<PipeInput>(processInput)
+	// 		.pipe(
+	// 			tap(pipe => {
+	// 				this.defineProperties(pipe, true);
+	// 			}),
+	// 			mergeMap(() => {
+	// 				if (!processInput.children.length) {
+	// 					return async();
+	// 				}
+	// 				this.children = processInput.children.map(c => {
+	// 					return new Pipe(null, this.isolated)
+	// 						.setDI(this.di);
+	// 				});
+	// 				const subjs = this.children.map((c, i) => {
+	// 					return c.init(processInput.children[i]);
+	// 				});
+	// 				return combineLatest(...subjs);
+	// 			})
+	// 		);
+	// }
 
 	run(input: any) {
 		this.subscribtion.unsubscribe();
 		this.subscribtion = new Subscription();
 		this.stream = new Subject();
 		this.streams = [];
-		this.waitCount = 0;
-		this.queue = [];
+		if (this.queue) {
+			this.queue.destroy();
+			this.queue = new Queue(this.limit);
+		}
 		this.childrenOutputs = [];
 
 		if(!this.canRun()) {
@@ -144,7 +145,6 @@ export class Pipe extends PipeBase {
 						return async(input);
 					}
 					if (this.process.input) {
-						debugger;
 						return this.getProcessInput();
 					}
 					return async(null);
@@ -186,6 +186,9 @@ export class Pipe extends PipeBase {
 		this.defineMeta(scheme, this.path, this.children.length);
 
 		const inst = this.createEntities([scheme])[0];
+		// debugger;
+		console.error('clone child');
+		console.error(inst.path);
 		inst.setSchemeProcessId(this.schemeProcessId);
 		inst.setDI(this.di);
 		this.children.push(inst);
@@ -194,43 +197,24 @@ export class Pipe extends PipeBase {
 		inst.sync()
 			.subscribe(
 				d => {
-					// console.warn('CLONE NEXT', inst.path);
 					subj.next(d)
 				},
 				e => subj.error(e),
 				() => {
-					// console.warn('CLONE COMPLETE', inst.path);
 					subj.complete()
 				}
 			);
 
-		// const obs = this.createProcessPipe(scheme)
-		// 	.pipe(
-		// 		mergeMap(processPipeId => {
-		// 			inst.processPipeId = processPipeId;
-		// 			return this.updateChildScheme(processPipeId, scheme.path)
-		// 		}),
-		// 		mergeMap(() => {
-		// 			if (run) {
-		// 				return this.performChild(inst, input);
-		// 			} else {
-		// 				return async(null);
-		// 				// return inst.saveProcessInput(input);
-		// 			}
-		// 		})
-		// 	);
 		this.addToStream(subj.pipe(
 			mergeMap(() => {
 				if (run) {
 					return this.performChild(inst, input);
 				} else {
 					return async(null);
-					// return inst.saveProcessInput(input);
 				}
 			})
 		));
 		return subj;
-			
 	}
 
 	private perform(input: any) {
@@ -291,54 +275,24 @@ export class Pipe extends PipeBase {
 	}
 
 	private performChild(child: Pipe, input: any): Observable<any> {
-		const subj = new Subject<any>();
 		const fn = () => {
-			++this.waitCount;
-			this.queue = this.queue.filter(s => s !== fn);
-
-			child
+			return child
 				.setSchemeProcessId(this.schemeProcessId)
 				.setRunParts(this.runPaths)
 				.setDI(this.di)
-				.run(input)
-				.subscribe(
-					d => subj.next(d),
-					e => subj.error(e),
-					() => {
-						subj.complete();
-						--this.waitCount;
-						this.runNext();
-					}
-				);
+				.run(input);
 		};
-		this.queue.push(fn);
-		if(this.queue.length === 1) {
-			this.runNext(true);
+		if (!this.queue) {
+			this.queue = new Queue(this.limit);
 		}
-		return subj;
-	}
-
-	private runNext(i?: boolean) {
-		if(this.waitCount >= this.limit) {
-			// if (i) {
-			// 	debugger;
-			// }
-			return;
-		}
-		let next = this.queue[0];
-		if(!next) {
-			// if (i) {
-			// 	debugger;
-			// }
-			return;
-		}
-
-		next();
-		this.runNext();
+		return this.queue.run(fn);
 	}
 
 	private createEntities(entities: PipeInput[]) {
-		return entities.map(e => new Pipe(e, this.isolated));
+		return entities.map(e => {
+			return new Pipe(e, this.isolated)
+				.setParentPipe(this);
+		});
 	}
 
 	private addToStream(obs: Observable<any>) {

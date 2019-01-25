@@ -1,17 +1,17 @@
-import { PipeBase } from './pipe-base';
+import { PipeDb } from './pipe-db';
 import { PipeType } from './pipe-type.enum';
 
 export class Navigator {
-	private pipesPaths = new Map<PipeBase, string>();
-	private pathsPipes = new Map<string, PipeBase>();
-	private groups = new Map<string, PipeBase>();
-	private line: PipeBase
+	private pipesPaths = new Map<PipeDb, string>();
+	private pathsPipes = new Map<string, PipeDb>();
+	private groups = new Map<string, PipeDb>();
+	private line: PipeDb
 
 	constructor() {
 		// console.log('nnnnnnnnnnnnnnnnnnn');
 	}
 
-	add(path: string, pipe: PipeBase) {
+	add(path: string, pipe: PipeDb) {
 		this.pathsPipes.set(path, pipe);
 		this.pipesPaths.set(pipe, path);
 		if (pipe.getType() === PipeType.GROUP) {
@@ -22,9 +22,9 @@ export class Navigator {
 		}
 	}
 
-	getChildOf(parent: PipeBase, subChild: PipeBase) {
+	getChildOf(parent: PipeDb, subChild: PipeDb) {
 		const subChildPath = this.pipesPaths.get(subChild);
-		return parent.getChildren()
+		return (parent.getChildren() as PipeDb[])
 			.find(c => {
 				const path = this.pipesPaths.get(c);
 				return subChildPath.startsWith(path);

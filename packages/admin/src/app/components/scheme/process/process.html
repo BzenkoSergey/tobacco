@@ -55,6 +55,19 @@
 							[(ngModel)]="pipe.label">
 					</li>
 					<li class="list-group-item p-2">
+						<label>Config</label>
+						<div
+							ace-editor
+							[(text)]="pipe.config"
+							[mode]="'json'"
+							[theme]="'eclipse'"
+							[readOnly]="false"
+							[autoUpdateContent]="true"
+							[durationBeforeCallback]="1000"
+							style="min-height: 50px; width:100%; overflow: auto;">
+						</div>
+					</li>
+					<li class="list-group-item p-2">
 						<label>Options</label>
 						<div
 							ace-editor

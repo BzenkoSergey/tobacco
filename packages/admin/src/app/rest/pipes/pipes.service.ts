@@ -19,7 +19,8 @@ export class PipeRestService {
 				'GET_LIST',
 				{
 					collection: 'pipes',
-					query: {}
+					query: {},
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(

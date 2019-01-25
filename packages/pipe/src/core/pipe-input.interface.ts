@@ -5,7 +5,6 @@ import { DIService } from './di';
 
 export interface PipeInput {
 	_id?: any;
-	id: string,
 	options: any,
 	input: any;
 	entityId: string,
@@ -17,6 +16,9 @@ export interface PipeInput {
 	process: Process,
 	children: PipeInput[],
 	services: DIService[],
+	config?: {
+		modes: string[]
+	},
 	path: string;
 	parent?: any;
 }

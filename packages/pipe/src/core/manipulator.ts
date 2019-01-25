@@ -27,23 +27,16 @@ export class Manipulator {
 								return combineLatest(...obs);
 							}),
 							map(options => {
-								// debugger;
 								return options.some(o => {
-									// debugger;
 									if (Array.isArray(o)) {
-										// console.log('SSSSSSSSSSS1', o, input)
 										return false;
 									}
 									if (typeof o === 'object' && o !== null) {
-										// console.log('SSSSSSSSSSS2', o, input)
 										return Object.keys(o || {})
 											.every(prop => {
 												return o[prop] === input[prop];
 											});
 									}
-
-									// debugger;
-									// console.log('SSSSSSSSSSS3', options, input)
 									return o === input;
 								});
 							})
@@ -51,13 +44,12 @@ export class Manipulator {
 				}),
 				mergeMap(status => {
 					if (status) {
-						console.log('Manipulator: cant reapeat');
+						// console.log('Manipulator: cant reapeat');
 						return async(false);
 					}
 
-					console.log('Manipulator: reapeat', child.getPath());
+					// console.log('Manipulator: reapeat', child.getPath());
 					return parent.cloneChild(child.getPath(), input, isDirectChild);
-					// return async(true);
 				})
 			);
 	}
@@ -114,15 +106,13 @@ export class Manipulator {
 				}),
 				mergeMap(d => {
 					if (d) {
-						console.log('Manipulator: cant reapeat');
+						// console.log('Manipulator: cant reapeat');
 						d[1].setDelayInput(input);
-						console.log('RUN WITH', input, d[1]);
 						return async(true);
 					}
 			
-					console.log('Manipulator: reapeat', child.getPath());
+					// console.log('Manipulator: reapeat', child.getPath());
 					return parent.cloneChild(child.getPath(), input, isDirectChild);
-					// return async(true);
 				})
 			);
 	}

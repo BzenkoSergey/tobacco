@@ -1,24 +1,11 @@
 import { Subject } from 'rxjs';
 import { 
-	MongoClient, 
-	Db,
 	ReplaceOneOptions, 
 	WriteOpResult,
 	InsertOneWriteOpResult,
 	InsertWriteOpResult,
 	UpdateWriteOpResult
 } from 'mongodb';
-
-class ConnectionInfo {
-	error: any;
-}
-
-class QueryInfo {
-	req: string;
-	data: any;
-	result: any;
-	error: any;
-}
 
 import { DbManager } from './db-manager';
 const bbManager = new DbManager();
@@ -35,7 +22,6 @@ export class MongoDb {
 		url?: string,
 		dbName?: string
 	) {
-		this.isolated = isolated;
 		if (url) {
 			this.url = url;
 		}
@@ -46,7 +32,7 @@ export class MongoDb {
 
 	update(filter: Object, update: Object, options: ReplaceOneOptions & { multi?: boolean }, subj?: Subject<WriteOpResult>): Subject<WriteOpResult> {
 		subj = subj || new Subject<WriteOpResult>();
-		this.getDb(null, 'update', filter).subscribe(db => {
+		this.getDb('update', filter).subscribe(db => {
 			db[0].collection(this.collection).update(
 				filter,
 				update,
@@ -72,7 +58,7 @@ export class MongoDb {
 
 	updateOne(filter: Object, update: Object, subj?: Subject<UpdateWriteOpResult>): Subject<UpdateWriteOpResult> {
 		subj = subj || new Subject<UpdateWriteOpResult>();
-		this.getDb(null, 'updateOne', filter).subscribe(db => {
+		this.getDb('updateOne', filter).subscribe(db => {
 			db[0].collection(this.collection).updateOne(
 				filter,
 				update,
@@ -111,7 +97,7 @@ export class MongoDb {
 
 	remove(selector: Object, subj?: Subject<WriteOpResult>): Subject<WriteOpResult> {
 		subj = subj || new Subject<WriteOpResult>();
-		this.getDb(null, 'remove').subscribe(db => {
+		this.getDb('remove').subscribe(db => {
 			db[0].collection(this.collection).deleteMany(
 				selector,
 				(err, result) => {
@@ -138,7 +124,7 @@ export class MongoDb {
 
 	count(query: Object, subj?: Subject<number>): Subject<number> {
 		subj = subj || new Subject<number>();
-		this.getDb(null, 'count').subscribe(db => {
+		this.getDb('count').subscribe(db => {
 			db[0].collection(this.collection).count(
 				query,
 				(err, result) => {
@@ -165,7 +151,7 @@ export class MongoDb {
 
 	findOne(query: any, subj?: Subject<any>): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb(null, 'findOne', query).subscribe(db => {
+		this.getDb('findOne', query).subscribe(db => {
 			let find = db[0].collection(this.collection)
 				.findOne(
 					query,
@@ -193,7 +179,7 @@ export class MongoDb {
 
 	find(query: Object, subj?: Subject<any>, limit?: number, skip?: number, sort?: any): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb(null, 'find', query).subscribe(db => {
+		this.getDb('find', query).subscribe(db => {
 			let find = db[0].collection(this.collection).find(query);
 			if (sort) {
 				find = find.sort(sort);
@@ -228,7 +214,7 @@ export class MongoDb {
 
 	findSort(query: Object, subj?: Subject<any>, limit?: number, skip?: number): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb(null, 'findSort').subscribe(db => {
+		this.getDb('findSort').subscribe(db => {
 			let find = db[0].collection(this.collection)
 				.find(query)
 				.project({ score: { $meta: "textScore" } })
@@ -263,7 +249,7 @@ export class MongoDb {
 
 	aggregate(query: Object[], subj?: Subject<any>): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb(null, 'aggregate').subscribe(db => {
+		this.getDb('aggregate').subscribe(db => {
 			db[0].collection(this.collection)
 				.aggregate(query, { allowDiskUse: true })
 				.toArray((err, result) => {
@@ -291,7 +277,7 @@ export class MongoDb {
 
 	bulkWrite(list: Object[], subj?: Subject<any>): Subject<any> {
 		subj = subj || new Subject<any>();
-		this.getDb(null, 'bulkWrite').subscribe(db => {
+		this.getDb('bulkWrite').subscribe(db => {
 			db[0].collection(this.collection)
 				.bulkWrite(list, {}, (err, result) => {
 					if (err) {
@@ -314,7 +300,7 @@ export class MongoDb {
 	insertOne(docs: Object, subj?: Subject<InsertOneWriteOpResult>): Subject<InsertOneWriteOpResult> {
 		subj = subj || new Subject<InsertOneWriteOpResult>();
 		try {
-			this.getDb(null, 'insertOne', docs).subscribe(db => {
+			this.getDb('insertOne', docs).subscribe(db => {
 				db[0].collection(this.collection).insertOne(
 					docs,
 					{
@@ -352,7 +338,7 @@ export class MongoDb {
 
 	insertMany(docs: Object[], subj?: Subject<InsertWriteOpResult>): Subject<InsertWriteOpResult> {
 		subj = subj || new Subject<InsertWriteOpResult>();
-		this.getDb(null, 'insertMany').subscribe(db => {
+		this.getDb('insertMany').subscribe(db => {
 			db[0].collection(this.collection).insertMany(
 				docs,
 				(err, result) => {
@@ -379,7 +365,7 @@ export class MongoDb {
 	
 	replaceOne(filter: Object, doc: Object, options: ReplaceOneOptions, subj?: Subject<UpdateWriteOpResult>): Subject<UpdateWriteOpResult> {
 		subj = subj || new Subject<UpdateWriteOpResult>();
-		this.getDb(null, 'replaceOne').subscribe(db => {
+		this.getDb('replaceOne').subscribe(db => {
 			db[0].collection(this.collection).replaceOne(
 				filter,
 				doc,
@@ -407,65 +393,12 @@ export class MongoDb {
 		return subj;
 	}
 
-	perform<T>(cb: (db: Db, error: any) => void): Subject<T> {
-		const subj = new Subject<T>();
-		this.getDb().subscribe(db => {
-			let d1 = Date.now();
-
-			cb(db, (d: T, error?: any) => {
-				if(error) {
-					subj.error(error);
-					return;
-				}
-				subj.next(d);
-				subj.complete();
-			});
-		});
-		return subj;
-	}
-
 	private needRetry(err: any) {
 		console.warn(err);
 		return !!~err.message.indexOf('failed to connect to server ');
 	}
 
-	private getDb(subj? :Subject<[Db, () => void]>, code?: string, args?: any) {
+	private getDb(code?: string, args?: any) {
 		return this.manager.get(code, args);
-		subj = subj || new Subject<[Db, () => void]>();
-
-		MongoClient.connect(
-			this.url, 
-			{
-
-				// connectTimeoutMS: 5000,
-				// socketTimeoutMS: 30000,
-				// poolSize: 20000,
-				useNewUrlParser: true
-				// ,
-				// autoReconnect: true,
-				// reconnectTries: Number.MAX_VALUE
-			}, 
-			(err, client) => {
-				if (err) {
-					if (err.errorLabels && err.errorLabels.indexOf('TransientTransactionError') >= 0) {
-						console.log('TransientTransactionError, retrying transaction ...');
-						setTimeout(() => {
-							this.getDb(subj);
-						}, Math.random() * 1000);
-						return;
-					}
-					subj.error(err);
-					return;
-				}
-				console.log('Success MOngod Db Connection');
-				// const db = db.db(this.collection);
-				const dbs = client.db('tobacco');
-				subj.next([dbs, () => {
-					client.close();
-				}]);
-				subj.complete();
-			}
-		);
-		return subj;
 	}
 }

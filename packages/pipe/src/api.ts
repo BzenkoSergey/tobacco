@@ -14,6 +14,7 @@ import { PipesLine } from './pipes/pipes-line';
 import { SnapshotCreator } from './core/snapshot.creator';
 import { SnapshotPipesCreator } from './core/snapshot-pipes.creator';
 import { SnapshotPipesCreator2 } from './core/snapshot-pipes.creator2';
+import { SnapshotPipesCreator3 } from './core/snapshot-pipes.creator3';
 import { Pipe } from './core/pipe';
 import { DI } from './core/di';
 
@@ -34,120 +35,6 @@ app.use(cors({
 }));
 app.use(compression());
 
-app.get('/pipes-line/:id/process/:processId/pipe-process/:pipeProcessId', function (req, res) {
-	const pipesLineId = req.params.id;
-	const processId = req.params.processId;
-	const pipeProcessId = req.params.pipeProcessId;
-
-	const pipesLine = new PipesLine(pipesLineId, true, {
-		pipeLineProcessId: processId,
-		pipeGroupProcessId: null,
-		pipeProcessId: pipeProcessId
-	});
-	pipesLine.run()
-		.subscribe(
-			d => {
-				// console.log('FULL NEXT processId => pipe-process');
-			},
-			e => {
-				console.log(e);
-				res.json(e);
-			},
-			() => {
-				// console.log('FULL COMPLETED processId => pipe-process');
-				res.json({});
-			}
-		)
-});
-
-app.get('/pipes-line/:id/process/:processId/group/:groupId/group-process/:groupProcessId', function (req, res) {
-	const pipesLineId = req.params.id;
-	const processId = req.params.processId;
-	const groupId = req.params.groupId;
-	const groupProcessId = req.params.groupProcessId;
-	const pipesLine = new PipesLine(pipesLineId, true, {
-		pipeLineId: pipesLineId,
-		pipeLineProcessId: processId,
-		pipeGroupId: groupId,
-		pipeGroupProcessId: groupProcessId,
-		pipeProcessId: null
-	});
-	
-	pipesLine.run()
-		.subscribe(
-			d => {
-				// console.log('FULL NEXT processId => group-process');
-			},
-			e => {
-				console.log('FULL ERRROR processId => group-process');
-				res.send(e.toString());
-			},
-			() => {
-				// console.log('FULL COMPLETED processId => group-process');
-				res.json({});
-			}
-		)
-});
-
-app.get('/pipes-line/:id/process/:processId', function (req, res) {
-	const pipesLineId = req.params.id;
-	const processId = req.params.processId;
-	const pipesLine = new PipesLine(pipesLineId, true, {
-		pipeLineId: pipesLineId,
-		pipeLineProcessId: processId,
-		pipeGroupProcessId: null,
-		pipeProcessId: null
-	});
-	pipesLine.run()
-		.subscribe(
-			d => {
-				// console.log('FULL NEXT processId');
-			},
-			e => {
-				res.json(e);
-			},
-			() => {
-				// console.log('FULL COMPLETED processId');
-				res.json({});
-			}
-		)
-});
-
-app.get('/pipes-line/:id', function (req, res) {
-	const pipesLineId = req.params.id;
-	const pipesLine = new PipesLine(pipesLineId, false, null);
-	pipesLine.run()
-		.subscribe(
-			d => {
-				// console.log('FULL NEXT');
-			},
-			e => {
-				res.json(e);
-			},
-			() => {
-				// console.log('FULL COMPLETED');
-				res.json({});
-			}
-		)
-});
-
-app.get('/pipes-line', function (req, res) {
-	const mongoDb = new MongoDb('pipes-line', true);
-	mongoDb.find({})
-		.subscribe(
-			d => res.send(d),
-			e => res.status(400).send(e)
-		);
-});
-
-app.get('/pipes-group', function (req, res) {
-	const mongoDb = new MongoDb('pipes-group', true);
-	mongoDb.find({})
-		.subscribe(
-			d => res.send(d),
-			e => res.status(400).send(e)
-		);
-});
 
 app.get('/pipes', function (req, res) {
 	const mongoDb = new MongoDb('pipes', true);
@@ -171,7 +58,7 @@ app.get('/process/:processId/paths/:paths', function (req, res) {
 			.pipe(
 				mergeMap(snapshot => {
 					const pipe = new Pipe(snapshot, false)
-						.setSchemeProcessId(snapshot._id)
+						.setSchemeProcessId(snapshot._id ? snapshot._id.toString() : undefined)
 						.setRunParts(paths)
 						.setDI(new DI());
 
@@ -204,7 +91,7 @@ app.get('/process/:processId', function (req, res) {
 				mergeMap(snapshot => {
 					const pipe = new Pipe(snapshot, false)
 						.resetStatus()
-						.setSchemeProcessId(snapshot._id)
+						.setSchemeProcessId(snapshot._id ? snapshot._id.toString() : undefined)
 						.setDI(new DI());
 					const clone = pipe.getScheme();
 
@@ -421,21 +308,26 @@ app.get('/get/scheme/:schemeId', function (req, res) {
 
 app.post('/scheme/:schemeId/options', function (req, res) {
 	const schemeId = req.params.schemeId;
-	const creator = new SnapshotPipesCreator2(schemeId);
+	const creator = new SnapshotPipesCreator3(schemeId);
+	let body: any = {};
+	if (typeof req.body === 'object') {
+		Object.keys(req.body)
+			.filter(prop => prop !== 'modes')
+			.forEach(prop => {
+				body[prop] = req.body[prop];
+			});
+	} else {
+		body = req.body;
+	}
 
-	creator.run()
+	creator.run(req.body && req.body.modes)
 		.pipe(
 			mergeMap(snapshot => {
-				const pipe = new Pipe(null, true)
-					.setSchemeProcessId(snapshot.id)
+				const pipe = new Pipe(snapshot, true)
+					.setSchemeProcessId(snapshot._id ? snapshot._id.toString() : undefined)
 					.setDI(new DI());
 
-				return pipe.init(snapshot)
-					.pipe(
-						mergeMap(() => {
-							return pipe.run(req.body);
-						})
-					);
+				return pipe.run(req.body ? body : req.body);
 			})
 		)
 		.subscribe(
@@ -456,23 +348,29 @@ app.post('/scheme/:schemeId/options', function (req, res) {
 app.post('/scheme/code/:code/options', function (req, res) {
 	const schemeCode = req.params.code;
 
-	const creator = new SnapshotPipesCreator2(null, schemeCode);
-	creator.run()
+	const creator = new SnapshotPipesCreator3(null, schemeCode);
+	let body = {};
+	if (typeof req.body === 'object') {
+		Object.keys(req.body)
+			.filter(prop => prop !== 'modes')
+			.forEach(prop => {
+				body[prop] = req.body[prop];
+			});
+	} else {
+		body = req.body;
+	}
+
+	creator.run(req.body && req.body.modes)
 		.pipe(
 			mergeMap(snapshot => {
 				// snapshot.options = req.body || snapshot.options;
 				// console.log(snapshot.id);
 
-				const pipe = new Pipe(null, true)
-					.setSchemeProcessId(snapshot.id)
+				const pipe = new Pipe(snapshot, true)
+					.setSchemeProcessId(snapshot._id ? snapshot._id.toString() : undefined)
 					.setDI(new DI());
 
-				return pipe.init(snapshot)
-					.pipe(
-						mergeMap(() => {
-							return pipe.run(req.body);
-						})
-					);
+				return pipe.run(req.body ? body : req.body);
 			})
 		)
 		.subscribe(
@@ -496,20 +394,15 @@ app.get('/scheme/code/:code/options', function (req, res) {
 	const schemeCode = req.params.code;
 	const options = req.query;
 
-	const creator = new SnapshotPipesCreator2(null, schemeCode);
+	const creator = new SnapshotPipesCreator3(null, schemeCode);
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
-				const pipe = new Pipe(null, true)
-					.setSchemeProcessId(snapshot.id)
+				const pipe = new Pipe(snapshot, true)
+					.setSchemeProcessId(snapshot._id ? snapshot._id.toString() : undefined)
 					.setDI(new DI());
 
-				return pipe.init(snapshot)
-					.pipe(
-						mergeMap(() => {
-							return pipe.run(options);
-						})
-					);
+					return pipe.run(options);
 			})
 		)
 		.subscribe(
@@ -544,21 +437,16 @@ app.get('/scheme/code/:code/options', function (req, res) {
 
 app.post('/scheme/:schemeId/options', function (req, res) {
 	const schemeId = req.params.schemeId;
-	const creator = new SnapshotPipesCreator2(schemeId);
+	const creator = new SnapshotPipesCreator3(schemeId);
 
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
-				const pipe = new Pipe(null, false)
-					.setSchemeProcessId(snapshot.id)
+				const pipe = new Pipe(snapshot, false)
+					.setSchemeProcessId(snapshot._id ? snapshot._id.toString() : undefined)
 					.setDI(new DI());
 
-				return pipe.init(snapshot)
-					.pipe(
-						mergeMap(() => {
-							return pipe.run(req.body);
-						})
-					);
+				return pipe.run(req.body);
 			})
 		)
 		.subscribe(
@@ -578,21 +466,15 @@ app.post('/scheme/:schemeId/options', function (req, res) {
 
 app.get('/scheme/:schemeId', function (req, res) {
 	const schemeId = req.params.schemeId;
-	const creator = new SnapshotPipesCreator2(schemeId);
+	const creator = new SnapshotPipesCreator3(schemeId);
 	creator.run()
 		.pipe(
 			mergeMap(snapshot => {
-				const pipe = new Pipe(null, false)
-					.setSchemeProcessId(snapshot.id)
+				const pipe = new Pipe(snapshot, false)
+					.setSchemeProcessId(snapshot._id ? snapshot._id.toString() : undefined)
 					.setDI(new DI());
 
-				return pipe.init(snapshot)
-					.pipe(
-						mergeMap(() => {
-							// return pipe.run(snapshot.options);
-							return pipe.run(null);
-						})
-					);
+				return pipe.run(null);
 			})
 		)
 		.subscribe(
@@ -622,16 +504,17 @@ app.get('/images/external/:host*', function (req, response, next) {
 	var imageURL = req.params.host + path;
 	request.get(imageURL).pipe(response);
 });
-// function handleEPIPE (err) {
-// 	if (err.errno !== 'EPIPE') throw err
-// }
-// process.stdout.on('error', handleEPIPE);
-// process.stderr.on('error', handleEPIPE);
+function handleEPIPE (err) {
+	if (err.errno !== 'EPIPE') throw err
+}
 
-// process.on('uncaughtException', function (err) {
-// 	console.error(err.stack);
-// 	console.log("Node NOT Exiting...");
-// });
+process.stdout.on('error', handleEPIPE);
+process.stderr.on('error', handleEPIPE);
+
+process.on('uncaughtException', function (err) {
+	console.error(err.stack);
+	console.log("Node NOT Exiting...");
+});
 
 app.listen(3330, '0.0.0.0', function () {
 	console.log('Example app listening on port 3330!');

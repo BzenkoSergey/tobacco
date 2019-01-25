@@ -1,10 +1,9 @@
-import { throwError, Observable, combineLatest } from 'rxjs';
-import { mergeMap, map, tap } from 'rxjs/operators';
+import { throwError, Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import { ObjectId } from 'mongodb';
 
 import { async } from './../async';
 import { DI, DIService } from './di';
-import { MongoDb } from './../core/db';
 import { PipeType } from './pipe-type.enum';
 import { PipeStatus } from './pipe-status.enum';
 
@@ -13,9 +12,7 @@ import { JobConstructor, Job } from './../jobs/job.interface';
 import { Navigator } from './navigator';
 import { PipeInput } from './pipe-input.interface';
 import { Process } from './pipe-process.interface';
-import { ProcessPipeInput } from './process-pipe-input.interface';
-import { SchemeProcessService } from './scheme-process.service';
-import { DbService } from './db.service';
+import { PipeMode } from './pipe-mode.enum';
 
 export abstract class PipeBase {
 	protected runPaths: string[] = [];
@@ -41,8 +38,12 @@ export abstract class PipeBase {
 	protected children: PipeBase[] = [];
 	protected isolated = false;
 	protected parent: ObjectId;
+	protected parentPipe: PipeBase;
+	protected config: {
+		modes: string[]
+	};
 
-	constructor(d?: PipeInput, isolated = false) {
+	constructor(d: PipeInput, isolated = false) {
 		this.isolated = isolated;
 		if (!d) {
 			return;
@@ -50,32 +51,32 @@ export abstract class PipeBase {
 		this.defineProperties(d);
 	}
 
+	setParentPipe(parentPipe: PipeBase) {
+		this.parentPipe = parentPipe;
+		return this;
+	}
+
 	abstract cloneChild(childPath: string, input: any, run?: boolean);
-	abstract init(processInput: ProcessPipeInput): Observable<any>;
+	// abstract init(processInput: PipeInput): Observable<any>;
+	protected abstract update(fields: (keyof Process)[]): Observable<any>;
 
-	// getDbProcesses() {
-	// 	return this.di.get<SchemeProcessService>(this.path, DIService.SCHEME_PROCESS);
-	// 	// return new MongoDb('scheme-processes', true);
-	// }
-
-	getDbProcessesPipe() {
-		return this.di.get<DbService>(this.path, DIService.DB).get('scheme-processes-pipe');
-		// return new MongoDb('scheme-processes-pipe', false);
+	protected getModes() {
+		const modes = this.getConfig().modes;
+		let parentConfig = [];
+		if (this.parentPipe) {
+			parentConfig = this.parentPipe.getModes();
+		}
+		return modes.concat(parentConfig);
 	}
-
-	getDbProcessesData() {
-		return this.di.get<DbService>(this.path, DIService.DB).get('scheme-processes-data');
-		// return new MongoDb('scheme-processes-data', false);
-	}
-
-	// getDbProcessesOptions() {
-	// 	return new MongoDb('scheme-processes-options', true);
-	// }
 
 	resetStatus() {
 		this.process.status = PipeStatus.PENDING;
 		this.children.forEach(c => c.resetStatus());
 		return this;
+	}
+
+	getProcessPipeId() {
+		return this.processPipeId;
 	}
 
 	getChildren() {
@@ -105,23 +106,21 @@ export abstract class PipeBase {
 		this.input = input;
 	}
 
+	getConfig() {
+		if (!this.config) {
+			return { modes: [] }
+		}
+		if (typeof this.config === 'string') {
+			return JSON.parse(this.config);
+		}
+		return this.config;
+	}
+
 	getOptions() {
 		if (!this.options) {
 			return async();
 		}
 		return async(JSON.parse(this.options));
-		// if (!this.options) {
-		// 	return async();
-		// }
-		// return this.getDbProcessesOptions()
-		// 	.findOne({
-		// 		_id: ObjectId(this.options)
-		// 	})
-		// 	.pipe(
-		// 		map(d => {
-		// 			return JSON.parse(d.content);
-		// 		})
-		// 	);
 	}
 
 	getPath() {
@@ -129,6 +128,9 @@ export abstract class PipeBase {
 	}
 
 	setSchemeProcessId(schemeProcessId: string) {
+		if (typeof schemeProcessId !== 'string') {
+			debugger;
+		}
 		this.schemeProcessId = schemeProcessId;
 		if (this.children.length) {
 			this.children.forEach(c => c.setSchemeProcessId(schemeProcessId));
@@ -136,49 +138,17 @@ export abstract class PipeBase {
 		return this;
 	}
 
-	getProcessOutput() {
-		if (!this.process.output) {
-			return async();
-		}
-		return this.getDbProcessesData()
-			.findOne({
-				_id: ObjectId(this.process.output)
-			})
-			.pipe(
-				map(d => {
-					return d.content;
-				})
-			);
-	}
-
-	getProcessInput() {
-		if (!this.process.input) {
-			return async();
-		}
-		return this.getDbProcessesData()
-			.findOne({
-				_id: ObjectId(this.process.input)
-			})
-			.pipe(
-				map(d => {
-					return d.content;
-				})
-			);
-	}
-
 	getScheme(): PipeInput {
-		// console.log(this.schemeProcessId);
 		return {
-			id: this.id,
 			entityId: this.entityId,
 			schemeId: this.schemeId,
 			processId: this.schemeProcessId,
+			config: this.config,
 			type: this.type,
 			jobName: this.jobName,
 			label: this.label,
 			parent: this.parent,
 			services: this.services,
-			// children: this.children.map(c => c.p),
 			children: this.children.map(c => c.getScheme()),
 			options: this.options,
 			input: this.input,
@@ -187,32 +157,9 @@ export abstract class PipeBase {
 		}
 	}
 
-	sync() {
-		if (this.processPipeId) {
-			return async();
-		}
-		const scheme = this.getScheme();
-		console.log(scheme.path);
-		return this.createProcessPipe(scheme)
-			.pipe(
-				mergeMap(processPipeId => {
-					this.processPipeId = processPipeId.toString();
-					if (!this.children.length) {
-						return async();
-					}
-					const subjs = this.children
-						.map(c => {
-							c.parent = processPipeId;
-							return c;
-						})
-						.map(c => c.sync());
-					return combineLatest(...subjs);
-				})
-			);
-	}
-
 	protected defineProperties(d: PipeInput) {
-		this.id = d.id;
+		this.config = d.config || this.config;
+		this.processPipeId = d._id;
 		this.entityId = d.entityId;
 		this.schemeId = d.schemeId;
 		this.type = d.type;
@@ -225,12 +172,6 @@ export abstract class PipeBase {
 		this.path = d.path;
 		this.children = [];
 		this.parent = d.parent;
-	}
-
-	protected fetchProcessPipe() {
-		return this.getDbProcessesPipe().findOne({
-			_id: ObjectId(this.processPipeId)
-		});
 	}
 
 	protected runAsBranch() {
@@ -259,37 +200,6 @@ export abstract class PipeBase {
 		return this.path.startsWith(path + '.');
 	}
 
-	protected createProcessPipe(scheme: PipeInput) {
-		const clone = Object.assign({}, scheme);
-		clone.children = [];
-		return this.getDbProcessesPipe().insertOne(clone)
-			.pipe(
-				map(r => r.insertedId)
-			);
-	}
-
-	// protected updateChildScheme(processPipeId: string, path: string) {
-	// 	const update = {
-	// 		$set: {}
-	// 	};
-
-	// 	// console.error('==================');
-	// 	// console.error(this.schemeProcessId, processPipeId, path);
-	// 	// console.log(path);
-
-	// 	update.$set[path] = {
-	// 		id: processPipeId,
-	// 		children: []
-	// 	};
-	// 	return this.getDbProcesses().update(this.schemeProcessId, update);
-	// 	// return this.getDbProcesses().updateOne(
-	// 	// 	{
-	// 	// 		_id: ObjectId(this.schemeProcessId)
-	// 	// 	},
-	// 	// 	update
-	// 	// );
-	// }
-
 	protected defineMeta(scheme: PipeInput, parentPath: string, nextIndex: number) {
 		const path = parentPath + '.children.' + nextIndex;
 		scheme.path = path;
@@ -311,7 +221,7 @@ export abstract class PipeBase {
 	protected prepare() {
 		this.services.forEach(s => this.di.registrate(this.path, s));
 		this.navigator = this.di.get<Navigator>(this.path, DIService.NAVIGATOR);
-		this.navigator.add(this.path, this);
+		this.navigator.add(this.path, this as any);
 		this.job = JobRegister.getJob(this.jobName);
 	}
 
@@ -328,157 +238,5 @@ export abstract class PipeBase {
 		} catch(e) {
 			return throwError(e);
 		}
-	}
-
-	protected saveProcessOutput(output: any): Observable<any> {
-		if (!this.process.output) {
-			return this.getDbProcessesData()
-				.insertOne({
-					content: output
-				})
-				.pipe(
-					mergeMap(d => {
-						this.process.output = d.insertedId.toString();
-						return this.update(['output']);
-					})
-				);
-		}
-
-		return this.getDbProcessesData().updateOne(
-			{
-				_id: ObjectId(this.process.output)
-			},
-			{
-				$set: {
-					content: output
-				}
-			}
-		);
-	}
-
-	protected saveProcessInput(input: any) {
-		if (!this.process.input) {
-			return this.getDbProcessesData()
-				.insertOne({
-					content: input
-				})
-				.pipe(
-					mergeMap(d => {
-						this.process.input = d.insertedId.toString();
-						return this.update(['input']);
-					})
-				);
-		}
-
-		return this.getDbProcessesData().updateOne(
-			{
-				_id: ObjectId(this.process.input)
-			},
-			{
-				$set: {
-					content: input
-				}
-			}
-		);
-	}
-
-	private updateObj = {};
-	private times: any;
-	private updating = false;
-	private runNext2 = false;
-	private performUpdate() {
-		if (this.updating) {
-			this.runNext2 = true;
-			return async();
-		}
-		if(this.times) {
-			clearTimeout(this.times);
-		}
-		if (!Object.keys(this.updateObj).length) {
-			return async();
-		}
-		this.times = setTimeout(() => {
-			this.updating = true;
-			this.getDbProcessesPipe()
-				.updateOne(
-					{
-						_id: ObjectId(this.processPipeId)
-					},
-					{
-						$set: this.updateObj
-					}
-				)
-				.subscribe(
-					() => {
-						this.updating = false;
-						this.updateObj = {};
-						if (this.runNext2) {
-							this.runNext2 = false;
-							this.performUpdate();
-						}
-					}
-				);
-		}, 3000);
-
-		return async();
-	}
-
-	protected update(fields: (keyof Process)[]) {
-		const pathProcess = 'process';
-		fields.forEach(p => {
-			this.updateObj[pathProcess + '.' + p] = this.process[p];
-		});
-		return this.performUpdate();
-
-		// const pathProcess = 'process';
-		// const set: any = {};
-		// fields.forEach(p => {
-		// 	set[pathProcess + '.' + p] = this.process[p];
-		// });
-		// return this.getDbProcessesPipe().updateOne(
-		// 	{
-		// 		_id: ObjectId(this.processPipeId)
-		// 	},
-		// 	{
-		// 		$set: set
-		// 	}
-		// );
-	}
-
-	// protected update(fields: (keyof Process)[]) {
-	// 	const update = {
-	// 		$set: {}
-	// 	};
-	// 	let path = this.path;
-	// 	if (path) {
-	// 		path = path + '.';
-	// 	}
-	// 	const toUpdate = {
-	// 		// ...this.process
-	// 	};
-	// 	const pathProcess = path + 'process';
-	// 	const set: any = {};
-	// 	fields.forEach(p => {
-	// 		set[pathProcess + '.' + p] = this.process[p];
-	// 	});
-	// 	// toUpdate.input = toUpdate.input;
-	// 	// toUpdate.output = toUpdate.output;
-
-	// 	update.$set[path + 'process'] = toUpdate;
-	// 	return this.mongoDbProcesses.updateOne(
-	// 		{
-	// 			_id: ObjectId(this.schemeProcessId)
-	// 		},
-	// 		{
-	// 			$set: set
-	// 		}
-	// 	);
-	// }
-
-	protected isEmpty(obj: any) {
-		if (!obj) {
-			return true;
-		}
-		return !!Object.keys(obj).length;
 	}
 }

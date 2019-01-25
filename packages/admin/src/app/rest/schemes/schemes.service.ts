@@ -15,7 +15,8 @@ export class SchemesRestService {
 				'GET_LIST',
 				{
 					collection: 'scheme',
-					query: query || {}
+					query: query || {},
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			// .pipe(

@@ -51,7 +51,6 @@ export class LinkerJob implements Job {
 		const allLinks = this.store.get('LINKS') || new Map<string, boolean>();
 		const urlInfo = URL.parse(links.url);
 
-		console.log(links.data);
 		links.data
 			.filter(l => !!l)
 			.map(l => {
