@@ -17,7 +17,8 @@ export interface PipeInput {
 	children: PipeInput[],
 	services: DIService[],
 	config?: {
-		modes: string[]
+		modes: string[],
+		limit?: number;
 	},
 	path: string;
 	parent?: any;

@@ -8,8 +8,8 @@ import { Job } from './job.interface';
 import { DI, DIService } from '../core/di';
 import { Navigator } from '../core/navigator';
 import { Manipulator } from '../core/manipulator';
-let a = 0;
-export class RepeatChildJob implements Job {
+
+export class CloneChildJob implements Job {
 	private options: any;
 	private di: DI;
 	private pipePath: string;
@@ -56,15 +56,6 @@ export class RepeatChildJob implements Job {
 		const group = this.navigator.getPipe(this.pipePath);
 		const pipeToRepeat = group.getChildren()[0];
 
-		debugger;
-		const obs = input.map(r => {
-			return this.manipulator.repeatOrPerform(group, pipeToRepeat, r || input, false, this.options.field || 'data');
-		});
-		return zip(...obs)
-			.pipe(
-				mergeMap(() => {
-					return async(input);
-				})
-			);
+		return group.cloneChild(pipeToRepeat.getPath(), input, true);
 	}
 }

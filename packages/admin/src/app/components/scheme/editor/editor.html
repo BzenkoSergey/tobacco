@@ -2,6 +2,21 @@
 	<div class="row">
 		<div class="col col-8 pl-0 pr-0">
 			<div class="card">
+				<div class="card-header p-1 text-right">
+					<button
+						type="button"
+						class="btn btn-primary btn-sm"
+						(click)="backgroud = !backgroud">
+						<span *ngIf="backgroud">
+							Background Server
+						</span>
+						<span *ngIf="!backgroud">
+							Main Server
+						</span>
+					</button>
+
+					<!-- Running {{running}} -->
+				</div>
 
 				<div
 					class="position-relative"
@@ -13,8 +28,11 @@
 					</flow-tree>
 
 					<div
-						class="position-absolute"
+						class="position-absolute w-100 text-right"
 						style="bottom: .5rem; right: 1rem;">
+						<span>
+
+						</span>
 						<button
 							type="button"
 							class="btn btn-link p-0 mr-2"
@@ -41,7 +59,8 @@
 						[class.text-danger]="p.process.status === 'ERROR'"
 						[class.text-warning]="p.process.status === 'IN_PROCESS'"
 						[routerLink]="[processPath, 'process', p._id]"
-						queryParamsHandling="merge">
+						queryParamsHandling="merge"
+						[queryParams]="{ path: '' }">
 						{{p.process.createdTime | date: 'M/d/yy h:mm:ss'}}
 					</a>
 				</ul>

@@ -123,7 +123,6 @@ export class SnapshotPipesCreator3 {
 		return async<PipeInput>(input)
 			.pipe(
 				mergeMap(input => {
-					console.log('CREATOR 3 CREATE');
 					return this.mongoDbProcessesPipes.insertOne(input)
 						.pipe(
 							mergeMap(r => {
@@ -226,7 +225,6 @@ export class SnapshotPipesCreator3 {
 								})
 							);
 					}
-					console.log('CREATOR 3 CREATE');
 					return this.mongoDbProcessesPipes.insertOne(input)
 						.pipe(
 							map(r => {

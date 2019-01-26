@@ -18,6 +18,7 @@
 					"id" : "5bf88047db3e4a4cf3e5b953",
 					"type" : "",
 					"label" : "",
+					"config": "{\"modes\":[\"DB_BRANCHES_SYNC_ON_DONE\",\"DB_NO_SYNC\"]}",
 					"children" : [
 						{
 							"id" : "5c0446cbdb3e4a4cf36bf9e5",

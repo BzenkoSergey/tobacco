@@ -30,7 +30,11 @@ export class PipeRestService {
 			);
 	}
 
-	apiUrl() {
-		return `http://` + window.location.hostname + `:3330`;
+	apiUrl(background = false) {
+		let port = 3330;
+		if (background) {
+			port = 3331;
+		}
+		return `http://` + window.location.hostname + `:${port}`;
 	}
 }

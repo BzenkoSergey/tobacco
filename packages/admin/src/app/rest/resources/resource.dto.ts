@@ -2,12 +2,16 @@ import { ResourceStructureDto } from './resource-structure.dto';
 
 export class ResourceSetingsDto {
 	itemsSync = '0 0 * * *';
+	interval = 0;
+	executionTime = 0;
 
 	constructor(d?: ResourceSetingsDto) {
 		if (!d) {
 			return;
 		}
 		this.itemsSync = d.itemsSync;
+		this.interval = d.interval;
+		this.executionTime = d.executionTime;
 	}
 }
 

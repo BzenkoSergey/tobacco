@@ -42,6 +42,7 @@ export abstract class PipeBase {
 	protected config: {
 		modes: string[]
 	};
+	protected limit: number;
 
 	constructor(d: PipeInput, isolated = false) {
 		this.isolated = isolated;
@@ -54,6 +55,17 @@ export abstract class PipeBase {
 	setParentPipe(parentPipe: PipeBase) {
 		this.parentPipe = parentPipe;
 		return this;
+	}
+
+	getLimit() {
+		let limit = this.limit;
+		if (!limit && !this.parentPipe) {
+			return 1;
+		}
+		if (!limit) {
+			limit = this.parentPipe.getLimit();
+		}
+		return limit;
 	}
 
 	abstract cloneChild(childPath: string, input: any, run?: boolean);
@@ -106,12 +118,19 @@ export abstract class PipeBase {
 		this.input = input;
 	}
 
+	setConfig(config: any) {
+		this.config = config;
+		return this;
+	}
+
 	getConfig() {
 		if (!this.config) {
 			return { modes: [] }
 		}
 		if (typeof this.config === 'string') {
-			return JSON.parse(this.config);
+			const d = JSON.parse(this.config);
+			d.modes = d.modes || [];
+			return d;
 		}
 		return this.config;
 	}
@@ -128,9 +147,6 @@ export abstract class PipeBase {
 	}
 
 	setSchemeProcessId(schemeProcessId: string) {
-		if (typeof schemeProcessId !== 'string') {
-			debugger;
-		}
 		this.schemeProcessId = schemeProcessId;
 		if (this.children.length) {
 			this.children.forEach(c => c.setSchemeProcessId(schemeProcessId));
@@ -172,6 +188,11 @@ export abstract class PipeBase {
 		this.path = d.path;
 		this.children = [];
 		this.parent = d.parent;
+
+		const config = this.getConfig();
+		if (config.limit) {
+			this.limit = config.limit;
+		}
 	}
 
 	protected runAsBranch() {

@@ -71,7 +71,19 @@ export abstract class PipeDb extends PipeBase {
 						process: this.process
 					})
 					.pipe(
+						mergeMap(() => {
+							const subjs = [];
+							if (this.toSaveInput) {
+								subjs.push(this.saveProcessInput(this.toSaveInput, true));
+							}
+							if (this.toSaveOutput) {
+								subjs.push(this.saveProcessOutput(this.toSaveOutput, true));
+							}
+							return subjs.length ? combineLatest(...subjs) : async();
+						}),
 						map(() => {
+							this.toSaveInput = null;
+							this.toSaveOutput = null;
 							this.defineEndSynced();
 							return ObjectId(this.processPipeId);
 						})
@@ -117,7 +129,19 @@ export abstract class PipeDb extends PipeBase {
 					process: this.process
 				})
 				.pipe(
+					mergeMap(() => {
+						const subjs = [];
+						if (this.toSaveInput) {
+							subjs.push(this.saveProcessInput(this.toSaveInput, true));
+						}
+						if (this.toSaveOutput) {
+							subjs.push(this.saveProcessOutput(this.toSaveOutput, true));
+						}
+						return subjs.length ? combineLatest(...subjs) : async();
+					}),
 					map(() => {
+						this.toSaveInput = null;
+						this.toSaveOutput = null;
 						this.defineEndSynced();
 						return this.processPipeId;
 					})
@@ -154,6 +178,9 @@ export abstract class PipeDb extends PipeBase {
 				);
 		}
 
+		if (this.jobName === 'DELAY') {
+			console.warn('SAVE OUT', this.jobName, this.processPipeId, this.process.input, output);
+		}
 		return this.getDbProcessesData('saveProcessOutput - updateOne').updateOne(
 			{
 				_id: ObjectId(this.process.output)
@@ -184,6 +211,9 @@ export abstract class PipeDb extends PipeBase {
 				);
 		}
 
+		if (this.jobName === 'DELAY') {
+			console.warn('SAVE INPUT', this.jobName, this.processPipeId, this.process.input, input);
+		}
 		return this.getDbProcessesData('saveProcessInput - updateOne').updateOne(
 			{
 				_id: ObjectId(this.process.input)
@@ -249,7 +279,7 @@ export abstract class PipeDb extends PipeBase {
 
 			if (this.schemeId !== '5c4508e8ffcf831adc62a385') {
 				// debugger;
-				console.log('update => syncUpdate()');
+				// console.log('update => syncUpdate()');
 			}
 			return this.syncUpdate();
 		}
@@ -288,9 +318,6 @@ export abstract class PipeDb extends PipeBase {
 	createBranchPipes() {
 		if (!this.canUseDb()) {
 			return async();
-		}
-		if (this.schemeId === '5c4508e8ffcf831adc62a384') {
-			debugger;
 		}
 		const createChildren = !!~this.getCurrentModes().indexOf(PipeMode.DB_BRANCHES_SYNC_ON_DONE) && this.process.status === PipeStatus.DONE;
 		if (this.processPipeId) {
@@ -347,9 +374,6 @@ export abstract class PipeDb extends PipeBase {
 				mergeMap(r => {
 					this.processPipeId = r.insertedId.toString();
 					if (this.getPath() === '') {
-						if (typeof this.processPipeId !== 'string') {
-							debugger;
-						}
 						this.setSchemeProcessId(this.processPipeId);
 					}
 					return async()
@@ -447,6 +471,9 @@ export abstract class PipeDb extends PipeBase {
 		if (itemToCreate === child) {
 			return list;
 		}
+		if (!itemToCreate) {
+			debugger;
+		}
 		if (!itemToCreate.getChildren().length) {
 			return list;
 		}
@@ -472,8 +499,8 @@ export abstract class PipeDb extends PipeBase {
 	private getDbProcessesPipe(info?: string) {
 		cols = cols + 1;
 		if (this.process.status === PipeStatus.DONE) {
-			console.error('cols', cols);
-			console.error('cols', 'PIPE', this.path, this.process.status, info, this.processPipeId);
+			// console.error('cols', cols);
+			// console.error('cols', 'PIPE', this.path, this.process.status, info, this.processPipeId);
 		}
 		return this.di.get<DbService>(this.path, DIService.DB).get('scheme-processes-pipe');
 	}
@@ -481,8 +508,8 @@ export abstract class PipeDb extends PipeBase {
 	private getDbProcessesData(info?: string) {
 		cols = cols + 1;
 		if (this.process.status === PipeStatus.DONE) {
-			console.error('cols', cols);
-			console.error('cols', 'DATA', this.path, this.process.status, info, this.processPipeId);
+			// console.error('cols', cols);
+			// console.error('cols', 'DATA', this.path, this.process.status, info, this.processPipeId);
 		}
 		return this.di.get<DbService>(this.path, DIService.DB).get('scheme-processes-data');
 	}
@@ -492,9 +519,11 @@ export abstract class PipeDb extends PipeBase {
 	}
 
 	private canUseDb() {
+		const allwed = [PipeMode.RUN_ONCE, PipeMode.SCHEME_TO_CLONE];
 		const modes = this.getModes();
 		const currentModes = this.getCurrentModes();
-		if (!modes.length) {
+		const f = modes.filter(i => !~allwed.indexOf(i))
+		if (!f.length) {
 			// this.log('ALLOW DB - !!!!', this.getPath(), currentModes, this.type);
 			return true;
 		}
@@ -525,6 +554,6 @@ export abstract class PipeDb extends PipeBase {
 		if (this.schemeId !== '5c4508e8ffcf831adc62a384') {
 			return;
 		}
-		console.log(...ags);
+		// console.log(...ags);
 	}
 }

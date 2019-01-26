@@ -137,8 +137,18 @@ export class OverviewComponent implements OnDestroy {
 		const intervalSchemeClone = JSON.parse(JSON.stringify(intervalScheme));
 		const productsFetch = this.genProductsFetch();
 		const delayItem = this.getByCode(intervalSchemeClone, 'DELAY_ITEM');
+		const delayItems = this.getByCode(intervalSchemeClone, 'DEFINE_DELAY_ITEMS');
+		delayItems.options = JSON.stringify({
+			executionTime: this.item.settings.executionTime,
+			interval: this.item.settings.interval
+		});
 		productsFetch
-			.forEach(s => delayItem.children.push(s));
+			.forEach(s => {
+				// s.config = JSON.stringify({
+				// 	modes: ['DB_BRANCHES_SYNC_ON_DONE', 'DB_NO_SYNC']
+				// });
+				delayItem.children.push(s);
+			});
 		const interval = this.getByCode(intervalSchemeClone, 'INTERVAL');
 		const intervalOptions = JSON.parse(interval.options);
 		intervalOptions.delay = this.item.settings.itemsSync;
@@ -146,6 +156,9 @@ export class OverviewComponent implements OnDestroy {
 		intervalSchemeClone.input = this.item._id;
 		intervalSchemeClone.label = this.item.name + ' Interval';
 		intervalSchemeClone.code = 'INTERVAL';
+		// intervalSchemeClone.config = JSON.stringify({
+		// 	limit: 10000
+		// });
 		return intervalSchemeClone;
 	}
 

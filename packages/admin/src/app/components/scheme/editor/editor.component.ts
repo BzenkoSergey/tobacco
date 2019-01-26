@@ -5,6 +5,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, of, combineLatest } from 'rxjs';
 import { tap, mergeMap, filter, map } from 'rxjs/operators';
 
+import { ActiveRestService } from '@rest/active';
 import { SchemeProcessesRestService } from '@rest/scheme-processes';
 import { SchemesRestService } from '@rest/schemes';
 import { PipeRestService, PipeDto } from '@rest/pipes';
@@ -17,7 +18,8 @@ import { RunInputComponent } from './../run-input/run-input.component';
 	providers: [
 		PipeRestService,
 		SchemesRestService,
-		SchemeProcessesRestService
+		SchemeProcessesRestService,
+		ActiveRestService
 	]
 })
 
@@ -29,6 +31,8 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	private parents = new Map<any, any>();
 	private paths = new Map<string, any>();
 	private pathsPipe = new Map<any, string>();
+	backgroud = false;
+	running = 0;
 
 	processes: any[] = [];
 	saving = false;
@@ -40,6 +44,7 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	constructor(
 		private modalService: NgbModal,
 		private router: Router,
+		private activeRestService: ActiveRestService,
 		private pipeRestService: PipeRestService,
 		private schemeProcessesRestService: SchemeProcessesRestService,
 		private schemesRestService: SchemesRestService,
@@ -55,6 +60,7 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 		if (!this.item) {
 			return;
 		}
+		this.hasRunning();
 		this.fetchProcesses();
 		this.fetchPipes()
 			.subscribe(() => {
@@ -68,6 +74,13 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 		if (this.sub) {
 			this.sub.unsubscribe();
 		}
+	}
+
+	hasRunning() {
+		this.activeRestService.list(this.item._id, this.backgroud)
+			.subscribe((list) => {
+				this.running = list.length;
+			});
 	}
 
 	select(pipe: any) {
@@ -134,10 +147,11 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	}
 
 	runProcess() {
-		this.schemeProcessesRestService.create(this.item._id)
+		this.schemeProcessesRestService.create(this.item._id, this.backgroud)
 			.subscribe();
 
 		setTimeout(() => {
+			this.hasRunning();
 			this.fetchProcesses();
 		}, 1000);
 	}
@@ -145,10 +159,11 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	runProcessWithInput() {
 		const modalRef = this.modalService.open(RunInputComponent);
 		modalRef.componentInstance.submitted.subscribe(l => {
-			this.schemeProcessesRestService.createWithData(this.item._id, l)
+			this.schemeProcessesRestService.createWithData(this.item._id, l, this.backgroud)
 				.subscribe();
 
 			setTimeout(() => {
+				this.hasRunning();
 				this.fetchProcesses();
 			}, 1000);
 		});

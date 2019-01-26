@@ -38,23 +38,23 @@ export class SchemeProcessesRestService {
 			);
 	}
 
-	createWithData(schemeId: string, data: any) {
-		const url = this.restService.apiUrl() + '/scheme/' + schemeId + '/options';
+	createWithData(schemeId: string, data: any, background = false) {
+		const url = this.restService.apiUrl(background) + '/scheme/' + schemeId + '/options';
 		return this.http.post(url, data);
 	}
 
-	create(schemeId: string) {
-		const url = this.restService.apiUrl() + '/scheme/' + schemeId;
+	create(schemeId: string, background = false) {
+		const url = this.restService.apiUrl(background) + '/scheme/' + schemeId;
 		return this.http.get(url);
 	}
 
-	run(processId: string) {
-		const url = this.restService.apiUrl() + '/process/' + processId;
+	run(processId: string, background = false) {
+		const url = this.restService.apiUrl(background) + '/process/' + processId;
 		return this.http.get<any[]>(url);
 	}
 
-	runPaths(processId: string, paths: string[]) {
-		const url = this.restService.apiUrl() + '/process/' + processId + '/paths/' + paths.join(',');
+	runPaths(processId: string, paths: string[], background = false) {
+		const url = this.restService.apiUrl(background) + '/process/' + processId + '/paths/' + paths.join(',');
 		return this.http.get<any[]>(url);
 	}
 

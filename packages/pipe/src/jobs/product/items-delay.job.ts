@@ -49,12 +49,18 @@ export class ItemsDelayJob implements Job {
 
 	run(data: any[]) {
 		const now = moment(new Date())
-		const end = moment(new Date()).hours(23).minutes(59);
+		let end = moment(new Date()).hours(23).minutes(59);
+		if (this.options && this.options.executionTime) {
+			end = moment(new Date()).add(this.options.executionTime, 'minutes');
+		}
 		// const end = moment().utc().endOf('day');
 		const diffs = end.valueOf() - now.valueOf();
 
 		const count = data.length;
-		const delay = diffs / count;
+		let delay = diffs / count;
+		if (this.options && this.options.interval) {
+			delay = this.options.interval;
+		}
 		let last = now.valueOf();
 
 		const list = data.map((v, i) => {

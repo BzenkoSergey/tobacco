@@ -6,6 +6,7 @@ import { PipeStatus } from './pipe-status.enum';
 import { PipeInput } from './pipe-input.interface';
 import { PipeDb } from './pipe-db';
 import { Queue } from './queue';
+import { PipeMode } from './pipe-mode.enum';
 
 export class Pipe extends PipeDb {
 	private stream: Subject<any>;
@@ -15,7 +16,6 @@ export class Pipe extends PipeDb {
 	protected children: Pipe[];
 
 	private queue: Queue;
-	private limit = 1;
 	private delay = 0; /// for visualization
 	private optionsData: any;
 
@@ -56,13 +56,21 @@ export class Pipe extends PipeDb {
 	// }
 
 	run(input: any) {
+		const config = this.getConfig();
+		if (!!~config.modes.indexOf(PipeMode.SCHEME_TO_CLONE)) {
+			return async(input);
+		}
+		if (!!~config.modes.indexOf(PipeMode.RUN_ONCE) && this.process.status !== PipeStatus.PENDING) {
+			return async(input);
+		}
+		this.endSynced = false;
 		this.subscribtion.unsubscribe();
 		this.subscribtion = new Subscription();
 		this.stream = new Subject();
 		this.streams = [];
 		if (this.queue) {
 			this.queue.destroy();
-			this.queue = new Queue(this.limit);
+			this.queue = new Queue(this.getLimit());
 		}
 		this.childrenOutputs = [];
 
@@ -187,11 +195,16 @@ export class Pipe extends PipeDb {
 
 		const inst = this.createEntities([scheme])[0];
 		// debugger;
-		console.error('clone child');
-		console.error(inst.path);
+		// console.error('clone child');
+		// console.error(inst.path);
 		inst.setSchemeProcessId(this.schemeProcessId);
 		inst.setDI(this.di);
 		this.children.push(inst);
+
+		debugger;
+		const config = inst.getConfig();
+		config.modes = config.modes.filter(i => i !== PipeMode.SCHEME_TO_CLONE);
+		inst.setConfig(config);
 
 		const subj = new Subject<any>();
 		inst.sync()
@@ -283,7 +296,7 @@ export class Pipe extends PipeDb {
 				.run(input);
 		};
 		if (!this.queue) {
-			this.queue = new Queue(this.limit);
+			this.queue = new Queue(this.getLimit());
 		}
 		return this.queue.run(fn);
 	}

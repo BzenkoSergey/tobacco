@@ -62,7 +62,7 @@ import { MoveJob } from './jobs/wl/move.job';
 import { MoveOneJob } from './jobs/wl/move-one.job';
 import { NeedCheckJob } from './jobs/product/need-check.job';
 import { PhantomJob } from './jobs/scrap/phantom.job';
-
+import { CloneChildJob } from './jobs/clone-child.job';
 
 export enum JobRegister {
 	PHANTOM = 'PHANTOM',
@@ -75,6 +75,7 @@ export enum JobRegister {
 	VERSION = 'VERSION',
 	DELAY = 'DELAY',
 	SITEMAP = 'SITEMAP',
+	CLONE_CHILD = 'CLONE_CHILD',
 
 	PRODUCT_COMPANY = 'PRODUCT_COMPANY',
 	PRODUCT_LINE = 'PRODUCT_LINE',
@@ -199,6 +200,7 @@ export namespace JobRegister {
 	map.set(JobRegister.WL_GET_ALL, GetAllJob);
 	map.set(JobRegister.WL_MOVE, MoveJob);
 	map.set(JobRegister.WL_MOVE_ONE, MoveOneJob);
+	map.set(JobRegister.CLONE_CHILD, CloneChildJob);
 
 	export function getJob(name: JobRegister): JobConstructor {
 		return map.get(name);
