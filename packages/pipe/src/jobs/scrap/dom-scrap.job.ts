@@ -73,7 +73,7 @@ export class DomScrapJob implements Job {
 		return session.get();
 	}
 
-	private parse(dom: any, config: any, url: string, index?: number) {
+	private parse(dom: any, config: any, url: string, index?: number, arrayParent?: boolean) {
 		if (typeof config === 'string') {
 			return config;
 		}
@@ -110,7 +110,7 @@ export class DomScrapJob implements Job {
 		if (Array.isArray(config)) {
 			let items = [];
 			config.forEach(c => {
-				items = items.concat(this.parse(dom, c, url, index));
+				items = items.concat(this.parse(dom, c, url, index, true));
 			});
 			return items.filter(i => i !== null);
 		}
@@ -119,7 +119,8 @@ export class DomScrapJob implements Job {
 			if (config.$ && config.$.selector && !dom.is(config.$.selector)) {
 				segment = this.find(dom, config.$.selector);
 			}
-			if (segment.length > 1) {
+			// if (segment.length > 1) {
+			if (arrayParent) {
 				return segment.toArray()
 					.map((f, i) => {
 						const $el = cheerio(f);
@@ -160,7 +161,8 @@ export class DomScrapJob implements Job {
 			return this.runTransforms(this.checkValue($el.attr(config.$.resource), config.$.selector, url, index), config.$.transforms);
 		}
 
-		if ($el.length > 1) {
+		// if ($el.length > 1) {
+		if (arrayParent) {
 			return $el.toArray()
 				.map((f, i) => {
 					if (config.$.contentType === 'HTML') {
