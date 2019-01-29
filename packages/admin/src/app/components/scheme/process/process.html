@@ -58,7 +58,7 @@
 						<label>Config</label>
 						<div
 							ace-editor
-							[(text)]="pipe.config"
+							[text]="toJSONString(pipe.config)"
 							[mode]="'json'"
 							[theme]="'eclipse'"
 							[readOnly]="false"
@@ -106,10 +106,10 @@
 						Error: {{pipe.process.error}}
 					</li>
 					<li class="list-group-item p-2">
-						StartDate: {{pipe.process.startDate | date: 'M/d/yy h:mm:ss'}}
+						StartDate: {{pipe.process.startDate | date: 'M/d/yy H:mm:ss'}}
 					</li>
 					<li class="list-group-item p-2">
-						EndDate: {{pipe.process.endDate | date: 'M/d/yy h:mm:ss'}}
+						EndDate: {{pipe.process.endDate | date: 'M/d/yy H:mm:ss'}}
 					</li>
 					<li class="list-group-item p-2">
 						Exc Time: {{pipe.process.endDate - pipe.process.startDate}}

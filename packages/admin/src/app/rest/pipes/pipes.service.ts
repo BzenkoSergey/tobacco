@@ -14,6 +14,11 @@ export class PipeRestService {
 		return this.http.post<T>(url, options);
 	}
 
+	runSchemeByIdOptions<T, K>(schemeId: string, options: K) {
+		const url = this.apiUrl() + '/scheme/' + schemeId + '/options';
+		return this.http.post<T>(url, options);
+	}
+
 	list() {
 		return this.runSchemeOptions<PipeDto[], any>(
 				'GET_LIST',

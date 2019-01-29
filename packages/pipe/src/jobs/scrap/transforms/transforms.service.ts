@@ -7,10 +7,12 @@ import { replaceRegexp } from './replace-regexp';
 import { prefix } from './prefix';
 import { postfix } from './postfix';
 import { match } from './match';
+import { doEval } from './eval';
+import { decode } from './decode';
 
 export class TransformsService {
 	perform(value: string, transform: GrabberTransform, options: any) {
-		if(!value) {
+		if(!value && typeof value !== 'number') {
 			return value;
 		}
 		if(transform === GrabberTransform.NUMBERIFY) {
@@ -36,6 +38,12 @@ export class TransformsService {
 		}
 		if(transform === GrabberTransform.MATCH) {
 			return match(value || '', options.split('|'));
+		}
+		if(transform === GrabberTransform.EVAL) {
+			return doEval(value, options);
+		}
+		if(transform === GrabberTransform.DECODE) {
+			return decode(value);
 		}
 
 		return value;

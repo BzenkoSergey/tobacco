@@ -21,8 +21,8 @@ export class HttpStack {
 		return this.stackHistory;
 	}
 
-	get(url: string, data: any, end: any, error: any, httpType: string, agent = false) {
-		const fn = this.make(url, data, end, error, httpType, agent);
+	get(url: string, data: any, end: any, error: any, httpType: string, agent = false, reTrayCount?: number) {
+		const fn = this.make(url, data, end, error, httpType, agent, reTrayCount);
 		this.stack.push(fn);
 		++this.stackHistory;
 		if(this.stack.length === 1) {
@@ -49,7 +49,7 @@ export class HttpStack {
 		return uri !== decodeURI(uri);
 	}
 
-	private make(urlResource: string, data: any, end: any, error: any, httpType: string, withAgent: boolean): Function {
+	private make(urlResource: string, data: any, end: any, error: any, httpType: string, withAgent: boolean, reTrayCount?: number): Function {
 		return () => {
 			this.stack.splice(0, 1);
 			++this.waitCount;
@@ -76,10 +76,10 @@ export class HttpStack {
 				}
 				uri = encodeURI(uri);
 
-				console.log(urlInfo.hostname);
-				console.log(encoded);
-				console.log(uri);
-				console.log(urlInfo.protocol);
+				// console.log(urlInfo.hostname);
+				// console.log(encoded);
+				// console.log(uri);
+				// console.log(urlInfo.protocol);
 
 				method.get({
 					hostname: urlInfo.hostname,
@@ -108,9 +108,11 @@ export class HttpStack {
 					if(e.code === 'ECONNRESET' || e.code === 'ETIMEDOUT') {
 						console.error(e);
 						console.error(urlResource);
-						setTimeout(() => {
-							this.get(urlResource, data, end, error, httpType, true);
-						}, 300);
+						if (!reTrayCount) {
+							setTimeout(() => {
+								this.get(urlResource, data, end, error, httpType, true, (reTrayCount || 0) + 1);
+							}, 300);
+						}
 						return;
 					}
 					error(e);

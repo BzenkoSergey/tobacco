@@ -1,0 +1,46 @@
+.result {
+	min-width: 556px;
+	width: 556px;
+	max-width: 556px;
+	font-size: 11px;
+	border-right: 1px solid #ccc;
+
+	.title {
+		font-size: 13px;
+		margin: 0;
+	}
+
+	.displayedUrl {
+		color: #006621;
+	}
+
+	.description {
+		color: #000;
+	}
+
+	.search-item {
+		padding: 0.5rem;
+		padding-left: 0;
+		border-color: #eaeaea;
+		// padding-left: 100px;
+
+		&.h {
+			background-color: #e6ffe7;
+		}
+	}
+
+	.page-number {
+		color: #000;
+		font-size: 13px;
+	}
+
+	.position {
+		color: red;
+		font-size: 30px;
+		width: 15%;
+	}
+
+	.keys {
+		color: #ffa4a4;
+	}
+}

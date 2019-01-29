@@ -1,0 +1,179 @@
+{
+    "id" : "5c4de246164774ca52f83cb6",
+    "options" : "{\"url\":\"https://www.google.com.ua/search?start=0\",\"param\":\"q\"}",
+    "type" : "LINE",
+    "label" : "Google.com.ua Google Search",
+    "code" : "GOOGLE-SEARCH",
+    "services" : [
+        "HTTP_STACK",
+        "STORE",
+        "EXT",
+        "SESSION"
+    ],
+    "children" : [
+        {
+            "_id" : null,
+            "id" : "5c044754db3e4a4cf36bfb88",
+            "type" : "GROUP",
+            "label" : "",
+            "services" : [],
+            "options" : "",
+            "jobName" : "",
+            "code" : "",
+            "input" : "",
+            "children" : [
+                {
+                    "_id" : null,
+                    "id" : "5c476f8d164774ca526060a8",
+                    "type" : "",
+                    "label" : "",
+                    "services" : [],
+                    "options" : "{\n    \"timeout\": 5000\n}",
+                    "jobName" : "",
+                    "code" : "",
+                    "input" : "",
+                    "config" : "{\"limit\": 1, \"modes\": [\"DB_BRANCHES_SYNC_ON_DONE\", \"DB_NO_SYNC\"]}",
+                    "children" : [
+                        {
+                            "_id" : null,
+                            "id" : "5c0446d9db3e4a4cf36bf9f7",
+                            "type" : "",
+                            "label" : "Pagination",
+                            "services" : [],
+                            "options" : "[\n   {\n      \"$\":{\n         \"selector\":\"#foot table td a.fl:not([href*=\\\"start=0\\\"])\",\n         \"type\":\"ATTR\",\n         \"resource\":\"href\",\n\t\t \"transforms\": [\n\t\t\t{\n\t\t\t\t\"name\": \"REPLACE_REGEXP\",\n\t\t\t\t\"option\": \"(prmd=)([^&]+)&|\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"name\": \"REPLACE_REGEXP\",\n\t\t\t\t\"option\": \"(ei=)([^&]+)&|\"\n\t\t\t}\n\t\t ]\n      }\n   }\n]\n\n",
+                            "jobName" : "",
+                            "code" : "",
+                            "children" : [
+                                {
+                                    "_id" : null,
+                                    "id" : "5c0446e4db3e4a4cf36bfa05",
+                                    "type" : "",
+                                    "label" : "2222",
+                                    "services" : [],
+                                    "options" : "",
+                                    "jobName" : "",
+                                    "code" : "",
+                                    "children" : [
+                                        {
+                                            "_id" : null,
+                                            "id" : "5c044676db3e4a4cf36bf937",
+                                            "type" : "",
+                                            "label" : "",
+                                            "children" : [],
+                                            "services" : [],
+                                            "options" : "",
+                                            "jobName" : "",
+                                            "code" : ""
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "_id" : null,
+                            "id" : "5c0446d9db3e4a4cf36bf9f7",
+                            "type" : "",
+                            "label" : "Results",
+                            "services" : [],
+                            "options" : "[\n    {\n        \"$\": {\n            \"selector\": \".g\"\n        },\n        \"session\": {\n            \"$\": {\n                \"selector\": \"$session\"\n            }\n        },\n        \"query\": {\n            \"$\": {\n                \"selector\": \"$url\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    },\n                    {\n                        \"name\": \"MATCH\",\n                        \"option\": \"\\\\A?(q=)([^&]+)&*|2\"\n                    },\n                    {\n                        \"name\": \"DECODE\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"page\": {\n            \"$\": {\n                \"selector\": \"$url\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    },\n                    {\n                        \"name\": \"MATCH\",\n                        \"option\": \"\\\\A?(start=)([^&]+)&*|2\"\n                    },\n                    {\n                        \"name\": \"NUMBERIFY\",\n                        \"option\": \"\"\n                    },\n                    {\n                        \"name\": \"EVAL\",\n                        \"option\": \"(!isNaN(+value) && (+value)) ? (+value) / 10 + 1 : 1\"\n                    }\n                ]\n            }\n        },\n        \"position\": {\n            \"$\": {\n                \"selector\": \"$index\",\n                \"transforms\": [\n                    {\n                        \"name\": \"NUMBERIFY\",\n                        \"option\": \"\"\n                    },\n                    {\n                        \"name\": \"EVAL\",\n                        \"option\": \"(value || 0) + 1\"\n                    }\n                ]\n            }\n        },\n        \"createdDate\": {\n            \"$\": {\n                \"selector\": \"$date\"\n            }\n        },\n        \"queryUrl\": {\n            \"$\": {\n                \"selector\": \"$url\",\n                \"transforms\": [\n                    {\n                        \"name\": \"DECODE\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"keys\": [\n            {\n                \"$\": {\n                    \"selector\": \"cite b, h3 a b, cite b, .st b\",\n                    \"type\": \"TEXT\",\n                    \"transforms\": [\n                        {\n                            \"name\": \"TRIM\",\n                            \"option\": \"\"\n                        }\n                    ]\n                }\n            }\n        ],\n        \"title\": {\n            \"$\": {\n                \"selector\": \"h3 a\",\n                \"type\": \"TEXT\",\n                \"contentType\": \"HTML\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"url\": {\n            \"$\": {\n                \"selector\": \"h3 a\",\n                \"type\": \"ATTR\",\n                \"resource\": \"href\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    },\n                    {\n                        \"name\": \"MATCH\",\n                        \"option\": \"\\\\A?(q=)([^&]+)&*|2\"\n                    }\n                ]\n            }\n        },\n        \"displayedUrl\": {\n            \"$\": {\n                \"selector\": \"cite\",\n                \"type\": \"TEXT\",\n                \"contentType\": \"HTML\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"description\": {\n            \"$\": {\n                \"selector\": \".st\",\n                \"type\": \"TEXT\",\n                \"contentType\": \"HTML\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"adds\": [\n            {\n                \"$\": {\n                    \"selector\": \".osl a\"\n                },\n                \"url\": {\n                    \"$\": {\n                        \"type\": \"ATTR\",\n                        \"resource\": \"href\",\n                        \"transforms\": [\n                            {\n                                \"name\": \"TRIM\",\n                                \"option\": \"\"\n                            },\n                            {\n                                \"name\": \"REPLACE_REGEXP\",\n                                \"option\": \"^\\\\/url\\\\?q=|\"\n                            }\n                        ]\n                    }\n                },\n                \"text\": {\n                    \"$\": {\n                        \"type\": \"TEXT\",\n                        \"transforms\": [\n                            {\n                                \"name\": \"TRIM\",\n                                \"option\": \"\"\n                            }\n                        ]\n                    }\n                }\n            }\n        ],\n        \"resource\": \"5c4ddc899fd908d940443494\",\n        \"structureCode\": \"ITEM\"\n    }\n]",
+                            "jobName" : "",
+                            "code" : "RESULTS",
+                            "children" : [
+                                {
+                                    "_id" : null,
+                                    "id" : "5c4e441a164774ca5201c220",
+                                    "type" : "",
+                                    "label" : "2222",
+                                    "children" : [
+                                        {
+                                            "_id" : null,
+                                            "id" : "5c23caa9b1e0d833107453ec",
+                                            "type" : "",
+                                            "label" : "2222",
+                                            "children" : [
+                                                {
+                                                    "_id" : null,
+                                                    "id" : "5c0ffb6bdee83c1b3bf32403",
+                                                    "type" : "",
+                                                    "label" : "2222",
+                                                    "services" : [],
+                                                    "options" : "",
+                                                    "jobName" : "",
+                                                    "code" : "VERSION",
+                                                    "config" : "{\"modes\": [\"SCHEME_TO_CLONE\", \"RUN_ONCE\"]}",
+                                                    "children" : [
+                                                        {
+                                                            "_id" : null,
+                                                            "id" : "5c0ff4e4dee83c1b3bf268e9",
+                                                            "type" : "",
+                                                            "label" : "",
+                                                            "services" : [],
+                                                            "options" : "[\"title\", \"url\", \"displayedUrl\", \"description\"]",
+                                                            "jobName" : "",
+                                                            "code" : "",
+                                                            "config" : "",
+                                                            "input" : "",
+                                                            "children" : [
+                                                                {
+                                                                    "_id" : null,
+                                                                    "id" : "5c0ed996dee83c1b3bef2568",
+                                                                    "type" : "",
+                                                                    "label" : "",
+                                                                    "services" : [],
+                                                                    "options" : "{\"collection\": \"resource-item\"}",
+                                                                    "jobName" : "",
+                                                                    "code" : "CREATE",
+                                                                    "config" : "",
+                                                                    "children" : []
+                                                                },
+                                                                {
+                                                                    "_id" : null,
+                                                                    "id" : "5c50ba4d164774ca5220aeec",
+                                                                    "type" : "",
+                                                                    "label" : "2222",
+                                                                    "children" : [
+                                                                        {
+                                                                            "_id" : null,
+                                                                            "id" : "5bf88047db3e4a4cf3e5b953",
+                                                                            "type" : "",
+                                                                            "label" : "",
+                                                                            "options" : "{\"emitError\": false}",
+                                                                            "services" : [],
+                                                                            "jobName" : "",
+                                                                            "code" : "INFO_HTTP",
+                                                                            "config" : "",
+                                                                            "children" : [
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "services" : [],
+                                                                    "options" : "{\"status\": \"$release\"}",
+                                                                    "jobName" : "",
+                                                                    "code" : ""
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "services" : [],
+                                            "options" : "",
+                                            "jobName" : "",
+                                            "code" : ""
+                                        }
+                                    ],
+                                    "services" : [],
+                                    "options" : "",
+                                    "jobName" : "",
+                                    "code" : ""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "config" : ""
+        }
+    ],
+    "config" : "{\"limit\": 2}"
+}

@@ -306,6 +306,17 @@
 					</div>
 				</div>
 			</div>
+
+
+			<div class="p-3 d-flex justify-content-center">
+				<ngb-pagination
+					maxSize="10"
+					[collectionSize]="total"
+					[pageSize]="perPage"
+					[(page)]="page"
+					(pageChange)="applyFilters()">
+				</ngb-pagination>
+			</div>
 		</div>
 	</div>
 </div>

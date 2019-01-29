@@ -100,6 +100,20 @@ const routes: Routes = [
 				data: {
 					breadcrumb: 'WL'
 				}
+			},
+			{
+				path: 'wiki',
+				loadChildren: './containers/wiki/wiki.module#WikiModule',
+				data: {
+					breadcrumb: 'Wiki'
+				}
+			},
+			{
+				path: 'seo',
+				loadChildren: './containers/seo/seo.module#SeoModule',
+				data: {
+					breadcrumb: 'Seo'
+				}
 			}
 		]
 	}
@@ -108,7 +122,10 @@ const routes: Routes = [
 @NgModule({
 	imports: [
 		RouterModule.forRoot(routes, {
-			paramsInheritanceStrategy: 'always'
+			paramsInheritanceStrategy: 'always',
+			anchorScrolling: 'enabled',
+			scrollOffset: [0, 64],
+			scrollPositionRestoration: 'enabled'
 		})
 	],
 	exports: [

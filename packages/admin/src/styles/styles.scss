@@ -1,5 +1,8 @@
 @import "./bootstrap/custom.scss";
 
+.pointer {
+	cursor: pointer;
+}
 
 .node {
 	cursor: pointer;
@@ -49,4 +52,8 @@
   fill: none;
   stroke: #ccc;
   stroke-width: 1px;
+}
+
+.scroll {
+	overflow-y: auto;
 }

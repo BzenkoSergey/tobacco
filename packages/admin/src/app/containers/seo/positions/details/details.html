@@ -1,0 +1,166 @@
+<form
+	class="p-2"
+	(submit)="runSearch()">
+
+	<div class="input-group">
+		<input
+			type="text"
+			class="form-control"
+			placeholder="Запустить поиск"
+			name="search"
+			[disabled]="loading"
+			[(ngModel)]="search">
+
+		<div class="input-group-append">
+			<button
+				class="btn btn-outline-secondary"
+				type="submit"
+				[disabled]="loading || !search">
+				Run
+				<i
+					class="fas"
+					[class.fa-search]="!loading"
+					[class.fa-spinner]="loading"
+					[class.fa-spin]="loading">
+				</i>
+			</button>
+		</div>
+	</div>
+</form>
+
+<div class="results d-flex flex-nowrap scroll">
+	<div
+		*ngFor="let session of sortSessions(items)"
+		class="result">
+
+		<div class="p-3">
+			<b>Start Date:</b> {{session.session | date: 'M/d/yy H:mm:ss'}}
+			<br>
+			<b>Pages</b> {{session.totalPages}} /
+			<b>Items</b> {{session.totalItems}}
+			<br>
+
+			<button
+				class="btn btn-info btn-sm mt-1 mr-1"
+				type="button"
+				(click)="openKeys.set(session, !openKeys.get(session)); openMeta.set(session, false)">
+				Keys Stats
+			</button>
+
+			<button
+				class="btn btn-info btn-sm mt-1"
+				type="button"
+				(click)="openMeta.set(session, !openMeta.get(session)); openKeys.set(session, false)">
+				Meta
+			</button>
+		</div>
+
+		<div
+			*ngIf="openMeta.get(session)"
+			class="p-2 scroll border"
+			style="max-height: 300px">
+
+			<div
+				*ngFor="let meta of getMeta(session)"
+				class="pb-2">
+				<div class="keys">{{meta.keys}}</div>
+				<div [innerHTML]="meta.text"></div>
+			</div>
+		</div>
+
+		<div
+			*ngIf="openKeys.get(session)"
+			class="scroll border"
+			style="max-height: 300px">
+			<table
+				*ngIf="getKeys(session) as keys"
+				class="table" style="table-layout: fixed">
+				<tr>
+					<th style="width: 200px">Key</th>
+					<th style="width: 60px">Count</th>
+					<th>Positions</th>
+				</tr>
+				<tr *ngFor="let key of keys">
+					<td class="p-2" style="width: 200px">{{key.key}}</td>
+					<td class="p-2" style="width: 60px">{{key.count}}</td>
+					<td class="p-2 text-truncate">{{key.poss}}</td>
+				</tr>
+			</table>
+		</div>
+
+		<div
+			*ngIf="getHoogle(session) as i"
+			class="mb-2 mr-2 ml-2 p-2 border d-flex justify-content-start">
+
+			<div class="position text-center">
+				{{((i.page - 1) * 10) + i.position}}
+				<div class="page-number">
+					Page: {{i.page}}
+				</div>
+			</div>
+			<div>
+				<h6 class="title">
+					<a
+						[href]="i.url"
+						target="_blank"
+						[innerHTML]="i.title">
+					</a>
+				</h6>
+				<div class="displayedUrl" [innerHTML]="i.displayedUrl"></div>
+				<div class="description" [innerHTML]="i.description"></div>
+				<div class="adds" *ngIf="i.adds.length">
+					<a
+						*ngFor="let add of i.adds"
+						[href]="add.href">
+						{{add.text}}
+					</a>
+				</div>
+				<div class="keys" *ngIf="i.keys.length">
+					Keys: <b>{{i.keys}}</b>
+				</div>
+			</div>
+		</div>
+
+		<div *ngFor="let page of sortPages(session.pages)">
+
+		<ul class="list-group list-group-flush">
+			<li class="list-group-item bg-light border-top p-2">
+				<h6 class="m-0">Page: {{page.page}}</h6>
+			</li>
+			<li
+				*ngFor="let item of sortItems(page.items)"
+				class="list-group-item list-group-item-action search-item d-flex justify-content-start"
+				[class.h]="isHoogle(item.url)">
+
+				<div class="position text-center">
+					{{((item.page - 1) * 10) + item.position}}
+					<div class="page-number">
+						Page: {{page.page}}
+					</div>
+				</div>
+				<div>
+					<h6 class="title">
+						<a
+							[href]="item.url"
+							target="_blank"
+							[innerHTML]="item.title">
+						</a>
+					</h6>
+					<div class="displayedUrl" [innerHTML]="item.displayedUrl"></div>
+					<div class="description" [innerHTML]="item.description"></div>
+					<div class="adds" *ngIf="item.adds.length">
+						<a
+							*ngFor="let add of item.adds"
+							[href]="add.href">
+							{{add.text}}
+						</a>
+					</div>
+					<div class="keys" *ngIf="item.keys.length">
+						Keys: <b>{{item.keys}}</b>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	</div>
+</div>

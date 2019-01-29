@@ -71,6 +71,17 @@ export class AppComponent {
 							url: 'unit-items'
 						}
 					]
+				},
+				{
+					name: 'Wiki',
+					url: '',
+					icon: 'fa-fax',
+					children: [
+						{
+							name: 'Overview',
+							url: 'wiki'
+						}
+					]
 				}
 			]
 		},
@@ -119,6 +130,17 @@ export class AppComponent {
 						{
 							name: 'Tools',
 							url: 'wl/tools'
+						}
+					]
+				},
+				{
+					name: 'Seo',
+					url: '',
+					icon: 'fa-fax',
+					children: [
+						{
+							name: 'Positions',
+							url: 'seo/positions'
 						}
 					]
 				}

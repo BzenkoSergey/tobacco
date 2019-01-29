@@ -42,9 +42,15 @@ export class HttpJob implements Job {
 		return this;
 	}
 
-	run(result: string) {
+	run(result: any) {
+		result = typeof result === 'string' ? result : result.url;
+		let emitError = true;
+		if (this.options && this.options.emitError !== undefined) {
+			emitError = this.options.emitError
+		}
+		
 		this.httpStack = this.di.get<HttpStack>(this.pipePath, DIService.HTTP_STACK);
-		const subj = new Subject<{ html: string, url: string }>();
+		const subj = new Subject<{ html: string, url: string }|'$stop'>();
 
 		const protocol = result.startsWith('https') ? 'HTTPS' : 'HTTP';
 		let html = '';
@@ -63,8 +69,13 @@ export class HttpJob implements Job {
 				subj.complete();
 			},
 			e => {
-				console.log(result);
-				subj.error(e);
+				if (emitError) {
+					console.log(result);
+					subj.error(e);
+				} else {
+					subj.next('$stop');
+					subj.complete();
+				}
 			},
 			protocol
 		);

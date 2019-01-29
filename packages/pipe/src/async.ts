@@ -5,6 +5,6 @@ export function async<T>(d?: any): Observable<T> {
 		setTimeout(() => {
 			subscriber.next(d);
 			subscriber.complete();
-		});
+		}, 0);
 	});
 }

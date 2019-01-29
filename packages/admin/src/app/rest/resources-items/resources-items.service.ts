@@ -20,6 +20,18 @@ export class ResourcesItemsRestService {
 			);
 	}
 
+	aggregate(query: any) {
+		return this.restService
+			.runSchemeOptions<any[], any>(
+				'GET_LIST',
+				{
+					collection: 'resource-item',
+					query: query || {},
+					aggregate: true
+				}
+			);
+	}
+
 	get(id: string) {
 		return this.restService
 			.runSchemeOptions<any, any>(

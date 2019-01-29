@@ -6,5 +6,7 @@ export enum GrabberTransform {
 	REPLACE_REGEXP = 'REPLACE_REGEXP',
 	PREFIX = 'PREFIX',
 	POSTFIX = 'POSTFIX',
-	MATCH = 'MATCH'
+	MATCH = 'MATCH',
+	EVAL = 'EVAL',
+	DECODE = 'DECODE'
 }

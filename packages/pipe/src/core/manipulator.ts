@@ -106,12 +106,12 @@ export class Manipulator {
 				}),
 				mergeMap(d => {
 					if (d) {
-						// console.log('Manipulator: cant reapeat');
-						d[1].setDelayInput(input);
+						console.log('Manipulator: cant reapeat');
+						child.setInput(input);
 						return async(true);
 					}
-			
-					// console.log('Manipulator: reapeat', child.getPath());
+
+					console.log('Manipulator: reapeat', child.getPath());
 					return parent.cloneChild(child.getPath(), input, isDirectChild);
 				})
 			);

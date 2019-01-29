@@ -3,6 +3,19 @@
 	(submit)="save(form.invalid)">
 
 	<div class="form-group">
+		<label for="schemeType">Scheme Type</label>
+		<select
+			id="schemeType"
+			class="form-control"
+			name="schemeType"
+			[(ngModel)]="item.settings.schemeType">
+
+			<option value="TOBACCO">Tobacco</option>
+			<option value="GOOGLE-SEARCH">Google search</option>
+		</select>
+	</div>
+
+	<div class="form-group">
 		<label for="itemsSync">Items Sync Schedule</label>
 		<input
 			id="itemsSync"

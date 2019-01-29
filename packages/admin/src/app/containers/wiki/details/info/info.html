@@ -1,0 +1,152 @@
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="form-group">
+		<label for="title">
+			Title
+		</label>
+		<input
+			type="text"
+			class="form-control form-control-sm"
+			id="title"
+			name="title"
+			placeholder="Enter Title"
+			required
+			[(ngModel)]="item.title">
+	</div>
+
+	<div class="form-group">
+		<label for="type">
+			Type
+		</label>
+		<select
+			class="form-control form-control-sm"
+			id="type"
+			name="type"
+			required
+			[(ngModel)]="item.type">
+
+			<option
+				*ngFor="let c of ['NONE', 'CATEGORY', 'UNIT', 'UNIT_LINE', 'COMPANY']"
+				[value]="c">
+				{{c}}
+			</option>
+		</select>
+	</div>
+
+	<div
+		*ngIf="item.type === 'COMPANY'"
+		class="form-group">
+
+		<label for="company">
+			Company
+		</label>
+		<select
+			class="form-control form-control-sm"
+			id="company"
+			name="company"
+			required
+			[(ngModel)]="item.entity">
+
+			<option
+				*ngFor="let c of companies"
+				[value]="c._id">
+				{{c.name}}
+			</option>
+		</select>
+	</div>
+
+	<div
+		*ngIf="item.type === 'CATEGORY'"
+		class="form-group">
+
+		<label for="categories">
+			Categories
+		</label>
+		<select
+			class="form-control form-control-sm"
+			id="categories"
+			name="categories"
+			required
+			[(ngModel)]="item.entity">
+
+			<option
+				*ngFor="let c of categories"
+				[value]="c._id">
+				{{c.name}}
+			</option>
+		</select>
+	</div>
+
+	<!-- <div
+		*ngIf="item.type === 'UNIT_LINE'"
+		class="form-group">
+
+		<label for="productLine">
+			Product Line
+		</label>
+		<select
+			id="productLine"
+			class="form-control form-control-sm"
+			name="productLine"
+			[(ngModel)]="item.entity">
+
+			<option [value]="null">
+				No Product Lines
+			</option>
+
+			<optgroup
+				*ngFor="let company of filterBySelected(item.company)"
+				[attr.label]="company.name">
+
+				<option
+					*ngFor="let c of getLine(company)"
+					[value]="c._id">
+					{{c.name}}
+				</option>
+			</optgroup>
+		</select>
+	</div> -->
+
+	<div class="form-group">
+		<div class="form-check">
+			<input
+				id="visible"
+				class="form-check-input"
+				type="checkbox"
+				name="visible"
+				[(ngModel)]="item.visible">
+
+			<label
+				for="visible"
+				class="form-check-label">
+				Visible
+			</label>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<button
+			class="btn btn-primary mr-1"
+			type="submit"
+			[disabled]="form.invalid">
+			<i
+				class="fas"
+				[class.fa-save]="!loading"
+				[class.fa-spinner]="loading"
+				[class.fa-spin]="loading">
+			</i>
+		</button>
+
+		<button
+			class="btn btn-danger"
+			type="button"
+			[disabled]="!item._id"
+			(click)="remove()">
+			<i class="fas fa-trash-alt"></i>
+		</button>
+	</div>
+</form>
+
+

@@ -1,0 +1,20 @@
+<div class="container-fluid h-100">
+	<div class="row h-100">
+		<div class="col-3 pl-0 pr-0 h-100 bg-white scroll shadow">
+			<div class="list-group list-group-flush">
+				<a
+					*ngFor="let item of items"
+					class="list-group-item list-group-item-action flex-column align-items-start"
+					routerLinkActive="active"
+					queryParamsHandling="merge"
+					[routerLink]="[item.query]">
+					{{item.query}}
+				</a>
+			</div>
+		</div>
+
+		<div class="col-9 h-100 shadow scroll p-0 bg-white">
+			<router-outlet></router-outlet>
+		</div>
+	</div>
+</div>

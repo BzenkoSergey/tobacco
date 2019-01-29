@@ -1,0 +1,55 @@
+<div class="card h-100 rounded-0 border-0">
+	<div class="card-header rounded-0">
+		<ul class="nav nav-tabs card-header-tabs">
+			<li class="nav-item">
+				<a
+					class="nav-link"
+					routerLinkActive="active"
+					queryParamsHandling="merge"
+					[routerLink]="['info']">
+					Information
+				</a>
+			</li>
+			<li
+				*ngIf="itemId !== 'new'"
+				class="nav-item">
+
+				<a
+					class="nav-link"
+					routerLinkActive="active"
+					queryParamsHandling="merge"
+					[routerLink]="['fields']">
+					Fields
+				</a>
+			</li>
+			<li
+				*ngIf="itemId !== 'new'"
+				class="nav-item">
+
+				<a
+					class="nav-link"
+					routerLinkActive="active"
+					queryParamsHandling="merge"
+					[routerLink]="['mapping']">
+					Mapping
+				</a>
+			</li>
+			<li
+				*ngIf="itemId !== 'new'"
+				class="nav-item">
+
+				<a
+					class="nav-link"
+					routerLinkActive="active"
+					queryParamsHandling="merge"
+					[routerLink]="['meta']">
+					Meta
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="card-body">
+		<router-outlet></router-outlet>
+	</div>
+</div>

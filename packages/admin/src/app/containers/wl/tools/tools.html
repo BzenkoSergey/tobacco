@@ -7,10 +7,19 @@
 		</i>
 	</h1>
 
-	<div *ngFor="let scheme of schemes">
-		<scheme-editor
-			processPath="../../"
-			[item]="scheme">
-		</scheme-editor>
+	<div
+		*ngFor="let scheme of schemes"
+		class="card mb-3">
+
+		<div class="card-header">
+			{{scheme.label}}
+		</div>
+
+		<div class="card-body pl-2 pr-2 pb-2 pt-0">
+			<scheme-editor
+				processPath="../../"
+				[item]="scheme">
+			</scheme-editor>
+		</div>
 	</div>
 </div>

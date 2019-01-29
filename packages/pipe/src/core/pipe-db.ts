@@ -519,6 +519,9 @@ export abstract class PipeDb extends PipeBase {
 	}
 
 	private canUseDb() {
+		if (this.process.status === PipeStatus.ERROR) {
+			return true;
+		}
 		const allwed = [PipeMode.RUN_ONCE, PipeMode.SCHEME_TO_CLONE];
 		const modes = this.getModes();
 		const currentModes = this.getCurrentModes();
@@ -527,7 +530,7 @@ export abstract class PipeDb extends PipeBase {
 			// this.log('ALLOW DB - !!!!', this.getPath(), currentModes, this.type);
 			return true;
 		}
-		if (!!~modes.indexOf(PipeMode.DB_SYNC_ON_ERROR) && this.process.status === PipeStatus.ERROR) {
+		if (!!~modes.indexOf(PipeMode.DB_SYNC_ON_ERROR) && this.process.status === PipeStatus.ERROR as any) {
 			// this.log('ALLOW DB - DB_SYNC_ON_ERROR !!!!', this.getPath(), currentModes, this.type);
 			return true;
 		}

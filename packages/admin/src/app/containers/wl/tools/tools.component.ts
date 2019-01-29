@@ -51,7 +51,7 @@ export class ToolsComponent {
 		this.schemesRestService
 			.list({
 				code: {
-					$in: ['wl-units', 'wl-categories']
+					$in: ['WL_MOVE_ALL', 'wl-units', 'wl-categories', 'SITEMAP2']
 				}
 			})
 			.subscribe(d => this.schemes = d);

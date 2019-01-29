@@ -41,7 +41,8 @@ export class VersionJob implements Job {
 	}
 
 	run(result: any) {
-		result.data.version = Date.now().toString();
+		const d = result.data || result;
+		d.version = Date.now().toString();
 		return async(result);
 	}
 }

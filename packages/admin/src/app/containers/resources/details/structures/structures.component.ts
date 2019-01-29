@@ -90,8 +90,15 @@ export class StructuresComponent implements OnDestroy {
 
 	private handleStructure(structure: ResourceStructureDto) {
 		const s = JSON.parse(structure.structure);
-		s.resource = this.itemId;
-		s.structureCode = structure.code;
+		if (Array.isArray(s)) {
+			s.forEach(i => {
+				i.resource = this.itemId;
+				i.structureCode = structure.code;
+			});
+		} else {
+			s.resource = this.itemId;
+			s.structureCode = structure.code;
+		}
 		structure.structure = JSON.stringify(s, null, '    ');
 		return structure;
 	}

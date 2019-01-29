@@ -27,6 +27,7 @@ $top-bar-height: 64px;
 .sidebar {
 	background-color: #354053;
 	height: 100%;
+	overflow: auto;
 	float: left;
 
 	&-nav {
@@ -115,7 +116,6 @@ $top-bar-height: 64px;
 			}
 		}
 	}
-
 	.content {
 		background-color: #f5f9fc;
 		overflow: auto;

@@ -5,6 +5,7 @@ import { Store } from './store';
 import { ExtService } from './ext.service';
 import { SchemeProcessService } from './scheme-process.service';
 import { DbService } from './db.service';
+import { Session } from './session.service';
 
 export enum DIService {
 	HTTP_STACK = 'HTTP_STACK',
@@ -13,7 +14,8 @@ export enum DIService {
 	STORE = 'STORE',
 	EXT = 'EXT',
 	SCHEME_PROCESS = 'SCHEME_PROCESS',
-	DB = 'DB'
+	DB = 'DB',
+	SESSION = 'SESSION'
 }
 
 export class DI {
@@ -31,6 +33,7 @@ export class DI {
 		this.services.set(DIService.EXT, ExtService);
 		this.services.set(DIService.SCHEME_PROCESS, SchemeProcessService);
 		this.services.set(DIService.DB, DbService);
+		this.services.set(DIService.SESSION, Session);
 	}
 
 	registrate(path: string, service: DIService) {

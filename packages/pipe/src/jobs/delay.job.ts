@@ -69,6 +69,9 @@ export class DelayJob implements Job {
 		
 		this.task = schedule.scheduleJob(delay, () => {
 			this.next(data.data || data, interval);
+			if (date) {
+			console.log(this.task.nextInvocation(), '=====');
+			}
 		});
 
 		if (!this.task) {

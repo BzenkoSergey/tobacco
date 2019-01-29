@@ -27,6 +27,9 @@ export class OverviewComponent implements OnDestroy {
 	resource = '';
 	sortBy = '';
 	sortDirection = 'up';
+	page = 1;
+	perPage = 30;
+	total = 0;
 
 	resources: ResourceDto[] = [];
 	versions = new Map<string, any[]>();
@@ -46,6 +49,7 @@ export class OverviewComponent implements OnDestroy {
 			this.resource = p.resource;
 			this.sortBy = p.sortBy;
 			this.sortDirection = p.sortDirection || 'up';
+			this.page = isNaN(+p.page) ? 1 : +p.page;
 			this.fetch();
 		});
 		this.fetchResources();
@@ -142,7 +146,7 @@ export class OverviewComponent implements OnDestroy {
 		} else {
 			sort.version = -1;
 		}
-		return this.service.list(query, null, null, sort)
+		return this.service.list(query, 50, 50 * (this.page - 1), sort)
 			.subscribe(
 				d => {
 					this.items = d;

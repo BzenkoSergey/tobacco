@@ -48,7 +48,7 @@ export class RepeatChildJob implements Job {
 
 	run(input) {
 		if(!input.length) {
-			return async(null);
+			return async('$stop');
 		}
 		this.navigator = this.di.get<Navigator>(this.pipePath, DIService.NAVIGATOR);
 		this.manipulator = this.di.get<Manipulator>(this.pipePath, DIService.MANIPULATOR);
@@ -56,7 +56,6 @@ export class RepeatChildJob implements Job {
 		const group = this.navigator.getPipe(this.pipePath);
 		const pipeToRepeat = group.getChildren()[0];
 
-		debugger;
 		const obs = input.map(r => {
 			return this.manipulator.repeatOrPerform(group, pipeToRepeat, r || input, false, this.options.field || 'data');
 		});

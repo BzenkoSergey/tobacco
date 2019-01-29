@@ -201,7 +201,6 @@ export class Pipe extends PipeDb {
 		inst.setDI(this.di);
 		this.children.push(inst);
 
-		debugger;
 		const config = inst.getConfig();
 		config.modes = config.modes.filter(i => i !== PipeMode.SCHEME_TO_CLONE);
 		inst.setConfig(config);
@@ -253,6 +252,20 @@ export class Pipe extends PipeDb {
 				mergeMap(d => {
 					if (d === '$stop') {
 						return async(d);
+					}
+					if (typeof d === 'object' && d.status === '$release') {
+						if (this.optionsData && this.optionsData.skipOutput) {
+							this.performChildren(d.output).subscribe();
+						}
+						(this.saveProcessOutput(d.output) as Observable<any>)
+							.pipe(
+								mergeMap(() => {
+									return this.performChildren(d.output);
+								})
+							).subscribe();
+						this.stream.next(d.output);
+						this.stream.complete();
+						return async(d.output);
 					}
 					if (this.optionsData && this.optionsData.skipOutput) {
 						return this.performChildren(d)

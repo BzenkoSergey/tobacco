@@ -1,0 +1,47 @@
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="row">
+		<div class="col">
+			<pre>
+Example:
+	company: ['7-days', 'adalya'],
+	category: ['tobacco'],
+	resource: ['aladin'],
+	unit-line: ['dark-side-medium']
+			</pre>
+		</div>
+		<div class="col"></div>
+	</div>
+
+	<div
+		class="border rounded"
+		ace-editor
+		[(text)]="data"
+		[mode]="'json'"
+		[options]="{showLineNumbers: false,showGutter: false}"
+		[theme]="'eclipse'"
+		[readOnly]="false"
+		[autoUpdateContent]="true"
+		[durationBeforeCallback]="10"
+		style="min-height: 300px; width:100%; overflow: auto;">
+	</div>
+
+	<div class="form-group mt-3">
+		<button
+			class="btn btn-primary mr-1"
+			type="submit"
+			[disabled]="form.invalid">
+			<i
+				class="fas"
+				[class.fa-save]="!loading"
+				[class.fa-spinner]="loading"
+				[class.fa-spin]="loading">
+			</i>
+			Save
+		</button>
+	</div>
+</form>
+
+

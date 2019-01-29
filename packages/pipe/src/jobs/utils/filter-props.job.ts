@@ -38,8 +38,9 @@ export class UtilsFilterPropsJob implements Job {
 	}
 
 	run(dom: any) {
+		const d = dom.data || dom;
 		const stop = this.options.some(s => {
-			return !dom.data[s];
+			return !d[s];
 		});
 		if (stop) {
 			return async('$stop');

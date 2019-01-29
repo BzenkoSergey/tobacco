@@ -1,0 +1,197 @@
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="border rounded p-2 mb-3">
+		<ng-container *ngFor="let field of getFields()">
+			<ng-container *ngIf="field.visible">
+				<div [innerHTML]="genFieldTemplate(field)"></div>
+			</ng-container>
+		</ng-container>
+	</div>
+
+	<div class="row border-bottom">
+		<div class="col d-flex justify-content-start align-items-center pb-2">
+			<div class="form-group m-0">
+				<button
+					class="btn btn-primary mr-1"
+					type="submit"
+					[disabled]="form.invalid">
+					<i
+						class="fas"
+						[class.fa-save]="!loading"
+						[class.fa-spinner]="loading"
+						[class.fa-spin]="loading">
+					</i>
+				</button>
+			</div>
+			<div class="form-group m-0 ml-3">
+				<div class="form-check">
+					<input
+						id="visible"
+						class="form-check-input"
+						type="checkbox"
+						name="visible"
+						[(ngModel)]="item.visible">
+
+					<label
+						for="visible"
+						class="form-check-label">
+						Visible
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="col text-right">
+			<button
+				type="button"
+				class="btn btn-primary"
+				(click)="addField()">
+
+				<i class="fas fa-plus"></i>
+				Add
+			</button>
+		</div>
+	</div>
+
+	<div
+		*ngFor="let field of item.fields"
+		class="row">
+		<div
+			class="col-12 border-bottom pt-1 pb-1 pointer title d-flex justify-content-between align-items-center"
+			[class.s]="selected === field"
+			(click)="selected = (selected === field) ? null : field">
+			{{field.name || 'No name'}}
+
+			<button
+				type="button"
+				class="btn btn-danger btn-sm"
+				(click)="$event.preventDefault(); removeField(field)">
+
+				<i class="fas fa-trash-alt"></i>
+				Remove
+			</button>
+		</div>
+		<div
+			*ngIf="selected === field"
+			class="col p-2 border-bottom">
+
+			<div class="row">
+				<div class="col">
+					<div class="form-group mb-1">
+						<input
+							type="text"
+							class="form-control form-control-sm"
+							name="tag"
+							placeholder="Tag"
+							[(ngModel)]="field.tag">
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-group mb-1">
+						<input
+							type="number"
+							class="form-control form-control-sm"
+							name="order"
+							placeholder="Order"
+							[(ngModel)]="field.order">
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-group">
+						<div class="form-check">
+							<input
+								id="visible2"
+								class="form-check-input"
+								type="checkbox"
+								name="visible"
+								[(ngModel)]="field.visible">
+
+							<label
+								for="visible2"
+								class="form-check-label">
+								Visible
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<input
+					type="text"
+					class="form-control form-control-sm"
+					name="name"
+					placeholder="Name"
+					required
+					[(ngModel)]="field.name">
+			</div>
+			<div
+				class="border rounded"
+				ace-editor
+				[(text)]="field.value"
+				[mode]="'html'"
+				[options]="{showLineNumbers: false,showGutter: false}"
+				[theme]="'eclipse'"
+				[readOnly]="false"
+				[autoUpdateContent]="true"
+				[durationBeforeCallback]="10"
+				style="min-height: 300px; width:100%; overflow: auto;">
+			</div>
+		</div>
+
+		<div
+			*ngIf="selected === field"
+			class="col-3 border-left p-2 border-bottom">
+
+			<button
+				type="button"
+				class="btn btn-primary btn-sm btn-block mb-2"
+				(click)="addAdds(field)">
+
+				<i class="fas fa-plus"></i>
+			</button>
+
+			<div
+				*ngFor="let add of field.adds"
+				class="d-flex justify-content-start">
+				<div class="form-group m-0">
+					<input
+						type="text"
+						class="form-control form-control-sm"
+						placeholder="Name"
+						required
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="add.name">
+				</div>
+				<div class="form-group m-0 pl-1 pr-1  w-50">
+					<input
+						type="text"
+						class="form-control form-control-sm"
+						placeholder="Value"
+						required
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="add.value">
+				</div>
+				<button
+					type="button"
+					class="btn btn-danger btn-sm btn-block mb-2 w-25"
+					(click)="removeAdds(field, add)">
+
+					<i class="fas fa-trash-alt"></i>
+				</button>
+			</div>
+
+			<div class="text-right">
+				<button
+					type="submit"
+					class="btn btn-primary btn-sm mb-2">
+
+					<i class="fas fa-save"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+</form>
+
+

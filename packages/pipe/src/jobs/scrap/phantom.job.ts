@@ -46,7 +46,9 @@ export class PhantomJob implements Job {
 
 	run(url: string) {
 		// const subj = new Subject();
-		let timeout = 10;
+		let timeout = this.options.timeout || 2000;
+
+		console.log(timeout, this.options);
 
 		const store = this.di.get<Store>(this.pipePath, DIService.STORE);
 		const page = store.get('PHANTOM_PAGE');
@@ -61,6 +63,8 @@ export class PhantomJob implements Job {
 							.then(instance => {
 								instance.createPage()
 									.then(page => {
+										// page.settings.userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36';
+					
 										page
 											.on('onResourceRequested', function(requestData) {
 												// console.info('Requesting', requestData.url);
@@ -76,16 +80,26 @@ export class PhantomJob implements Job {
 									.catch(e => subj.error(e));
 							})
 							.catch(e => subj.error(e));
-						timeout = 500;
+						timeout = timeout + 2500;
 						return subj;
 					}
 					console.error('=USE EXISYSYS===============');
 					return async<any>(page);
 				}),
 				mergeMap(page => {
+
+					const encoded = this.isEncoded(url);
+					let uri = url;
+	
+					if (encoded) {
+						uri = decodeURI(uri);
+					}
+					uri = encodeURI(uri);
+
+					console.log(uri);
 					const subj = new Subject();
 					page
-						.open(url)
+						.open(uri)
 						.then(() => {
 							setTimeout(() => {
 								page
@@ -148,5 +162,11 @@ export class PhantomJob implements Job {
 		// 	.catch(e => subj.error(e));
 
 		// return subj;
+	}
+
+	private isEncoded(uri: string) {
+		uri = uri || '';
+	  
+		return uri !== decodeURI(uri);
 	}
 }

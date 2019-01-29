@@ -39,7 +39,7 @@ export class DBGetListJob implements Job {
 		dom = dom || {};
 		const collection = dom.collection || this.options.collection;
 		const query = dom.query || this.options.query;
-		const limit = dom.limit || this.options.limit;
+		const limit = (dom.limit === undefined || dom.limit === null) ? this.options.limit : dom.limit;
 		const skip = dom.skip || this.options.skip;
 		const sort = dom.sort || this.options.sort;
 	
@@ -47,6 +47,7 @@ export class DBGetListJob implements Job {
 			return new MongoDb(collection, true)
 				.aggregate(this.processQueries(query, '$id-'));
 		}
+
 		return new MongoDb(collection, true)
 			.find(this.processQueries(query), null, limit, skip, sort);
 	}

@@ -50,7 +50,7 @@ export class DBCreateJob implements Job {
 
 	run(dom: any) {
 		const collection = dom.collection || this.options.collection;
-		let document = dom.document || dom.data;
+		let document = dom.document || dom.data || dom;
 		if (this.options && this.options.dataPath) {
 			document = this.deepValue(dom, this.options.dataPath);
 		}

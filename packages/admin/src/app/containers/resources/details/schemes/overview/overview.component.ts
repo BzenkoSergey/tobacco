@@ -17,6 +17,9 @@ import itemScheme from './item-scheme.json';
 import linksScheme from './links-scheme.json';
 import fetchScheme from './fetch-scheme.json';
 import intervalScheme from './interval-scheme.json';
+import googleSearchScheme from './google-search.json';
+import googleSearchMultiScheme from './google-search-multi.json';
+import linkInfoScheme from './link-info.json';
 
 @Component({
 	templateUrl: './overview.html',
@@ -162,15 +165,69 @@ export class OverviewComponent implements OnDestroy {
 		return intervalSchemeClone;
 	}
 
+	getLinkInfo() {
+		const schemeClone = JSON.parse(JSON.stringify(linkInfoScheme));
+		const infoStructure = this.item.structures.find(s => s.code === 'INFO');
+		schemeClone.options = infoStructure.structure;
+		schemeClone.label = this.item.name + ' Link Info';
+		return schemeClone;
+	}
+
+	genGoogleMultiSearch() {
+		const search = this.genGoogleSearch();
+		search.config = JSON.stringify({
+			modes: ['SCHEME_TO_CLONE', 'RUN_ONCE']
+		});
+		const schemeClone = JSON.parse(JSON.stringify(googleSearchMultiScheme));
+		schemeClone.children.push(search);
+		schemeClone.label = this.item.name + ' Google Search Multi';
+		return schemeClone;
+	}
+
+	genGoogleSearch() {
+		const schemeClone = JSON.parse(JSON.stringify(googleSearchScheme));
+		const results = this.getByCode(schemeClone, 'RESULTS');
+		const structure = this.item.structures.find(s => s.code === 'ITEM');
+		results.options = structure.structure;
+
+		const linkInfo = this.getLinkInfo();
+		const info = this.getByCode(schemeClone, 'INFO_HTTP');
+		info.children.push(linkInfo);
+
+		// const infoStructure = this.item.structures.find(s => s.code === 'INFO');
+		// info.options = infoStructure.structure;
+
+		schemeClone.label = this.item.name + ' Google Search';
+		schemeClone.options = JSON.stringify({
+			url: this.item.path + 'search?start=0',
+			param: 'q'
+		});
+		// https://www.google.com.ua/search?q=Компания+DarkSide
+		return schemeClone;
+	}
+
 	generate() {
-		let schemes: any[] = this.genProducts();
-		schemes = schemes.concat(this.genProductsFetch());
-		const links = this.genLinks();
-		const complex = this.genComplex();
-		const interval = this.genInterval();
-		schemes.unshift(links);
-		schemes.unshift(complex);
-		schemes.unshift(interval);
+		let schemes: any[] = [];
+		if (this.item.settings.schemeType !== 'GOOGLE-SEARCH') {
+			schemes = this.genProducts();
+			schemes = schemes.concat(this.genProductsFetch());
+			const links = this.genLinks();
+			const complex = this.genComplex();
+			const interval = this.genInterval();
+			schemes.unshift(links);
+			schemes.unshift(complex);
+			schemes.unshift(interval);
+		} else {
+			const sc = this.genGoogleSearch();
+			const i = this.getLinkInfo();
+			const m = this.genGoogleMultiSearch();
+			schemes.unshift(i);
+			schemes.unshift(sc);
+			schemes.unshift(m);
+		}
+		if (!schemes.length) {
+			return;
+		}
 
 		this.applySchemes(schemes);
 	}

@@ -1,0 +1,24 @@
+{
+	"_id" : null,
+	"id" : "5c0446d9db3e4a4cf36bf9f7",
+	"type" : "",
+	"label" : "",
+	"services" : [],
+	"options" : "{\n    \"$\": {\n        \"selector\": \"html\"\n    },\n    \"head\": {\n        \"$\": {\n            \"selector\": \"head\"\n        },\n        \"title\": {\n            \"$\": {\n                \"selector\": \"title\",\n                \"type\": \"TEXT\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"description\": {\n            \"$\": {\n                \"selector\": \"meta[name=\\\"description\\\"]\",\n                \"type\": \"ATTR\",\n                \"resource\": \"content\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"canonical\": {\n            \"$\": {\n                \"selector\": \"link[rel=\\\"canonical\\\"]\",\n                \"type\": \"ATTR\",\n                \"resource\": \"href\",\n                \"transforms\": [\n                    {\n                        \"name\": \"TRIM\",\n                        \"option\": \"\"\n                    }\n                ]\n            }\n        },\n        \"properties\": [\n            {\n                \"$\": {\n                    \"selector\": \"meta[property]\"\n                },\n                \"property\": {\n                    \"$\": {\n                        \"type\": \"ATTR\",\n                        \"resource\": \"property\",\n                        \"transforms\": [\n                            {\n                                \"name\": \"TRIM\",\n                                \"option\": \"\"\n                            }\n                        ]\n                    }\n                },\n                \"content\": {\n                    \"$\": {\n                        \"type\": \"ATTR\",\n                        \"resource\": \"content\",\n                        \"transforms\": [\n                            {\n                                \"name\": \"TRIM\",\n                                \"option\": \"\"\n                            }\n                        ]\n                    }\n                }\n            }\n        ]\n    },\n    \"links\": [\n        {\n            \"$\": {\n                \"selector\": \"a\"\n            },\n            \"href\": {\n                \"$\": {\n                    \"type\": \"ATTR\",\n                    \"resource\": \"href\",\n                    \"transforms\": [\n                        {\n                            \"name\": \"TRIM\",\n                            \"option\": \"\"\n                        }\n                    ]\n                }\n            },\n            \"title\": {\n                \"$\": {\n                    \"type\": \"ATTR\",\n                    \"resource\": \"title\",\n                    \"transforms\": [\n                        {\n                            \"name\": \"TRIM\",\n                            \"option\": \"\"\n                        }\n                    ]\n                }\n            },\n            \"text\": {\n                \"$\": {\n                    \"type\": \"TEXT\",\n                    \"transforms\": [\n                        {\n                            \"name\": \"TRIM\",\n                            \"option\": \"\"\n                        }\n                    ]\n                }\n            }\n        }\n    ],\n    \"resource\": \"5c4ddc899fd908d940443494\",\n    \"structureCode\": \"INFO\"\n}",
+	"jobName" : "",
+	"config" : "{\"modes\": [\"DB_SYNC_ON_DONE\"]}",
+	"code" : "LINK_INFO",
+	"children" : [
+		{
+			"_id" : null,
+			"id" : "5c0ed996dee83c1b3bef2568",
+			"type" : "",
+			"label" : "",
+			"children" : [],
+			"services" : [],
+			"options" : "{\"collection\": \"resource-item\"}",
+			"jobName" : "",
+			"code" : ""
+		}
+	]
+}

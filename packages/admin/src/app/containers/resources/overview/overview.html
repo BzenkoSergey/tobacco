@@ -213,17 +213,59 @@
 				</div>
 			</div>
 
-			<div class="card">
+			<div
+				*ngFor="let group of groups"
+				class="card mb-3">
+
+				<div class="card-header">
+					{{group.name}} ({{group.resources.length}})
+				</div>
+
 				<table class="table table-sm table-striped m-0">
 					<thead>
 						<tr>
-							<th scope="col">Name</th>
-							<th scope="col">Path</th>
-							<th scope="col"></th>
+							<th class="border-top-0" scope="col">Name</th>
+							<th class="border-top-0" scope="col">Path</th>
+							<th class="border-top-0" scope="col"></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let item of items">
+						<tr *ngFor="let item of getByGroup(group._id)">
+							<td>
+								<a [routerLink]="['../../', item._id]">
+									{{item.name}}
+								</a>
+							</td>
+							<td>{{item.path}}</td>
+
+							<td class="text-center">
+								<button
+									type="button"
+									class="btn btn-link text-danger p-0"
+									(click)="performRemove(item)">
+									<i class="far fa-trash-alt"></i>
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="card mb-3">
+				<div class="card-header">
+					Ungrouped
+				</div>
+
+				<table class="table table-sm table-striped m-0">
+					<thead>
+						<tr>
+							<th class="border-top-0" scope="col">Name</th>
+							<th class="border-top-0" scope="col">Path</th>
+							<th class="border-top-0" scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr *ngFor="let item of getByGroup()">
 							<td>
 								<a [routerLink]="['../../', item._id]">
 									{{item.name}}

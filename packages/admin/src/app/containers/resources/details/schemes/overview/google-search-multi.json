@@ -1,0 +1,13 @@
+{
+    "id" : "5c23caa9b1e0d833107453ec",
+    "type" : "LINE",
+    "code" : "GOOGLE_SEARCH_MULTI",
+    "services" : [
+        "HTTP_STACK",
+        "STORE",
+        "EXT"
+    ],
+    "config" : "{\"limit\": 1}",
+    "children" : [
+    ]
+}

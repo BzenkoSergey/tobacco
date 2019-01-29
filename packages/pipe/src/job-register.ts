@@ -16,6 +16,7 @@ import { DBGetListJob } from './jobs/db/get-list.job';
 import { DBCreateJob } from './jobs/db/create.job';
 import { DBUpdateJob } from './jobs/db/update.job';
 import { DBRemoveJob } from './jobs/db/remove.job';
+import { MockJob } from './jobs/mock.job';
 
 import { UtilsFilterJob } from './jobs/utils/filter.job';
 import { UtilsFilterPropsJob } from './jobs/utils/filter-props.job';
@@ -63,8 +64,18 @@ import { MoveOneJob } from './jobs/wl/move-one.job';
 import { NeedCheckJob } from './jobs/product/need-check.job';
 import { PhantomJob } from './jobs/scrap/phantom.job';
 import { CloneChildJob } from './jobs/clone-child.job';
+import { QueryJob } from './jobs/scrap/query.job';
+import { UnwrapJob } from './jobs/unwrap.job';
+
+import { RemoveAllJob } from './jobs/wl/remove-all.job';
+import { MoveAllJob } from './jobs/wl/move-all.job';
 
 export enum JobRegister {
+	MOCK = 'MOCK',
+	REMOVE_ALL = 'REMOVE_ALL',
+	MOVE_ALL = 'MOVE_ALL',
+	UNWRAP = 'UNWRAP',
+	QUERY = 'QUERY',
 	PHANTOM = 'PHANTOM',
 	NONE = 'NONE',
 	HTTP = 'HTTP',
@@ -134,6 +145,8 @@ export enum JobRegister {
 export namespace JobRegister {
 	const map = new Map<JobRegister, JobConstructor>();
 
+	map.set(JobRegister.MOCK, MockJob);
+	map.set(JobRegister.QUERY, QueryJob);
 	map.set(JobRegister.PHANTOM, PhantomJob);
 	map.set(JobRegister.IMG_DOWMLOAD, ImageDownloadJob);
 	map.set(JobRegister.IMG_EXTERNAL_DOWNLOAD, ImageExternlDownloadJob);
@@ -150,7 +163,7 @@ export namespace JobRegister {
 	
 
 	map.set(JobRegister.NONE, NoneJob);
-	map.set(JobRegister.NONE, NoneJob);
+	map.set(JobRegister.UNWRAP, UnwrapJob);
 
 	map.set(JobRegister.NONE, NoneJob);
 	map.set(JobRegister.HTTP, HttpJob);
@@ -161,6 +174,8 @@ export namespace JobRegister {
 	map.set(JobRegister.VERSION, VersionJob);
 	map.set(JobRegister.DELAY, DelayJob);
 	map.set(JobRegister.REPEAT_CHILD, RepeatChildJob);
+	map.set(JobRegister.MOVE_ALL, MoveAllJob);
+	map.set(JobRegister.REMOVE_ALL, RemoveAllJob);
 
 	map.set(JobRegister.PRODUCT_COMPANY, CompanyJob);
 	map.set(JobRegister.PRODUCT_LINE, ProductLineJob);
