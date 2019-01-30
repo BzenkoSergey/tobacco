@@ -113,6 +113,7 @@ export class PhantomJob implements Job {
 										// 	.then(() => {
 							console.log('=======sadads=|||||: ' + uri)
 												page.close();
+												phantom.exit();
 												subj.next({
 													html: html,
 													url: url
