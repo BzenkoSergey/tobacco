@@ -28,7 +28,7 @@
                     "type" : "",
                     "label" : "",
                     "services" : [],
-                    "options" : "{\n    \"timeout\": 5000\n}",
+                    "options" : "{\n    \"timeout\": 3000\n}",
                     "jobName" : "",
                     "code" : "",
                     "input" : "",

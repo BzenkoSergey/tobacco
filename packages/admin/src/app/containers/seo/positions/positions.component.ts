@@ -107,6 +107,13 @@ export class SeoPositionsComponent implements OnDestroy {
 			});
 	}
 
+	formatQuery(query: string) {
+		if (!query) {
+			return '';
+		}
+		return query.replace(/\+/g, ' ');
+	}
+
 	save(d: WikiDto) {
 		if (d._id) {
 			this.update(d);
