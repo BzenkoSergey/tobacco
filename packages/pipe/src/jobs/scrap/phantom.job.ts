@@ -72,7 +72,7 @@ export class PhantomJob implements Job {
 											})
 											.then(() => {
 												store.set('PHANTOM_PAGE', page);
-												subj.next(page);
+												subj.next([page, instance]);
 												subj.complete();
 											})
 											.catch(e => subj.error(e));
@@ -87,8 +87,9 @@ export class PhantomJob implements Job {
 					console.error('=USE EXISYSYS===============');
 					return async<any>(page);
 				}),
-				mergeMap(page => {
-
+				mergeMap(d => {
+					const page = d[0];
+					const instance = d[1];
 					const encoded = this.isEncoded(url);
 					let uri = url;
 	
@@ -109,18 +110,16 @@ export class PhantomJob implements Job {
 								page
 									.property('content')
 									.then((html) => {
-										// instance.exit()
-										// 	.then(() => {
-							console.log('=======sadads=|||||: ' + uri)
-												page.close();
-												phantom.exit();
+										instance.exit()
+											.then(() => {
+												// page.close();
 												subj.next({
 													html: html,
 													url: url
 												});
 												subj.complete();
-											// })
-											// .catch(e => subj.error(e));
+											})
+											.catch(e => subj.error(e));
 									})
 									.catch(e => subj.error(e));
 							}, timeout);
