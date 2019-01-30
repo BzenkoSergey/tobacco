@@ -81,7 +81,7 @@ export class PhantomJob implements Job {
 									.catch(e => subj.error(e));
 							})
 							.catch(e => subj.error(e));
-						timeout = timeout + 2500;
+						timeout = timeout + 1000;
 						return subj;
 					}
 					console.error('=USE EXISYSYS===============');
@@ -123,7 +123,7 @@ export class PhantomJob implements Job {
 											// .catch(e => subj.error(e));
 									})
 									.catch(e => subj.error(e));
-							}, timeout - 2500);
+							}, timeout);
 							console.log('============|||||: ' + timeout)
 						})
 						.catch(e => subj.error(e));

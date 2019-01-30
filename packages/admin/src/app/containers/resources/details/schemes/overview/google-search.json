@@ -175,5 +175,5 @@
             "config" : ""
         }
     ],
-    "config" : "{\"limit\": 2}"
+    "config" : "{\"limit\": 1}"
 }
