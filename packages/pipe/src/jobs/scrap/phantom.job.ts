@@ -46,6 +46,7 @@ export class PhantomJob implements Job {
 
 	run(url: string) {
 		// const subj = new Subject();
+		console.log('====/////////' + this.options.timeout);
 		let timeout = this.options.timeout || 2000;
 
 		console.log(timeout, this.options);
@@ -55,7 +56,7 @@ export class PhantomJob implements Job {
 		return async(page)
 			.pipe(
 				mergeMap(page => {
-					if (!page) {
+					if (true) {
 						console.error('================');
 						const subj = new Subject();
 
@@ -96,7 +97,10 @@ export class PhantomJob implements Job {
 					}
 					uri = encodeURI(uri);
 
+					console.log('======= run');
 					console.log(uri);
+	//				"modes": ["DB_BRANCHES2_SYNC_ON_DONE", "DB_2NO_SYNC"],
+    
 					const subj = new Subject();
 					page
 						.open(uri)
@@ -107,6 +111,8 @@ export class PhantomJob implements Job {
 									.then((html) => {
 										// instance.exit()
 										// 	.then(() => {
+							console.log('=======sadads=|||||: ' + uri)
+												page.close();
 												subj.next({
 													html: html,
 													url: url
@@ -117,6 +123,7 @@ export class PhantomJob implements Job {
 									})
 									.catch(e => subj.error(e));
 							}, timeout);
+							console.log('============|||||: ' + timeout)
 						})
 						.catch(e => subj.error(e));
 					return subj;
