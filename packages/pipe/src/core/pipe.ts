@@ -253,7 +253,7 @@ export class Pipe extends PipeDb {
 					if (d === '$stop') {
 						return async(d);
 					}
-					if (typeof d === 'object' && d.status === '$release') {
+					if (typeof d === 'object' && d !== null && d.status === '$release') {
 						if (this.optionsData && this.optionsData.skipOutput) {
 							this.performChildren(d.output).subscribe();
 						}
