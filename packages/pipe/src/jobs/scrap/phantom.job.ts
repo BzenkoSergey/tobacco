@@ -122,7 +122,7 @@ export class PhantomJob implements Job {
 											// .catch(e => subj.error(e));
 									})
 									.catch(e => subj.error(e));
-							}, timeout);
+							}, timeout - 2500);
 							console.log('============|||||: ' + timeout)
 						})
 						.catch(e => subj.error(e));
