@@ -24,6 +24,7 @@ type Input = {
 
 export class ImageResizeJob implements Job {
 	private options: Options;
+	private overlay = path.resolve(__dirname + './overlay_white.png');
 
 	constructor(options: Options) {
 		this.options = options;
@@ -88,7 +89,9 @@ export class ImageResizeJob implements Job {
 					width: width,
 					height: height
 				})
-				.overlayWith('overlay.png', { gravity: sharp.gravity.southeast } )
+				.overlayWith(this.overlay, {
+					gravity: sharp.gravity.southeast
+				})
 				.sharpen()
 				.withMetadata()
 				.webp( { quality: 90 } )
