@@ -82,6 +82,18 @@ export class ImageResizeJob implements Job {
 		const input = this.getStorePath() + '/' + path;
 		const output = this.getResizedStorePath() + '/' + sizeCode + '-' + path;
 
+		if (sizeCode === 'md' || sizeCode === 'lg') {
+			return sharp(input)
+				.resize({
+					width: width,
+					height: height
+				})
+				.overlayWith('overlay.png', { gravity: sharp.gravity.southeast } )
+				.sharpen()
+				.withMetadata()
+				.webp( { quality: 90 } )
+				.toFile(output);
+		}
 		return sharp(input)
 			.resize({
 				width: width,
