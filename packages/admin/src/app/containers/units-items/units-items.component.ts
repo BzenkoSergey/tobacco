@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription, Observable, combineLatest } from 'rxjs';
+import { mergeMap, map } from 'rxjs/operators';
 
 import { UnitsRestService, UnitDto } from '@rest/units';
 import { UnitLinesRestService, UnitLineDto } from '@rest/unit-lines';
@@ -222,6 +223,41 @@ export class UnitsItemsComponent implements OnDestroy {
 
 	isSync(url: string) {
 		return this.syncItems.includes(url);
+	}
+
+	syncPage() {
+		const subjs = this.processedItems.map(item => {
+			this.syncItems.push(item.item.url);
+			return this.resourcesRestService.get(item.item.resource)
+				.pipe(
+					mergeMap(resource => {
+						return this.schemesRestService
+							.list({
+								_id: {
+									$in: resource.schemes.map(i => '$' + i),
+								},
+								code: 'PRODUCT_FETCH'
+							})
+							.pipe(
+								mergeMap(schemes => {
+									const scheme = schemes[0];
+									return this.schemeProcessesService.createWithData(scheme._id, item.item.url)
+										.pipe(
+											map(() => {
+												this.syncItems = this.syncItems.filter(i => i !== item.item.url);
+												return null;
+											})
+										);
+								})
+							);
+					})
+				);
+		});
+
+		combineLatest(...subjs)
+			.subscribe(() => {
+				this.fetchProcessedItems();
+			});
 	}
 
 	sync(item: any) {
