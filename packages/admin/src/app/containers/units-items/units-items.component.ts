@@ -193,6 +193,24 @@ export class UnitsItemsComponent implements OnDestroy {
 			});
 	}
 
+	setAutoSyncPage() {
+		const subjs = this.processedItems
+			.filter(item => {
+				return item.unitItem && !item.unitItem.autoAggregation;
+			})
+			.map(item => {
+				item.unitItem.autoAggregation = !item.unitItem.autoAggregation;
+
+				this.syncItems.push(item.item.url);
+				return this.unitItemsService.update(item.unitItem._id, item.unitItem);
+			});
+
+		combineLatest(...subjs)
+			.subscribe(() => {
+				this.fetchProcessedItems();
+			});
+	}
+
 	unassign(item: any) {
 		this.unitItemsService.remove(item.unitItem._id)
 			.subscribe(d => {
