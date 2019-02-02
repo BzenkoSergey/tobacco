@@ -155,6 +155,13 @@ export abstract class PipeBase {
 	}
 
 	getScheme(): PipeInput {
+		let hasToClone = false;
+		if (this.children.length) {
+			hasToClone = this.children.some(a => {
+				const config = a.getConfig();
+				return !!~config.modes.indexOf(PipeMode.SCHEME_TO_CLONE);
+			})
+		}
 		return {
 			entityId: this.entityId,
 			schemeId: this.schemeId,
@@ -165,7 +172,15 @@ export abstract class PipeBase {
 			label: this.label,
 			parent: this.parent,
 			services: this.services,
-			children: this.children.map(c => c.getScheme()),
+			children: this.children
+				.filter(c => {
+					if (!hasToClone) {
+						return true;
+					}
+					const config = c.getConfig();
+					return !!~config.modes.indexOf(PipeMode.SCHEME_TO_CLONE);
+				})
+				.map(c => c.getScheme()),
 			options: this.options,
 			input: this.input,
 			path: this.path,
