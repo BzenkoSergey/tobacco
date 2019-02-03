@@ -103,7 +103,7 @@ export class ImageNamesJob implements Job {
 	}
 
 	rus_to_latin (str: string) {
-		if (!str.match(/[A-z]/g)) {
+		if (!str.match(/[А-я]/g)) {
 			return str;
 		}
 		var ru = {
