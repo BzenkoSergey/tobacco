@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-import * as URL from 'URL';
+import * as URL from 'url';
 import { async } from './../../async';
 import { PipeInjector } from './../../pipes/pipe-injector.interface';
 import { Messager } from './../../pipes/messager.interface';

@@ -6,7 +6,7 @@ import { PipeInjector } from './../../pipes/pipe-injector.interface';
 import { Messager } from './../../pipes/messager.interface';
 import { Job } from './../job.interface';
 import { DI, DIService } from '../../core/di';
-import * as URL from 'URL';
+import * as URL from 'url';
 import { Session } from './../../core/session.service';
 
 export class DomScrapJob implements Job {

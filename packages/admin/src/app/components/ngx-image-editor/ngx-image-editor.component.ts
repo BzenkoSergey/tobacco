@@ -181,7 +181,7 @@ export class NgxImageEditorComponent implements AfterViewInit, OnInit, OnDestroy
 	private initializeCropper() {
 	  this.cropper = new Cropper(this.previewImage.nativeElement, {
 		zoomOnWheel: false,
-		viewMode: 1,
+		viewMode: 0,
 		autoCropArea: 1,
 		aspectRatio: NGX_DEFAULT_RATIOS[0].value,
 		// minContainerHeight: this.imageHeight,

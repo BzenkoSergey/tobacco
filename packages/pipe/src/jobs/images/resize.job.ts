@@ -24,7 +24,7 @@ type Input = {
 
 export class ImageResizeJob implements Job {
 	private options: Options;
-	private overlay = path.resolve(__dirname + './overlay_white.png');
+	private overlay = path.resolve(__dirname + './overlay_black.png');
 
 	constructor(options: Options) {
 		this.options = options;
@@ -83,25 +83,50 @@ export class ImageResizeJob implements Job {
 		const input = this.getStorePath() + '/' + path;
 		const output = this.getResizedStorePath() + '/' + sizeCode + '-' + path;
 
-		if (sizeCode === 'md' || sizeCode === 'lg') {
-			return sharp(input)
+		if (sizeCode === 'origin') {
+			console.log(width, height);
+			let w = 0;
+			let h = 0;
+			let l = 0;
+			let t = 0;
+
+			// 230/65
+			const imgs = sharp(input)
 				.resize({
 					width: width,
 					height: height
+				});
+
+			return imgs
+				.metadata()
+				.then(function(metadata) {
+					l = (metadata.width - (230 + 40));
+					t = (metadata.height - (65 + 40));
+
+					return imgs.webp()
+					.toBuffer();
 				})
-				.overlayWith(this.overlay, {
-					gravity: sharp.gravity.southeast
+				.then((imgs) => {
+
+					return sharp(imgs)
+						.overlayWith(this.overlay, {
+							top: t,
+							left: l
+						})
+						.sharpen()
+						.withMetadata()
+						.webp( { quality: 90 } )
+						.toFile(output);
 				})
-				.sharpen()
-				.withMetadata()
-				.webp( { quality: 90 } )
-				.toFile(output);
+				
 		}
 		return sharp(input)
 			.resize({
 				width: width,
 				height: height
 			})
+			.jpeg({quality : 100, force : false})
+
 			.toFile(output);
 	}
 

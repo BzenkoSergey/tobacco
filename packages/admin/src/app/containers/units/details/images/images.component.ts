@@ -123,6 +123,20 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 			unitIds: [this.itemId],
 			files: [this.imageEditor.croppedImage]
 		};
+		if (!this.externalUrl) {
+				this.imagesRestService.upload(d2)
+					.subscribe(d => {
+						this.item.logo = d.paths[0];
+						this.imagesRestService.resize(d.paths)
+							.subscribe(() => {
+								this.imagesRestService.sync(d.paths)
+									.subscribe(() => {
+										this.save();
+									});
+							});
+					});
+			return;
+		}
 		this.imagesRestService.uploadOrigin(original)
 			.subscribe(() => {
 				this.imagesRestService.upload(d2)
@@ -145,6 +159,7 @@ export class UnitsDetailsImagesComponent implements OnDestroy {
 			this.showEditor = true;
 		}, 100);
 		this.getDataUri(this.getImageUrl(), (dataUrl) => {
+			console.log(dataUrl);
 			this.original = dataUrl;
 		});
 	}
