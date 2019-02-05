@@ -4,11 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { ResourcesRestService, ResourceDto } from '@rest/resources';
+import { PipeRestService } from '@rest/pipes';
 
 @Component({
 	templateUrl: './info.html',
 	providers: [
-		ResourcesRestService
+		ResourcesRestService,
+		PipeRestService
 	]
 })
 
@@ -21,6 +23,7 @@ export class InfoComponent implements OnDestroy {
 
 	constructor(
 		private service: ResourcesRestService,
+		private pipesService: PipeRestService,
 		route: ActivatedRoute
 	) {
 		this.sub = route.params.subscribe(params => {
@@ -45,6 +48,20 @@ export class InfoComponent implements OnDestroy {
 				() => this.saving = false,
 				() => this.saving = false
 			);
+	}
+
+	changeProtocol() {
+		const info = new URL(this.item.path);
+		this.pipesService.runSchemeOptions<any, any>(
+			'CHANGE_PROTOCOL',
+			{
+				data: {
+					productId: this.itemId,
+					protocol: info.protocol
+				}
+			}
+		)
+		.subscribe();
 	}
 
 	private fetch() {
