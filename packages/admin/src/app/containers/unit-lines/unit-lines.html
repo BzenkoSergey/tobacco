@@ -207,6 +207,19 @@
 					</form>
 				</div>
 			</div>
+
+			<div
+				*ngIf="item"
+				class="card mt-3">
+				<div class="card-body">
+					<custom-fields
+						ownerType="unit-line"
+						parentType="company"
+						[parentId]="item.company"
+						[ownerCode]="item.code">
+					</custom-fields>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

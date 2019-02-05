@@ -39,6 +39,13 @@ const routes: Routes = [
 				data: {
 					breadcrumb: 'SEO'
 				}
+			},
+			{
+				path: 'custom-fields',
+				loadChildren: './units-details-custom-fields.module#UnitsDetailsCustomFieldsModule',
+				data: {
+					breadcrumb: 'Custom Fields'
+				}
 			}
 		]
 	}

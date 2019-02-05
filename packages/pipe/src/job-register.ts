@@ -69,8 +69,10 @@ import { UnwrapJob } from './jobs/unwrap.job';
 
 import { RemoveAllJob } from './jobs/wl/remove-all.job';
 import { MoveAllJob } from './jobs/wl/move-all.job';
+import { ChangeProtocolJob } from './jobs/change-protocol.job';
 
 export enum JobRegister {
+	CHANGE_PROTOCOL = 'CHANGE_PROTOCOL',
 	MOCK = 'MOCK',
 	REMOVE_ALL = 'REMOVE_ALL',
 	MOVE_ALL = 'MOVE_ALL',
@@ -160,7 +162,7 @@ export namespace JobRegister {
 	map.set(JobRegister.IMG_UPLOAD_ORIGIN, ImageUploadOriginJob);
 	map.set(JobRegister.SITEMAP, SitemapJob);
 	map.set(JobRegister.REMOVE_SITEMAP, RemoveSitemapJob);
-	
+	map.set(JobRegister.CHANGE_PROTOCOL, ChangeProtocolJob);
 
 	map.set(JobRegister.NONE, NoneJob);
 	map.set(JobRegister.UNWRAP, UnwrapJob);

@@ -3,63 +3,64 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 
 import { PipeRestService } from './../pipes/pipes.service';
-import { CategoryDto } from './category.dto';
+import { CustomFieldsDto } from './custom-fields.dto';
 
 @Injectable()
-export class CategoriesRestService {
+export class CustomFieldsRestService {
+	private collection = 'custom-fields';
 	constructor(private restService: PipeRestService) {}
 
-	list() {
+	list(query?: any) {
 		return this.restService
-			.runSchemeOptions<CategoryDto[], any>(
-				'GETEXT_LIST',
+			.runSchemeOptions<CustomFieldsDto[], any>(
+				'GET_LIST',
 				{
-					collection: 'categories',
-					query: {},
+					collection: this.collection,
+					query: query || {},
 					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
 				map(list => {
-					return list.map(d => new CategoryDto(d));
+					return list.map(d => new CustomFieldsDto(d));
 				})
 			);
 	}
 
 	get(id: string) {
 		return this.restService
-			.runSchemeOptions<CategoryDto, any>(
-				'GETEXT',
+			.runSchemeOptions<CustomFieldsDto, any>(
+				'GET',
 				{
-					collection: 'categories',
+					collection: this.collection,
 					id: id,
 					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
 				map(d => {
-					return new CategoryDto(d);
+					return new CustomFieldsDto(d);
 				})
 			);
 	}
 
-	create(d: CategoryDto) {
+	create(d: CustomFieldsDto) {
 		return this.restService
 			.runSchemeOptions<number, any>(
-				'CREATEEXT',
+				'CREATE',
 				{
-					collection: 'categories',
+					collection: this.collection,
 					document: d
 				}
 			);
 	}
 
-	update(id: string, d: CategoryDto) {
+	update(id: string, d: CustomFieldsDto) {
 		return this.restService
 			.runSchemeOptions<number, any>(
-				'UPDATEEXT',
+				'UPDATE',
 				{
-					collection: 'categories',
+					collection: this.collection,
 					id: id,
 					document: d
 				}
@@ -69,9 +70,9 @@ export class CategoriesRestService {
 	remove(id: string) {
 		return this.restService
 			.runSchemeOptions<number, any>(
-				'REMOVEEXT',
+				'REMOVE',
 				{
-					collection: 'categories',
+					collection: this.collection,
 					id: id
 				}
 			);

@@ -1,4 +1,4 @@
-import { from, Subject, BehaviorSubject, combineLatest } from 'rxjs';
+import { from, Subject, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { tap, mergeMap, map } from 'rxjs/operators';
 
 import { ObjectId } from 'mongodb';
@@ -169,7 +169,7 @@ export class AggregateJob implements Job {
 				if (company) {
 					readableName = this.makeReadable(company.name) + '_' + readableName;
 				}
-				const agg = {
+				const agg: any = {
 					logo: unit.logo,
 					productId: unit._id.toString(),
 					visible: unit.visible,
@@ -231,13 +231,20 @@ export class AggregateJob implements Job {
 						name: line.name
 					}: null
 				};
-				return this.save(agg)
+
+				return this.getCustomFieldsAll(agg)
 					.pipe(
-						map(d => {
-							return {
-								aggregated: d,
-								resourceId: item.resourceId
-							}
+						mergeMap((fields) => {
+							agg.fields = fields;
+							return this.save(agg)
+								.pipe(
+									map(d => {
+										return {
+											aggregated: d,
+											resourceId: item.resourceId
+										}
+									})
+							);
 						})
 					);
 			})
@@ -390,6 +397,72 @@ export class AggregateJob implements Job {
 			.findOne({
 				_id: ObjectId(unitId)
 			})
+	}
+
+	private getCustomFieldsAll(agg: any) {
+		const company = this.getCustomFields(agg.company.code, 'company');
+		const unitLine = agg.productLine ? this.getCustomFields(agg.productLine.coge, 'unit-line') : of(null);
+		const unit = this.getCustomFields(agg.logo, 'unit');
+
+		return combineLatest(company, unitLine, unit)
+			.pipe(
+				map(d => {
+					const companyFields = d[0];
+					const unitLineFields = d[1];
+					const unitFields = d[2];
+					const fields = [];
+
+					companyFields.fields
+						.filter(f => f.inheritance)
+						.forEach(f => {
+							const i = fields.indexOf(cf => cf.code === f.code);
+							if (!!~i) {
+								fields[i] = f;
+								return;
+							}
+							fields.unshift(f);
+						});
+
+					if (unitLineFields) {
+						unitLineFields.fields
+							.filter(f => f.inheritance)
+							.forEach(f => {
+								const i = fields.indexOf(cf => cf.code === f.code);
+								if (!!~i) {
+									fields[i] = f;
+									return;
+								}
+								fields.unshift(f);
+							})
+					}
+
+					unitFields.fields
+						.forEach(f => {
+							const i = fields.indexOf(cf => cf.code === f.code);
+							if (!!~i) {
+								fields[i] = f;
+								return;
+							}
+							fields.unshift(f);
+						});
+
+					return fields;
+				})
+			);
+
+	}
+
+	private getCustomFields(ownerCode: string, ownerType: string) {
+		return new MongoDb('custom-fields', true)
+			.find({
+				ownerCode: ownerCode,
+				ownerType: ownerType
+			})
+			.pipe(
+				map(d => {
+					return d[0] || { fields: [] };
+				})
+			);
 	}
 
 	makeReadable(str: string) {

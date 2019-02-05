@@ -154,6 +154,17 @@
 					</form>
 				</div>
 			</div>
+
+			<div
+				*ngIf="item"
+				class="card mt-3">
+				<div class="card-body">
+					<custom-fields
+						ownerType="company"
+						[ownerCode]="item.code">
+					</custom-fields>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

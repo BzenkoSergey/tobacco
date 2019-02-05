@@ -45,7 +45,8 @@ export class WikiDetailsMappingComponent implements OnDestroy {
 		if (invalid) {
 			return;
 		}
-		this.item.mapping = JSON.parse(this.data);
+		debugger;
+		this.item.mapping = JSON.parse(this.data) || {};
 		this.loading = true;
 		this.service.update(this.itemId, this.item)
 			.subscribe(

@@ -1,0 +1,149 @@
+<div class="container-fluid mb-2">
+	<div class="row">
+		<h4
+			class="card-title m-0 col-6 pl-0"
+			fxFlex>
+
+			Custom Fields
+		</h4>
+
+		<div class="col-6 pr-0 text-right">
+			<button
+				class="btn btn-primary"
+				type="button"
+				[disabled]="items.length >= 1"
+				(click)="add()">
+
+				<i class="fas fa-plus"></i>
+				Create
+			</button>
+		</div>
+	</div>
+</div>
+
+<div
+	*ngFor="let item of items; index as i"
+	class="mb-3">
+
+	<div class="input-group mb-3">
+		<input
+			type="text"
+			class="form-control"
+			placeholder="Name"
+			[name]="i + 'mapping-name'"
+			[(ngModel)]="item.name">
+
+		<div class="input-group-append">
+			<button
+				class="btn btn-outline-secondary"
+				type="button"
+				(click)="addField(item)">
+				<i class="fas fa-plus"></i>
+			</button>
+		</div>
+	</div>
+
+	<div *ngFor="let field of item.fields">
+		<div class="input-group input-group-sm mb-1">
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Label"
+				[(ngModel)]="field.label"
+				[ngModelOptions]="{standalone: true}">
+
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Code"
+				[(ngModel)]="field.code"
+				[ngModelOptions]="{standalone: true}">
+
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Value"
+				[(ngModel)]="field.value"
+				[ngModelOptions]="{standalone: true}">
+
+			<div class="input-group-append">
+				<button
+					class="btn"
+					[class.btn-outline-success]="field.inheritance"
+					[class.btn-outline-secondary]="!field.inheritance"
+					type="button"
+					(click)="field.inheritance = !field.inheritance">
+					<i class="fas fa-project-diagram"></i>
+				</button>
+			</div>
+			<div class="input-group-append">
+				<button
+					class="btn btn-outline-secondary"
+					type="button"
+					(click)="removeField(item, field)">
+					<i class="fas fa-trash-alt"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div
+	*ngFor="let item of parents; index as i"
+	class="mb-3">
+
+	<h6>{{item.ownerType}} / {{item.ownerCode}}</h6>
+
+	<div *ngFor="let field of onlyInherance(item.fields)">
+		<div class="input-group input-group-sm mb-1">
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Label"
+				disabled
+				[(ngModel)]="field.label"
+				[ngModelOptions]="{standalone: true}">
+
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Code"
+				disabled
+				[(ngModel)]="field.code"
+				[ngModelOptions]="{standalone: true}">
+
+			<input
+				type="text"
+				class="form-control"
+				placeholder="Value"
+				disabled
+				[(ngModel)]="field.value"
+				[ngModelOptions]="{standalone: true}">
+
+			<div class="input-group-append">
+				<button
+					class="btn btn-outline-secondary"
+					type="button"
+					(click)="setIgnore(field)">
+
+					<i
+						class="far"
+						[class.fa-check-square]="!isIgnored(field)"
+						[class.fa-square]="isIgnored(field)">
+					</i>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="form-group mt-2">
+	<button
+		class="btn btn-primary"
+		type="button"
+		[disabled]="!items.length"
+		(click)="save(items[0])">
+		<i class="fas fa-save"></i>
+	</button>
+</div>

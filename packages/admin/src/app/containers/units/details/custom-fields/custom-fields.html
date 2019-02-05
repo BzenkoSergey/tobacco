@@ -1,0 +1,17 @@
+<custom-fields
+	*ngIf="item.productLine && !isArray(item.productLine)"
+	name="customFields"
+	ownerType="unit"
+	parentType="unit-line"
+	[parentId]="item.productLine"
+	[ownerCode]="item.logo">
+</custom-fields>
+
+<custom-fields
+	*ngIf="!item.productLine || isArray(item.productLine)"
+	name="customFields"
+	ownerType="unit"
+	parentType="company"
+	[parentId]="item.company"
+	[ownerCode]="item.logo">
+</custom-fields>

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MappingKeysModule } from '@components/mapping-keys/mapping-keys.module';
+import { CustomFieldsModule } from '@components/custom-fields/custom-fields.module';
 
 import { UnitLinesRoutingModule } from './unit-lines-routing.module';
 import { UnitLinesComponent } from './unit-lines.component';
@@ -12,6 +13,7 @@ import { UnitLinesComponent } from './unit-lines.component';
 		CommonModule,
 		FormsModule,
 
+		CustomFieldsModule,
 		MappingKeysModule,
 		UnitLinesRoutingModule
 	],
