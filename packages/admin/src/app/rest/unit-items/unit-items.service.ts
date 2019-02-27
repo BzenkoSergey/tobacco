@@ -16,7 +16,8 @@ export class UnitItemsRestService {
 					query: query || {},
 					limit: limit,
 					skip: skip,
-					sort: sort
+					sort: sort,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -27,7 +28,8 @@ export class UnitItemsRestService {
 				'GET',
 				{
 					collection: 'unit-item',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -38,7 +40,8 @@ export class UnitItemsRestService {
 				'CREATE',
 				{
 					collection: 'unit-item',
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -50,7 +53,8 @@ export class UnitItemsRestService {
 				{
 					collection: 'unit-item',
 					id: id,
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -61,7 +65,8 @@ export class UnitItemsRestService {
 				'REMOVE',
 				{
 					collection: 'unit-item',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}

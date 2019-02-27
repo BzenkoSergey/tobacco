@@ -46,19 +46,16 @@
 	</div>
 
 	<div class="dialog-button-actions">
-		<!-- <div class="image-detail-toolbar">
-			<div class="image-zoom"
-			fxLayout="row"
-			fxLayoutAlign="space-around stretch">
-				<button fxFlex="40px" mat-icon-button color="accent" (click)="zoomChange(0.1, 'zoomIn')">
-					<mat-icon>zoom_in</mat-icon>
+		<div class="image-detail-toolbar">
+			<div>
+				<button class="btn" type="button" (click)="zoomChange(0.1, 'zoomIn')">
+					<i class="fas fa-search-plus"></i>
 				</button>
-				<mat-slider fxFlex [value]="sliderValue" (input)="zoomChange($event.value)" thumbLabel></mat-slider>
-				<button fxFlex="40px" mat-icon-button color="accent" (click)="zoomChange(-0.1, 'zoomOut')">
-					<mat-icon>zoom_out</mat-icon>
+				<button class="btn" type="button" (click)="zoomChange(-0.1, 'zoomOut')">
+					<i class="fas fa-search-minus"></i>
 				</button>
 			</div>
-		</div> -->
+		</div>
 		<div
 			class="cropped-image-buttons"
 			[style.visibility]="!croppedImage ? 'hidden' : 'visible'">

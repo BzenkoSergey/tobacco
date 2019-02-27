@@ -234,7 +234,8 @@ export class UnitsItemsComponent implements OnDestroy {
 			{
 				data: {
 					productId: unitId
-				}
+				},
+				modes: ['DB_NO_SYNC']
 			}
 		).subscribe();
 	}

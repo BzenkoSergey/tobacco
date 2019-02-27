@@ -55,10 +55,10 @@ export class InfoComponent implements OnDestroy {
 		this.pipesService.runSchemeOptions<any, any>(
 			'CHANGE_PROTOCOL',
 			{
-				data: {
-					productId: this.itemId,
+				//data: {
+					resourceId : this.itemId,
 					protocol: info.protocol
-				}
+				//}
 			}
 		)
 		.subscribe();

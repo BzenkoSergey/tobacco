@@ -1,5 +1,5 @@
-import { from, Subject, BehaviorSubject, combineLatest } from 'rxjs';
-import { tap, map, mergeMap } from 'rxjs/operators';
+import { from, Subject, BehaviorSubject, combineLatest, interval } from 'rxjs';
+import { tap, map, mergeMap, delay } from 'rxjs/operators';
 
 import { ObjectId } from 'mongodb';
 import { MongoDb } from './../core/db';
@@ -50,27 +50,43 @@ export class ChangeProtocolJob implements Job {
 	run(d: any) {
 		const resourceId = d.resourceId;
 		const protocol = d.protocol;
+		console.log(d.resourceId);
 		return this.fetch(resourceId)
 			.pipe(
 				mergeMap(list => {
-					const subjs = list.map(i => {
-						const info = new URL(i.url);
-						info.protocol = protocol;
-						i.url = info.toString();
+					let ig = 0;
+					return from(list)
+						.pipe(
+							mergeMap((i: any) => {
+								const info = new URL(i.url);
+								info.protocol = protocol;
+								i.url = info.toString();
 
-						return new MongoDb('resource-processed-item', true)
-							.updateOne(
-								{
-									_id: i._id
-								},
-								{
-									$set: {
-										url: i.url
-									}
-								}
-							);
-					});
-					return combineLatest(...subjs);
+								ig = ig + 100;
+								const sub = new Subject();
+								setTimeout(() => {
+									console.log(i._id.toString(), i.url);
+									new MongoDb('resource-processed-item')
+										.updateOne(
+											{
+												_id: ObjectId(i._id.toString())
+											},
+											{
+												$set: {
+													url: i.url
+												}
+											}
+										)
+										.subscribe(
+											d => sub.next(d),
+											e => sub.error(e),
+											() => sub.complete()
+										);
+								}, ig)
+							
+								return sub;
+							})
+						)
 				})
 			);
 	}

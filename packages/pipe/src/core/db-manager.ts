@@ -12,7 +12,7 @@ export class DbManager {
 	constructor(
 		private url = 'mongodb://127.0.0.1:27017',
 		private dbName = 'tobacco',
-		limit = 10
+		limit = 1
 	) {
 		this.queue = new Queue(limit);
 	}

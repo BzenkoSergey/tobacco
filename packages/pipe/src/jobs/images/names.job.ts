@@ -61,6 +61,7 @@ export class ImageNamesJob implements Job {
 						.map(u => u.productLine)
 						.filter(u => !!u);
 
+					console.log('=====\\\\', linesIds);
 					return this.getlines(linesIds)
 						.pipe(
 							map(lines => {
@@ -77,6 +78,8 @@ export class ImageNamesJob implements Job {
 					const a = units.map(u => {
 						const company = companies.find(c => c._id.toString() === u.company);
 						const line = lines.find(l => l._id.toString() === u.productLine);
+
+						console.log(line, u.productLine);
 						let name = this.makeReadable(u.name);
 						if (line) {
 							name = this.makeReadable(line.name) + '_' + name;
@@ -138,7 +141,7 @@ export class ImageNamesJob implements Job {
 	}
 
 	private getlines(linesIds: string[]) {
-		if (linesIds && linesIds.length) {
+		if (!linesIds || !linesIds.length) {
 			return async<any>([]);
 		}
 		return new MongoExtDb('product-lines', true)

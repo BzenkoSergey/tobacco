@@ -50,6 +50,7 @@ export class MenuComponent {
 		this.fetchLines();
 		this.fetchAttributes();
 		this.fetchResources();
+		window['ff'] = this;
 	}
 
 	selectAll(menuItem: any, options: any[]) {
@@ -67,7 +68,8 @@ export class MenuComponent {
 		} else {
 			menuItem.options.push({
 				code: option.code,
-				label: option.name || option.label || option.value
+				label: option.name || option.label || option.value,
+				logo: option.logo
 			});
 		}
 	}

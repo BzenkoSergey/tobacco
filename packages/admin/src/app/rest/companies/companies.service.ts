@@ -15,7 +15,8 @@ export class CompaniesRestService {
 				'GETEXT_LIST',
 				{
 					collection: 'companies',
-					query: {}
+					query: {},
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -31,7 +32,8 @@ export class CompaniesRestService {
 				'GETEXT',
 				{
 					collection: 'companies',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -47,7 +49,8 @@ export class CompaniesRestService {
 				'CREATEEXT',
 				{
 					collection: 'companies',
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -59,7 +62,8 @@ export class CompaniesRestService {
 				{
 					collection: 'companies',
 					id: id,
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -70,7 +74,8 @@ export class CompaniesRestService {
 				'REMOVEEXT',
 				{
 					collection: 'companies',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}

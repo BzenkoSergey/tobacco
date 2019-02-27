@@ -30,7 +30,7 @@ export class ImageDownloadJob implements Job {
 	}
 
 	run(data: Input): Observable<string> {
-		const path = this.getStorePath() + '/' + data.path;
+		const path = this.getStorePath() + '\\' + data.path;
 		return async(path);
 	}
 

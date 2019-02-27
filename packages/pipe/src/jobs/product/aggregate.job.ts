@@ -401,7 +401,7 @@ export class AggregateJob implements Job {
 
 	private getCustomFieldsAll(agg: any) {
 		const company = this.getCustomFields(agg.company.code, 'company');
-		const unitLine = agg.productLine ? this.getCustomFields(agg.productLine.coge, 'unit-line') : of(null);
+		const unitLine = agg.productLine ? this.getCustomFields(agg.productLine.code, 'unit-line') : of(null);
 		const unit = this.getCustomFields(agg.logo, 'unit');
 
 		return combineLatest(company, unitLine, unit)
@@ -427,6 +427,7 @@ export class AggregateJob implements Job {
 						unitLineFields.fields
 							.filter(f => f.inheritance)
 							.forEach(f => {
+								console.log(f);
 								const i = fields.indexOf(cf => cf.code === f.code);
 								if (!!~i) {
 									fields[i] = f;

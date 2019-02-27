@@ -15,7 +15,8 @@ export class UnitLinesRestService {
 				'GETEXT_LIST',
 				{
 					collection: 'product-lines',
-					query: {}
+					query: {},
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -31,7 +32,8 @@ export class UnitLinesRestService {
 				'GETEXT',
 				{
 					collection: 'product-lines',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -47,7 +49,8 @@ export class UnitLinesRestService {
 				'CREATEEXT',
 				{
 					collection: 'product-lines',
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -59,7 +62,8 @@ export class UnitLinesRestService {
 				{
 					collection: 'product-lines',
 					id: id,
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -70,7 +74,8 @@ export class UnitLinesRestService {
 				'REMOVEEXT',
 				{
 					collection: 'product-lines',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}

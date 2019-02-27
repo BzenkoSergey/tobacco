@@ -256,6 +256,7 @@ cluster(function(worker) {
 					}
 					if (options.isFile) {
 						try {
+							console.log(d);
 							res.sendFile(d);
 						} catch(e) {
 							console.log(e);
@@ -377,7 +378,7 @@ cluster(function(worker) {
 			console.log('Example app listening on port: ' + port);
 		});
 	}
-}, {count: 5, verbose: false,
+}, {count: 2, verbose: false,
 	workerListener: function(msg) {
 	//   console.log('master with pid', process.pid, 'received', msg, 'from worker');
 	}})

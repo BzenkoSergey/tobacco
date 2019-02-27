@@ -18,7 +18,8 @@ export class UnitsRestService {
 					query: query || {},
 					limit: limit,
 					skip: skip,
-					sort: sort
+					sort: sort,
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -34,7 +35,8 @@ export class UnitsRestService {
 				'GETEXT',
 				{
 					collection: 'products',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
@@ -50,7 +52,8 @@ export class UnitsRestService {
 				'CREATEEXT',
 				{
 					collection: 'products',
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -62,7 +65,8 @@ export class UnitsRestService {
 				{
 					collection: 'products',
 					id: id,
-					document: d
+					document: d,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
@@ -73,7 +77,8 @@ export class UnitsRestService {
 				'REMOVEEXT',
 				{
 					collection: 'products',
-					id: id
+					id: id,
+					modes: ['DB_NO_SYNC']
 				}
 			);
 	}

@@ -83,7 +83,7 @@ export class ImageResizeJob implements Job {
 		const input = this.getStorePath() + '/' + path;
 		const output = this.getResizedStorePath() + '/' + sizeCode + '-' + path;
 
-		if (sizeCode === 'origin') {
+		if (sizeCode === 'origin' || sizeCode === 'lg') {
 			console.log(width, height);
 			let w = 0;
 			let h = 0;

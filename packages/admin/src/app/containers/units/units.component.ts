@@ -154,7 +154,8 @@ export class UnitsComponent implements OnDestroy {
 
 		let sub: Observable<UnitDto[]>;
 		const sort = {
-			productLine: 1
+			productLine: 1,
+			name: 1
 		};
 
 		if (this.company) {
