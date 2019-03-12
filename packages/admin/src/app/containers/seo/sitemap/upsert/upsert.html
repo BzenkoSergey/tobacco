@@ -1,0 +1,72 @@
+<div class="modal-header">
+	<h4 class="modal-title h6">
+		Url
+	</h4>
+</div>
+
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="modal-body">
+		<div class="form-group">
+			<label for="loc">Loc</label>
+			<input
+				class="form-control"
+				id="loc"
+				name="loc"
+				required
+				[(ngModel)]="item.loc"
+				placeholder="Loc">
+		</div>
+		<div class="form-group">
+			<label for="changefreq">Changefreq</label>
+			<input
+				class="form-control"
+				id="changefreq"
+				name="changefreq"
+				[(ngModel)]="item.changefreq"
+				placeholder="Changefreq">
+		</div>
+		<div class="form-group">
+			<label for="priority">Priority</label>
+			<input
+				class="form-control"
+				id="priority"
+				name="priority"
+				[(ngModel)]="item.priority"
+				placeholder="Priority">
+		</div>
+		<div class="form-group">
+			<label for="lastmod">Lastmod</label>
+			<input
+				class="form-control"
+				id="lastmod"
+				name="lastmod"
+				[(ngModel)]="item.lastmod"
+				placeholder="Lastmod">
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button
+			type="button"
+			class="btn btn-outline-dark"
+			(click)="activeModal.close('Close click')">
+			Cancel
+		</button>
+
+		<button
+			type="submit"
+			class="btn btn-outline-primary"
+			[disabled]="form.invalid">
+			Save
+			<i
+				class="fas"
+				[class.fa-save]="!saving"
+				[class.fa-spinner]="saving"
+				[class.fa-spin]="saving">
+			</i>
+		</button>
+	</div>
+</form>

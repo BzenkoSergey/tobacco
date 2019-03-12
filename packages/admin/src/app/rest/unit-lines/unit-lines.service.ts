@@ -9,13 +9,13 @@ import { UnitLineDto } from './unit-line.dto';
 export class UnitLinesRestService {
 	constructor(private restService: PipeRestService) {}
 
-	list() {
+	list(query?: any) {
 		return this.restService
 			.runSchemeOptions<UnitLineDto[], any>(
 				'GETEXT_LIST',
 				{
 					collection: 'product-lines',
-					query: {},
+					query: query || {},
 					modes: ['DB_NO_SYNC']
 				}
 			)

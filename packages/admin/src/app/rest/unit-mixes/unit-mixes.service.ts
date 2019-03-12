@@ -3,64 +3,64 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 
 import { PipeRestService } from '../pipes/pipes.service';
-import { CompanyDto } from './company.dto';
+import { UnitMixDto } from './unit-mix.dto';
 
 @Injectable()
-export class CompaniesRestService {
+export class UnitMixesRestService {
 	constructor(private restService: PipeRestService) {}
 
-	list(query?: any) {
+	list() {
 		return this.restService
-			.runSchemeOptions<CompanyDto[], any>(
+			.runSchemeOptions<UnitMixDto[], any>(
 				'GETEXT_LIST',
 				{
-					collection: 'companies',
-					query: query || {},
+					collection: 'unit-mixes',
+					query: {},
 					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
 				map(list => {
-					return list.map(d => new CompanyDto(d));
+					return list.map(d => new UnitMixDto(d));
 				})
 			);
 	}
 
 	get(id: string) {
 		return this.restService
-			.runSchemeOptions<CompanyDto, any>(
+			.runSchemeOptions<UnitMixDto, any>(
 				'GETEXT',
 				{
-					collection: 'companies',
+					collection: 'unit-mixes',
 					id: id,
 					modes: ['DB_NO_SYNC']
 				}
 			)
 			.pipe(
 				map(d => {
-					return new CompanyDto(d);
+					return new UnitMixDto(d);
 				})
 			);
 	}
 
-	create(d: CompanyDto) {
+	create(d: UnitMixDto) {
 		return this.restService
 			.runSchemeOptions<number, any>(
 				'CREATEEXT',
 				{
-					collection: 'companies',
+					collection: 'unit-mixes',
 					document: d,
 					modes: ['DB_NO_SYNC']
 				}
 			);
 	}
 
-	update(id: string, d: CompanyDto) {
+	update(id: string, d: UnitMixDto) {
 		return this.restService
 			.runSchemeOptions<number, any>(
 				'UPDATEEXT',
 				{
-					collection: 'companies',
+					collection: 'unit-mixes',
 					id: id,
 					document: d,
 					modes: ['DB_NO_SYNC']
@@ -73,7 +73,7 @@ export class CompaniesRestService {
 			.runSchemeOptions<number, any>(
 				'REMOVEEXT',
 				{
-					collection: 'companies',
+					collection: 'unit-mixes',
 					id: id,
 					modes: ['DB_NO_SYNC']
 				}

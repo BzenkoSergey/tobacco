@@ -1,0 +1,50 @@
+<div class="page-content">
+	<h1 class="h4 mb-3">
+		Mixes
+	</h1>
+
+	<div class="card">
+		<div class="card-header p-2 d-flex justify-content-end align-items-center">
+			<a
+				class="btn btn-primary btn-sm"
+				[routerLink]="['./../../', 'new']">
+
+				<i class="fas fa-plus"></i>
+				Create
+			</a>
+		</div>
+
+		<table class="table table-sm table-striped m-0">
+			<thead>
+				<tr>
+					<th class="border-top-0" scope="col">Name</th>
+					<th class="border-top-0" scope="col">Recipes</th>
+					<th class="border-top-0" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let item of items">
+					<td>
+						<a [routerLink]="['../../', item._id]">
+							{{item.name}}
+						</a>
+					</td>
+					<td>
+						<span *ngFor="let recipe of item.recipes">
+							(<b>%{{recipe.percentage}}</b> {{getCompanyName(recipe.company)}} {{getLineName(recipe.line)}} {{getUnitName(recipe.unit)}})
+						</span>
+					</td>
+
+					<td class="text-center">
+						<button
+							type="button"
+							class="btn btn-link text-danger p-0"
+							(click)="performRemove(item)">
+							<i class="far fa-trash-alt"></i>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -19,6 +19,13 @@ const routes: Routes = [
 				data: {
 					breadcrumb: 'Positions'
 				}
+			},
+			{
+				path: 'sitemap',
+				loadChildren: './seo-sitemap.module#SitemapModule',
+				data: {
+					breadcrumb: 'Sitemap'
+				}
 			}
 		]
 	}

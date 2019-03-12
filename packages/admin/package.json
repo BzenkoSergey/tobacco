@@ -24,7 +24,10 @@
     "core-js": "^2.5.4",
     "cropperjs": "^1.4.3",
     "d3": "^5.7.0",
+    "d3pie": "^0.2.1",
+    "html2canvas": "^1.0.0-alpha.12",
     "ng2-ace-editor": "^0.3.8",
+    "ngx-editor": "^4.1.0",
     "rxjs": "~6.2.0",
     "zone.js": "~0.8.26"
   },

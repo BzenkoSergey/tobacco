@@ -24,7 +24,7 @@ type Input = {
 
 export class ImageResizeJob implements Job {
 	private options: Options;
-	private overlay = path.resolve(__dirname + './overlay_black.png');
+	private overlay = path.resolve(__dirname + '/overlay_black.png');
 
 	constructor(options: Options) {
 		this.options = options;
@@ -64,6 +64,8 @@ export class ImageResizeJob implements Job {
 				subj.complete();
 			})
 			.catch(e => {
+				debugger;
+				console.log(e);
 				subj.error(e);
 			});
 
@@ -83,8 +85,9 @@ export class ImageResizeJob implements Job {
 		const input = this.getStorePath() + '/' + path;
 		const output = this.getResizedStorePath() + '/' + sizeCode + '-' + path;
 
+		// console.log(input, sizeCode);
 		if (sizeCode === 'origin' || sizeCode === 'lg') {
-			console.log(width, height);
+			// console.log(width, height);
 			let w = 0;
 			let h = 0;
 			let l = 0;
@@ -95,7 +98,8 @@ export class ImageResizeJob implements Job {
 				.resize({
 					width: width,
 					height: height
-				});
+				})
+				.jpeg({quality : 100, force : false})
 
 			return imgs
 				.metadata()
@@ -104,19 +108,23 @@ export class ImageResizeJob implements Job {
 					t = (metadata.height - (65 + 40));
 
 					return imgs.webp()
-					.toBuffer();
+						.toBuffer();
 				})
 				.then((imgs) => {
 
+					console.log(this.overlay);
 					return sharp(imgs)
 						.overlayWith(this.overlay, {
 							top: t,
 							left: l
 						})
 						.sharpen()
-						.withMetadata()
-						.webp( { quality: 90 } )
-						.toFile(output);
+
+						.toFile(output)
+						.catch(e => {
+							console.log(input, sizeCode);
+							console.log(e, input, sizeCode);
+						})
 				})
 				
 		}

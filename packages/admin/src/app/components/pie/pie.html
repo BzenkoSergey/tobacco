@@ -1,0 +1,50 @@
+<button
+	class="btn btn-primary mb-2"
+	type="button"
+	(click)="createS()">
+	Make Screenshot
+</button>
+
+<img width="100%" [src]="dd" alt="">
+
+<div
+	id="asdasd"
+	style="overflow: hidden; background-size: cover; padding-left: 220px;zoom: 1.5;width: 1000px;"
+	[ngStyle]="{'background-image': 'url(' + mainImage + ')'}">
+
+	<div
+		id="pie-w"
+		style="opacity: 0.9;  box-shadow: 0 0 5px 5px #00000040;      background-size: 657px;    background-position: 27px 34px;"
+
+		[ngStyle]="{'background-image': 'url(' + secondImage + ')'}">
+
+		<style>
+
+.pie-sublabel {
+	font-size: 16px;
+	font-weight: 300;
+	text-transform: uppercase;
+}
+
+.pie-lineGroup path {
+	stroke-width: 2px !important;
+}
+
+.pie-arc path {
+	stroke-width: 0 !important;
+}
+
+.pie-segmentMainLabel-outer {
+	font-weight: 500;
+	dominant-baseline: ideographic;
+}
+
+.pie-segmentPercentage-outer {
+	font-weight: 300;
+	dominant-baseline: ideographic;
+}
+
+		</style>
+		<div id="pie"></div>
+	</div>
+</div>

@@ -53,6 +53,13 @@ const routes: Routes = [
 				}
 			},
 			{
+				path: 'unit-mixes',
+				loadChildren: './containers/unit-mixes/unit-mixes.module#UnitMixesModule',
+				data: {
+					breadcrumb: 'Unit Mixes'
+				}
+			},
+			{
 				path: 'unit-attributes',
 				loadChildren: './containers/unit-attributes/unit-attributes.module#UnitAttributesModule',
 				data: {

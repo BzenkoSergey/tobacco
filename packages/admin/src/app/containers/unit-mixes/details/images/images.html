@@ -1,0 +1,36 @@
+<div class="mb-2">
+	<input
+		class="form-control mb-2"
+		name="image"
+		placeholder="Image"
+		disabled
+		[(ngModel)]="item.image">
+
+	<input
+		class="form-control mb-2"
+		name="image2"
+		placeholder="Image 2"
+		[(ngModel)]="item.image2">
+
+	<button
+		type="button"
+		class="btn btn-primary"
+		(click)="imageEditer()">
+		Save Image 2
+
+		<i
+			class="fas"
+			[class.fa-save]="!saving"
+			[class.fa-spinner]="saving"
+			[class.fa-spin]="saving">
+		</i>
+	</button>
+</div>
+
+<pie
+	*ngIf="item && units.length && companies.length && getData().length"
+	[image]="item.image2"
+	[data]="pieData"
+	(made)="saveImage($event)">
+</pie>
+

@@ -69,6 +69,10 @@ export class AppComponent {
 						{
 							name: 'Items',
 							url: 'unit-items'
+						},
+						{
+							name: 'Mixes',
+							url: 'unit-mixes'
 						}
 					]
 				},
@@ -141,6 +145,10 @@ export class AppComponent {
 						{
 							name: 'Positions',
 							url: 'seo/positions'
+						},
+						{
+							name: 'Sitemap',
+							url: 'seo/sitemap'
 						}
 					]
 				}

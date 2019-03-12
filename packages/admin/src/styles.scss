@@ -38,3 +38,27 @@ body {
 .bold {
 	font-weight: bold;
 }
+
+.pie-sublabel {
+	font-size: 16px;
+	font-weight: 300;
+	text-transform: uppercase;
+}
+
+.pie-lineGroup path {
+	stroke-width: 2px !important;
+}
+
+.pie-arc path {
+	stroke-width: 0 !important;
+}
+
+.pie-segmentMainLabel-outer {
+	font-weight: 500;
+	dominant-baseline: ideographic;
+}
+
+.pie-segmentPercentage-outer {
+	font-weight: 300;
+	dominant-baseline: ideographic;
+}

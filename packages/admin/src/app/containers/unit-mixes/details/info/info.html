@@ -1,0 +1,203 @@
+<form
+	#form="ngForm"
+	(submit)="save(form.invalid)">
+
+	<div class="row">
+		<div class="col-5">
+			<div class="form-group">
+				<label for="readableName">Readable Name</label>
+				<input
+					id="readableName"
+					class="form-control"
+					placeholder="Readable Name"
+					name="readableName"
+					required
+					[(ngModel)]="item.readableName">
+			</div>
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input
+					id="name"
+					class="form-control"
+					placeholder="Name"
+					name="name"
+					[(ngModel)]="item.name">
+			</div>
+
+			<div class="form-group">
+				<label for="description">Description</label>
+				<textarea
+					id="description"
+					class="form-control"
+					name="description"
+					style="height: 300px;"
+					required
+					[(ngModel)]="item.description">
+				</textarea>
+			</div>
+
+			<div class="form-group">
+				<label for="short">Short</label>
+				<textarea
+					id="short"
+					class="form-control"
+					name="short"
+					style="height: 300px;"
+					required
+					[(ngModel)]="item.short">
+				</textarea>
+			</div>
+
+			<div class="form-group">
+				<label for="seotitle">SEO Title</label>
+				<input
+					id="seotitle"
+					class="form-control"
+					placeholder="Seo title"
+					name="seotitle"
+					[(ngModel)]="item.seo.title">
+			</div>
+
+			<div class="form-group">
+				<label for="seokeywords">SEO Keywords</label>
+				<input
+					id="seokeywords"
+					class="form-control"
+					placeholder="Seo Keywords"
+					name="seokeywords"
+					[(ngModel)]="item.seo.keywords">
+			</div>
+
+			<div class="form-group">
+				<label for="seodescription">SEO Description</label>
+				<input
+					id="seodescription"
+					class="form-control"
+					placeholder="Seo Description"
+					name="seodescription"
+					[(ngModel)]="item.seo.description">
+			</div>
+
+			<button
+				class="btn btn-info mr-1"
+				type="button"
+				[disabled]="!item._id"
+				(click)="aggregate()">
+				<i class="fas fa-database"></i>
+			</button>
+
+			<button
+				type="submit"
+				class="btn btn-primary"
+				[disabled]="form.invalid">
+				Save
+				<i
+					class="fas"
+					[class.fa-save]="!saving"
+					[class.fa-spinner]="saving"
+					[class.fa-spin]="saving">
+				</i>
+			</button>
+		</div>
+		<div class="col-5">
+			<div [innerHTML]="item.short"></div>
+			<div [innerHTML]="item.description"></div>
+		</div>
+
+		<div class="col-2">
+			<button
+				class="btn btn-primary btn-sm"
+				type="button"
+				(click)="addRecipe()">
+
+				<i class="fas fa-plus"></i>
+				Create
+			</button>
+
+			<ul class="list-group mt-2">
+				<li
+					*ngFor="let recipe of item.recipes"
+					class="list-group-item">
+					<div class="form-group">
+						<select
+							class="form-control form-control-sm"
+							name="company"
+							[ngModelOptions]="{standalone: true}"
+							[(ngModel)]="recipe.company"
+							(ngModelChange)="recipe.line = null;recipe.unit = null;">
+
+							<option value="">No</option>
+							<option
+								*ngFor="let company of companies"
+								[value]="company.code">
+								{{company.name}}
+							</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<select
+							class="form-control form-control-sm"
+							name="line"
+							[ngModelOptions]="{standalone: true}"
+							[disabled]="!recipe.company || !getLines(recipe).length"
+							[(ngModel)]="recipe.line"
+							(ngModelChange)="recipe.unit = null;">
+
+							<option value="">No Lines</option>
+							<option
+								*ngFor="let line of getLines(recipe)"
+								[value]="line.code">
+								{{line.name}}
+							</option>
+						</select>
+					</div>
+					<div
+						*ngIf="recipe.company"
+						class="form-group">
+						<select
+							class="form-control form-control-sm"
+							name="unit"
+							[ngModelOptions]="{standalone: true}"
+							[disabled]="!recipe.company"
+							[(ngModel)]="recipe.unit">
+
+							<option value="">No</option>
+							<option
+								*ngFor="let unit of getInits(recipe) | async"
+								[value]="unit._id">
+								{{unit.name}}
+							</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<input
+							class="form-control form-control-sm"
+							name="percentage"
+							type="number"
+							min="0"
+							max="100"
+							[disabled]="!recipe.unit"
+							[ngModelOptions]="{standalone: true}"
+							[(ngModel)]="recipe.percentage">
+					</div>
+					<div class="form-group">
+						<input
+							class="form-control form-control-sm"
+							name="color"
+							[disabled]="!recipe.unit"
+							[ngModelOptions]="{standalone: true}"
+							[(ngModel)]="recipe.color">
+					</div>
+					<button
+						class="btn btn-danger btn-sm"
+						type="button"
+						(click)="removeRecipe(recipe)">
+
+						<i class="fas fa-trash"></i>
+						Remove
+					</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+</form>

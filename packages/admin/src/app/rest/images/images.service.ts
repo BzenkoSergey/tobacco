@@ -34,10 +34,28 @@ export class ImagesRestService {
 			);
 	}
 
+	resizeMix(paths: string[]) {
+		return this.restService
+			.runSchemeOptions<any, any>(
+				'IMG_RESIZE_MIX',
+				{
+					paths: paths
+				}
+			);
+	}
+
 	upload(d: any) {
 		return this.restService
 			.runSchemeOptions<any, any>(
 				'IMG_UPLOAD',
+				d
+			);
+	}
+
+	uploadMix(d: any) {
+		return this.restService
+			.runSchemeOptions<any, any>(
+				'IMG_UPLOAD_MIX',
 				d
 			);
 	}
