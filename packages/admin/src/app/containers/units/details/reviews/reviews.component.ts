@@ -54,6 +54,14 @@ export class UnitsDetailsReviewsComponent implements OnDestroy {
 			);
 	}
 
+	update(review: ReviewDto) {
+		this.loading = true;
+		this.reviewsRestService.update(review._id, review)
+			.subscribe(() => {
+				this.loading = false;
+			});
+	}
+
 	ngOnDestroy() {
 		if (this.sub) {
 			this.sub.unsubscribe();

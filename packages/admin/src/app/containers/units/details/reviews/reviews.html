@@ -35,6 +35,8 @@
 			<input
 				class="form-control"
 				type="number"
+				max="10"
+				min="1"
 				placeholder="Rating"
 				name="rating"
 				[(ngModel)]="review.rating">
@@ -62,11 +64,24 @@
 		class="list-group-item">
 
 		<div class="d-flex w-100 justify-content-between">
-			<h5 class="mb-1">{{review.author}}</h5>
-			<small>Rating: {{review.rating}}</small>
+			<input
+				class="form-control form-control-sm"
+				name="author"
+				[(ngModel)]="review.author">
+
+			<input
+				class="form-control form-control-sm"
+				type="number"
+				name="rating"
+				max="10"
+				min="1"
+				[(ngModel)]="review.rating">
 		</div>
 		<p class="mb-1">
-			{{review.text}}
+			<textarea
+				class="form-control form-control-sm"
+				name="text"
+				[(ngModel)]="review.text"></textarea>
 		</p>
 		<small>{{review.datePublished | date}}</small>
 
@@ -75,6 +90,12 @@
 			type="button"
 			(click)="remove(review._id)">
 			Remove
+		</button>
+		<button
+			class="btn btn-sm btn-link"
+			type="button"
+			(click)="update(review)">
+			Update
 		</button>
 	</div>
 
