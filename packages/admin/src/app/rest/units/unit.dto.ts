@@ -15,12 +15,14 @@ export class UnitDto {
 	visible = false;
 	seo = new UnitSeoDto();
 	reviews: number;
+	description: string;
 
 	constructor(d?: UnitDto) {
 		if (!d) {
 			return;
 		}
 		this._id = d._id;
+		this.description = d.description;
 		this.name = d.name;
 		this.translate = d.translate || '';
 		this.logo = d.logo;
