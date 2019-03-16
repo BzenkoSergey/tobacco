@@ -58,6 +58,18 @@
 					Custom Fields
 				</a>
 			</li>
+			<li
+				*ngIf="itemId !== 'new'"
+				class="nav-item">
+
+				<a
+					class="nav-link"
+					routerLinkActive="active"
+					queryParamsHandling="merge"
+					[routerLink]="['reviews']">
+					Reviews
+				</a>
+			</li>
 		</ul>
 	</div>
 

@@ -14,6 +14,7 @@ export class UnitDto {
 	categories: string[] = [];
 	visible = false;
 	seo = new UnitSeoDto();
+	reviews: number;
 
 	constructor(d?: UnitDto) {
 		if (!d) {
@@ -29,6 +30,7 @@ export class UnitDto {
 		this.categories = d.categories;
 		this.visible = d.visible;
 		this.seo = new UnitSeoDto(d.seo);
+		this.reviews = d.reviews;
 
 		if (d.mappingKeys) {
 			this.mappingKeys = d.mappingKeys.map(m => new MappingKeyDto(m));

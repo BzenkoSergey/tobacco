@@ -46,6 +46,13 @@ const routes: Routes = [
 				data: {
 					breadcrumb: 'Custom Fields'
 				}
+			},
+			{
+				path: 'reviews',
+				loadChildren: './reviews/reviews.module#UnitsDetailsReviewsModule',
+				data: {
+					breadcrumb: 'reviews'
+				}
 			}
 		]
 	}

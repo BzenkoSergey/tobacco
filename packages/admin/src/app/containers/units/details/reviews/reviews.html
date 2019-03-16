@@ -1,0 +1,93 @@
+<div class="form-group">
+	<button
+		class="btn btn-primary mr-1"
+		type="button"
+		(click)="save()">
+		<i
+			class="fas"
+			[class.fa-save]="!loading"
+			[class.fa-spinner]="loading"
+			[class.fa-spin]="loading">
+		</i>
+	</button>
+
+	<button
+		class="btn btn-info mr-1"
+		type="button"
+		[disabled]="!item._id"
+		(click)="aggregate()">
+		<i class="fas fa-database"></i>
+	</button>
+</div>
+
+<div class="list-group">
+	<form
+		class="list-group-item"
+		(submit)="add()">
+
+		<div class="input-group mb-3">
+			<input
+				class="form-control"
+				placeholder="Author"
+				name="author"
+				[(ngModel)]="review.author">
+
+			<input
+				class="form-control"
+				type="number"
+				placeholder="Rating"
+				name="rating"
+				[(ngModel)]="review.rating">
+		</div>
+
+		<div class="input-group mb-3">
+			<textarea
+				class="form-control"
+				name="text"
+				[(ngModel)]="review.text">
+			</textarea>
+
+			<div class="input-group-append">
+				<button
+					class="btn btn-outline-secondary"
+					type="submit">
+					Add
+				</button>
+			</div>
+		</div>
+	</form>
+
+	<div
+		*ngFor="let review of reviews"
+		class="list-group-item">
+
+		<div class="d-flex w-100 justify-content-between">
+			<h5 class="mb-1">{{review.author}}</h5>
+			<small>Rating: {{review.rating}}</small>
+		</div>
+		<p class="mb-1">
+			{{review.text}}
+		</p>
+		<small>{{review.datePublished | date}}</small>
+
+		<button
+			class="btn btn-sm btn-link"
+			type="button"
+			(click)="remove(review._id)">
+			Remove
+		</button>
+	</div>
+
+	<div class="list-group-item">
+	  <div class="d-flex w-100 justify-content-between">
+		<h5 class="mb-1">Артур Кутриш</h5>
+		<small>Rating: 5</small>
+	  </div>
+	  <p class="mb-1">
+			Брал ноутбук для офисной работы: Excel, SQL и прочее - нареканий и претензий нет.
+			Фильмы в онлайне тоже можно посмотреть :)
+			Подробнее: https://rozetka.com.ua/hp_250_g6_2hg26es/p19343758/comments/
+	  </p>
+	  <small>2019-12-12</small>
+	</div>
+</div>
