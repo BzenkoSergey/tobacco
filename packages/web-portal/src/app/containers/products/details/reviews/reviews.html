@@ -1,0 +1,10 @@
+<div class="reviews">
+	<h2>
+		Отзывы об {{product.company?.name}} {{product.productLine?.name}} {{product.name}}
+	</h2>
+
+	<review
+		*ngFor="let review of reviews"
+		[review]="review">
+	</review>
+</div>

@@ -2,13 +2,13 @@
 	margin-top: 12px;
 	margin-bottom: 12px;
 	box-shadow: 0 4px 5px 0 rgba(0,0,0,.08);
+	display: flex;
 
-	&-btn {
+	button[type="submit"] {
 		background-color: #ffeb3b;
 		border-radius: 0;
 		border-top-left-radius: 4px;
 		border-bottom-left-radius: 4px;
-		padding: 18px 0 17px;
 		width: 90px;
 		text-align: center;
 		font-size: 13px;
@@ -27,13 +27,9 @@
 		&:focus {
 			background-color: #fbe533;
 		}
-
-		&:focus {
-			// box-shadow: inset 0px -2px 0px rgba(0, 0, 0, 0.0784313725490196);
-		}
 	}
 
-	&-field-wrapper {
+	&-field {
 		position: relative;
 		width: calc(100% - 90px);
 		float: left;
@@ -52,7 +48,7 @@
 		}
 	}
 
-	.search-items {
+	ul {
 		background-color: #fff;
 		position: absolute;
 		top: 100%;
@@ -71,90 +67,21 @@
 		li {
 			border-top: 1px solid #f3f3f3;
 
-			.search-item-btn {
+			button {
 				background-color: transparent;
 				width: 100%;
 				display: block;
 				border: 0;
-				padding: 12px;
+				padding: 8px;
 				text-align: left;
 				cursor: pointer;
 				outline: none;
-				display: flex;
-				flex-flow: row wrap;
+				font-size: .8rem;
 
 				&.active,
 				&:focus,
 				&:hover {
 					background-color: rgba(0, 0, 0, 0.01);
-				}
-
-				img {
-					max-width: 100%;
-				}
-
-				.product-info {
-					width: 50%;
-					text-align: center;
-					display: flex;
-					flex-flow: row wrap;
-
-					.product-logo-wrap {
-						width: 41px;
-					}
-
-					.product-name {
-						width: calc(100% - 41px);
-						text-align: left;
-						font-size: 16px;
-						padding-left: 15px;
-					}
-				}
-
-				.products-items {
-					width: 50%;
-					margin: 0;
-					padding: 0;
-					padding-left: 5px;
-					list-style: none;
-					display: flex;
-					flex-flow: row wrap;
-
-					.products-item {
-						display: inline-block;
-						margin-right: 4px;
-						margin-bottom: 4px;
-						min-width: 65px;
-						text-align: center;
-						border: none;
-					}
-				}
-
-				.price {
-					color: #268c21;
-					font-weight: bold;
-					font-size: 10px;
-					line-height: 18px;
-					display: flex;
-					flex-flow: row wrap;
-					flex-wrap: nowrap;
-
-					&-attr {
-						background-color: rgba(0, 0, 0, 0.239216);
-						color: #fff;
-						border-radius: 3px 0 0 3px;
-						// padding-right: 2px;
-						width: 45%;
-						// font-size: 11px;
-					}
-
-					&-value {
-						// padding-left: 2px;
-						background-color: rgba(255, 235, 59, 0.4117647058823529);
-						border-radius: 0 3px 3px 0;
-						width: 55%;
-						font-size: 12px;
-					}
 				}
 			}
 		}

@@ -1,0 +1,54 @@
+<section
+	*ngIf="product && mixes.length"
+	class="content">
+
+	<div class="summary">
+		<div class="description">
+			<h2>Миксы для кальяна с брендом {{product.company?.name}} {{product.productLine?.name}} вкус {{product.name}}</h2>
+			<p>
+				Все миксы в состав которых входит табак {{product.company?.name}} {{product.productLine?.name}} {{product.name}}.
+				<br>
+				Всего миксов: <b>{{mixes.length}}</b>.
+				<br>
+				Посмотреть все
+				<a [routerLink]="['/mixes', product.company.code]">
+					миксы с табаком {{product.company?.name}}
+				</a>.
+			</p>
+			<h4>Самый бюджетный микс {{getMin()[0]}} грн</h4>
+
+			<div class="mixes">
+				<mix
+					[d]="getMin()[1]"
+					[brand]="product.company.code"
+					[absolute]="true">
+				</mix>
+			</div>
+		</div>
+
+		<div class="info">
+			<h4>Найди свой микс</h4>
+			<a
+				class="btn"
+				[routerLink]="['/mixes']">
+				<icon
+					class="middle"
+					icon="filter"
+					width="15"
+					height="18">
+				</icon>
+				Улучшиный фильтр
+			</a>
+		</div>
+	</div>
+
+	<h2>Все миксы</h2>
+	<div class="mixes">
+		<mix
+			*ngFor="let m of mixes"
+			[absolute]="true"
+			[brand]="product.company.code"
+			[d]="m">
+		</mix>
+	</div>
+</section>

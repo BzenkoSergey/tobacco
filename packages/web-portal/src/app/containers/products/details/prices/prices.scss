@@ -1,0 +1,80 @@
+h2 {
+	margin: 0;
+}
+
+.summary {
+	.prices {
+		padding: 5px 0;
+
+		.item {
+			font-size: 15px;
+
+			.values {
+				display: inline-block;
+				margin-left: 10px;
+			}
+
+			.attribute {
+				color: #929228;
+			}
+
+			.value {
+				font-weight: bold;
+				color: #268c21;
+				font-size: 20px;
+			}
+		}
+	}
+
+	.description {
+		padding: 10px 0;
+
+		.available {
+			&.fail {
+				color: red;
+			}
+
+			&.success {
+				color: green;
+			}
+		}
+	}
+}
+
+.markets {
+	box-shadow: 0px 1px 2px #00000045;
+
+	@media (min-width: 588px) {
+		margin-top: 10px;
+	}
+	@media (min-width: 820px) {
+		width: 84%;
+		margin-top: 35px;
+	}
+
+	.market {
+		width: 168px;
+		text-align: center;
+
+		img {
+			max-height: 30px;
+		}
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+
+		th, td {
+			padding: 5px;
+		}
+
+		th {
+			background-color: rgba(243, 243, 243, 0.36);
+		}
+
+		td {
+			border-bottom: 1px solid #f1efef;
+		}
+	}
+}

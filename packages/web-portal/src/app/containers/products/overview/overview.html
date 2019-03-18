@@ -1,0 +1,100 @@
+<div class="main">
+	<button
+		class="filters-btn"
+		type="button"
+		(click)="showFilter = true">
+
+		<icon icon="filter"></icon>
+		Фильтра
+	</button>
+
+	<div
+		class="nav-bg"
+		[class.open]="showFilter"
+		(click)="showFilter = false">
+	</div>
+
+	<div
+		class="nav"
+		[class.open]="showFilter">
+
+		<ul class="items">
+			<li *ngIf="hasFilters()">
+				<a
+					class="filter"
+					rel="noindex"
+					queryParamsHandling="merge"
+					[routerLink]="['/products']">
+
+					<icon icon="filter"></icon>
+					Сбросить Фильтра
+				</a>
+			</li>
+			<li
+				*ngFor="let i of getMenuItems()"
+				[class.hide]="!getMenuOptions(i).length"
+				(click)="$event.stopPropagation()">
+
+				<button
+					[class.selected]="filterSelected(i.code)"
+					type="button"
+					(click)="openFilter(i.code)">
+
+					{{i.label}}
+					<icon
+						*ngIf="i.options.length"
+						[icon]="openned.get(i.code) ? 'caret-up' : 'caret-down'">
+					</icon>
+				</button>
+
+				<div
+					*ngIf="i.options.length"
+					class="sub-items"
+					[class.open]="!openned.get(i.code)">
+
+					<filter-items
+						[items]="getMenuOptions(i)"
+						[code]="i.code"
+						[selectedCodes]="queriesMap.get(i.code)"
+						[allSelected]="queriesMap"
+						(selected)="filter($event, i)">
+					</filter-items>
+				</div>
+			</li>
+		</ul>
+	</div>
+
+	<div class="content">
+		<div
+			*ngIf="wiki.length"
+			class="info">
+			<ng-container *ngFor="let wiki of getWiki()">
+				<ng-container *ngFor="let fields of wiki">
+					<div class="inline" [innerHTML]="fields"></div>
+				</ng-container>
+			</ng-container>
+		</div>
+
+		<div class="items">
+			<h2
+				*ngIf="pageTitle && !wiki.length"
+				class="title-page">
+				{{pageTitle}}
+			</h2>
+
+			<products
+				[openedId]="openedId"
+				[queries]="productsQueries"
+				(total)="productsTotal = $event"
+				(opened)="tooggleItems($event)">
+			</products>
+
+			<pagination
+				class="pagination"
+				[itemsPerPage]="queries.itemsPerPage"
+				[page]="queries.page"
+				[total]="productsTotal">
+			</pagination>
+		</div>
+	</div>
+</div>

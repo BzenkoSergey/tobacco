@@ -1,0 +1,6 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://hoogle.com.ua/sitemap.xml
+Sitemap: https://hoogle.com.ua/sitemap-products.xml
+Sitemap: https://hoogle.com.ua/sitemap-mixes.xml

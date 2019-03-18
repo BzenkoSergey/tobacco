@@ -1,0 +1,25 @@
+$mobile: 768px;
+
+.content {
+	padding-bottom: 25px;
+}
+
+.title {
+	margin: 0 -10px;
+	font-weight: 300;
+	font-size: 21px;
+	color: #333;
+	border-bottom: 1px solid #eaeaea;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 6px;
+	@media (min-width: $mobile) {
+		border-bottom: none;
+		margin: 0;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	@media (min-width: 820px) {
+		font-size: 33px;
+	}
+}

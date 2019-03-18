@@ -1,0 +1,163 @@
+<div
+	*ngIf="items.length || !hideEmpty"
+	class="products"
+	[class.cols]="cols"
+	[class.home]="home">
+
+	<section
+		*ngIf="!items.length && !loading"
+		class="product-empty">
+		<icon
+			class="middle"
+			icon="info-circle"
+			width="16"
+			height="19">
+		</icon>
+		Список пуст.
+	</section>
+
+	<section
+		*ngIf="!items.length && loading"
+		class="product-empty">
+		<icon
+			class="middle"
+			icon="spinner"
+			width="16"
+			height="19">
+		</icon>
+		Загрузка...
+	</section>
+
+	<section
+		*ngFor="let product of items; let i = index"
+		class="product"
+		itemscope
+		itemtype="https://schema.org/Product">
+
+		<a
+			class="product-main"
+			queryParamsHandling="merge"
+			[routerLink]="getLink(product.readableName)">
+
+			<div class="product-logo-wrap">
+				<picture>
+					<source
+						media="(min-width: 425px)"
+						offset="100"
+						[attr.lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + product.logo">
+
+					<img
+						class="product-logo"
+						offset="200"
+						itemprop="image"
+						[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/md-' + product.logo"
+						alt="{{product.company?.name}} {{product.productLine?.name}} {{product.name}}">
+				</picture>
+			</div>
+
+			<meta itemprop="brand" content="{{product.company.name}}">
+			<h2
+				class="product-name"
+				itemprop="name">
+
+				<span class="product-brand">
+					<ng-container *ngIf="product.company as company">
+						{{company.name}}
+					</ng-container>
+					<ng-container *ngIf="product.productLine as productLine">
+						{{productLine.name}}
+					</ng-container>
+				</span>
+
+				<span class="product-names">
+					<ng-container *ngIf="titleAs === 'composition'">
+						{{product.name}}
+					</ng-container>
+					<ng-container *ngIf="titleAs === 'originName'">
+						{{product.originName}}
+					</ng-container>
+					<ng-container *ngIf="titleAs === 'translate'">
+						{{product.translate || product.originName}}
+					</ng-container>
+				</span>
+			</h2>
+
+			<ul class="product-summary">
+				<li
+					*ngFor="let item of getItems(product)"
+					class="product-summary-item product-prices-box">
+
+					<div
+						*ngIf="item.attr"
+						class="attr">
+
+						{{item.attr}}
+					</div>
+					<div class="price">
+						{{item.prices}}
+					</div>
+					грн
+				</li>
+			</ul>
+		</a>
+
+		<button
+			*ngIf="!hideOffers"
+			type="button"
+			class="product-items-show"
+			(click)="tooggleItems(product._id)">
+			Цены
+			<icon icon="angle-double-down"></icon>
+		</button>
+
+		<ul
+			*ngIf="!hideOffers"
+			class="product-items"
+			[class.open]="product._id === openedId">
+
+			<li
+				*ngFor="let item of sortItems(product.items)"
+				class="product-item"
+				itemprop="offers"
+				itemscope
+				itemtype="https://schema.org/Offer">
+
+				<a
+					class="product-item-info"
+					target="_blank"
+					rel="noopener"
+					[href]="item.url">
+
+					<div
+						*ngIf="item.market as market"
+						class="market">
+
+						<img
+							*ngIf="market.logo"
+							offset="0"
+							[lazyLoad]="market.logo"
+							[defaultImage]="market.logo"
+							[alt]="market.name">
+
+						<meta itemprop="availability" content="{{item.available ? 'InStock' : 'OutOfStock'}}">
+						<ng-container *ngIf="!market.logo">{{market.name}}</ng-container>
+					</div>
+					<div class="attrs">
+						<ng-container *ngIf="item.productAttributes.length">
+							<ng-container *ngFor="let attr of item.productAttributes">
+								<ng-container *ngIf="attr.name === 'Weight'">
+									{{attr.value}}
+								</ng-container>
+							</ng-container>
+						</ng-container>
+					</div>
+					<div class="price">
+						<meta itemprop="url" content="{{item.url}}">
+						<meta itemprop="priceCurrency" content="UAH">
+						<span itemprop="price">{{item.price}}</span>грн
+					</div>
+				</a>
+			</li>
+		</ul>
+	</section>
+</div>

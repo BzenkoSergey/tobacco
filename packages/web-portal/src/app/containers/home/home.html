@@ -1,0 +1,87 @@
+<div class="content">
+	<ul class="brands">
+		<li *ngFor="let option of getCategories()">
+			<a [routerLink]="['../products', 'all', 'all', option.code]">
+
+				<img
+					offset="0"
+					[lazyLoad]="option.logo"
+					[defaultImage]="option.logo"
+					[alt]="option.label"
+					[title]="option.label">
+			</a>
+		</li>
+	</ul>
+
+	<div class="cats">
+		<a [routerLink]="['../products', 'all', 'bowl']">
+			<img
+				offset="200"
+				lazyLoad="https://res.cloudinary.com/dwkakr4wt/image/upload/v1552003641/brands/42465000_images_5622934752.jpg"
+				alt="Чаши"
+				title="Чаши">
+
+			Чаши
+		</a>
+		<a [routerLink]="['../products', 'all', 'tobacco']">
+			<img
+				offset="200"
+				lazyLoad="https://res.cloudinary.com/dwkakr4wt/image/upload/v1552003814/brands/121212121212.jpg"
+				alt="Табак для кальяна"
+				title="Табак для кальяна">
+
+			Табак для кальяна
+		</a>
+		<a [routerLink]="['../products', 'all', 'coal']">
+			<img
+				offset="200"
+				lazyLoad="https://res.cloudinary.com/dwkakr4wt/image/upload/v1552003906/brands/jjjjj.jpg"
+				alt="Уголь"
+				title="Уголь">
+
+			Уголь
+		</a>
+	</div>
+
+	<div class="row">
+		<div class="col-4">
+			<h2>Табак</h2>
+
+			<products
+				[cols]="3"
+				[home]="true"
+				[openedId]="openedId"
+				[queries]="tobaccoQueries"
+				(opened)="tooggleItems($event)">
+			</products>
+		</div>
+
+		<div class="col-6">
+			<h2>Миксы табаков</h2>
+
+			<div class="mixes">
+				<mix
+					*ngFor="let d of mixes"
+					[absolute]="true"
+					[d]="d">
+				</mix>
+			</div>
+		</div>
+	</div>
+
+	<h2>Чаши</h2>
+	<products
+		[home]="true"
+		[openedId]="openedId"
+		[queries]="bowlQueries"
+		(opened)="tooggleItems($event)">
+	</products>
+
+	<h2>Уголь</h2>
+	<products
+		[home]="true"
+		[openedId]="openedId"
+		[queries]="coalQueries"
+		(opened)="tooggleItems($event)">
+	</products>
+</div>

@@ -1,0 +1,103 @@
+.header-wrap {
+	background-position: left top;
+	@media (min-width: 588px) {
+		background-position: left bottom;
+	}
+	background-repeat: no-repeat;
+	background-image: url('./assets/DJI_0008-1200x674_3.jpg');
+	background-color: #fbfbfb;
+	padding-bottom: 5px;
+	box-shadow: 0px 1px 8px #00000014;
+}
+
+.header {
+	padding-top: 10px;
+
+	a {
+		text-decoration: none;
+		color: #222;
+		text-shadow: 1px -1px #ffffff2e, 1px 1px #ffffff2e;
+	}
+
+	.logo {
+		font-size: 12px;
+		text-align: center;
+
+		@media (min-width: 588px) {
+			float: left;
+			padding-right: 20px;
+			width: 155px;
+		}
+
+		.name {
+			font-weight: bold;
+			font-size: 52px;
+			@media (min-width: 588px) {
+				font-size: 37px;
+			}
+		}
+
+		.description {
+			display: none;
+			@media (min-width: 588px) {
+				display: block;
+			}
+		}
+	}
+
+	&-content {
+		max-width: 700px;
+
+		@media (min-width: 588px) {
+			float: left;
+			width: calc(100% - 187px);
+		}
+	}
+}
+
+.menu {
+	list-style: none;
+	padding: 0;
+	margin-bottom: 0;
+	margin-top: 0;
+
+	li {
+		display: inline-block;
+	}
+
+	a {
+		display: block;
+		padding: 9px 10px;
+		color: initial;
+		font-size: 18px;
+		color: #3e3e3e;
+		fill: #3e3e3e;
+		@media (min-width: 588px) {
+			padding: 5px 10px;
+			font-size: 15px;
+		}
+
+		transition: background-color, color, fill;
+		transition-duration: .3s;
+		&:hover {
+			border-radius: 2px;
+			color: #928403;
+			fill: #928403;
+		}
+
+		icon {
+			width: 18px;
+			vertical-align: middle;
+
+			&[icon="store"] {
+				width: 21px;
+			}
+			@media (min-width: 588px) {
+				width: 15px;
+				&[icon="store"] {
+					width: 18px;
+				}
+			}
+		}
+	}
+}

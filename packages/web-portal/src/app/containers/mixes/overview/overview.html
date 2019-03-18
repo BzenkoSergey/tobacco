@@ -1,0 +1,138 @@
+<div class="main">
+	<button
+		class="filters-btn"
+		type="button"
+		(click)="showFilter = true">
+
+		<icon icon="filter"></icon>
+		Фильтра
+	</button>
+
+	<div
+		class="nav-db"
+		[class.open]="showFilter"
+		(click)="showFilter = false">
+	</div>
+
+	<div
+		class="nav"
+		[class.open]="showFilter">
+
+		<ul class="items">
+			<li *ngIf="hasFilters()">
+				<a
+					class="filter"
+					rel="noindex"
+					queryParamsHandling="merge"
+					[routerLink]="['/mixes']">
+
+					<icon icon="filter"></icon>
+					Сбросить Фильтра
+				</a>
+			</li>
+			<li
+				*ngFor="let i of getMenuItems()"
+				[class.hide]="!getMenuOptions(i).length"
+				(click)="$event.stopPropagation()">
+
+				<button
+					[class.selected]="filterSelected(i.code)"
+					type="button"
+					(click)="openFilter(i.code)">
+
+					{{i.label}}
+					<icon
+						*ngIf="i.options.length"
+						[icon]="openned.get(i.code) ? 'caret-up' : 'caret-down'">
+					</icon>
+				</button>
+
+				<div
+					*ngIf="i.options.length"
+					class="sub-items"
+					[class.open]="!openned.get(i.code)">
+
+					<filter-items
+						[mixes]="true"
+						[items]="getMenuOptions(i)"
+						[code]="i.code"
+						[selectedCodes]="queriesMap.get(i.code)"
+						[allSelected]="queriesMap"
+						(selected)="filter($event, i)">
+					</filter-items>
+				</div>
+			</li>
+		</ul>
+	</div>
+
+	<div class="content">
+		<h2
+			*ngIf="pageTitle; else elseTitle"
+			class="title-page">
+			{{pageTitle}}
+		</h2>
+		<ng-template #elseTitle>
+			<h2
+				*ngIf="!queries.page"
+				class="title-page">
+				Все миксы для кальяна
+			</h2>
+		</ng-template>
+
+		<p
+			*ngIf="getContext(); else elseContext"
+			class="description">
+			{{getContext()}}
+		</p>
+
+		<ng-template #elseContext>
+			<p
+				*ngIf="!queries.page"
+				class="description">
+				На этой странице собраны все кальянные миксы которые можно найти.
+				<br>
+				Каждый микс содержит информацию о доступности для покупки составляющих табаков а также их стоимость по минимальной цене в рамках украины.
+			</p>
+		</ng-template>
+
+		<div class="mixes">
+			<section
+				*ngIf="!items.length && !loading"
+				class="product-empty">
+				<icon
+					class="middle"
+					icon="info-circle"
+					width="16"
+					height="19">
+				</icon>
+				Список пуст.
+			</section>
+
+			<section
+				*ngIf="!items.length && loading"
+				class="product-empty">
+				<icon
+					class="middle"
+					icon="spinner"
+					width="16"
+					height="19">
+				</icon>
+				Загрузка...
+			</section>
+
+			<div class="mixes-list">
+				<mix
+					*ngFor="let item of items; let i = index"
+					[d]="item">
+				</mix>
+			</div>
+		</div>
+
+		<pagination
+			class="pagination"
+			[itemsPerPage]="queries.itemsPerPage"
+			[page]="queries.page"
+			[total]="productsTotal">
+		</pagination>
+	</div>
+</div>

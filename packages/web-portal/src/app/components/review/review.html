@@ -1,0 +1,25 @@
+<article
+	class="review"
+	[class.mini]="hideDate">
+
+	<div class="heading">
+		<span class="author">{{review.author}}</span>
+		<span class="rating">
+			<span *ngIf="!hideDate">
+				Оценка: {{review.rating}}
+			</span>
+
+			<icon
+				*ngFor="let i of [1,2,3,4,5]"
+				[icon]="(i > (review.rating / 2)) ? 'empty-star' : 'star'">
+			</icon>
+		</span>
+		<time
+			*ngIf="!hideDate"
+			class="time">
+			{{review.datePublished | date:'d/MM/yy hh:mm'}}
+		</time>
+	</div>
+
+	{{review.text}}
+</article>

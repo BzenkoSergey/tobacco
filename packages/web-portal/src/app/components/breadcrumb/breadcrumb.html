@@ -1,0 +1,43 @@
+<ul
+	class="container center-layout breadcrumb"
+	itemscope
+	itemtype="https://schema.org/BreadcrumbList">
+
+	<ng-container *ngFor="let i of subj | async; index as ind">
+		<li
+			*ngIf="i.url"
+			itemprop="itemListElement"
+			itemscope
+			itemtype="https://schema.org/ListItem">
+			<a
+				itemtype="https://schema.org/Thing"
+				itemprop="item"
+				queryParamsHandling="merge"
+				[routerLink]="i.url">
+
+				<span
+					class="text"
+					itemprop="name">
+					<icon
+						*ngIf="i.icon"
+						[icon]="i.icon">
+					</icon>
+
+					{{i.title}}
+				</span>
+			</a>
+			<meta itemprop="position" content="{{ind + 1}}">
+		</li>
+		<li *ngIf="!i.url">
+			<span class="last">
+				<span class="text">
+					<icon
+						*ngIf="i.icon"
+						[icon]="i.icon">
+					</icon>
+					{{i.title}}
+				</span>
+			</span>
+		</li>
+	</ng-container>
+</ul>

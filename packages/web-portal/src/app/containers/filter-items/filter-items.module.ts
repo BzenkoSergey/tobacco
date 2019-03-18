@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { RouterModule } from '@angular/router';
 
+import { IconModule } from '@components/icon/icon.module';
 import { FilterItemsComponent } from './filter-items.component';
 
 @NgModule({
 	imports: [
 		CommonModule,
-		FormsModule,
-		FlexLayoutModule,
+		RouterModule,
+
+		IconModule
 	],
 	declarations: [
 		FilterItemsComponent

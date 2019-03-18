@@ -1,109 +1,89 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Meta } from '@angular/platform-browser';
 
-import { debounceTime } from 'rxjs/operators';
+import { BreadcrumbService } from '@components/breadcrumb/breadcrumb.service';
+import { BreadcrumbModel } from '@components/breadcrumb/breadcrumb.model';
 
-import { CompanyDto, CategoryDto, MarketDto, ProductDto, ProductLineDto, ProductAttributeDto, MarketProductDto } from '@magz/common';
-
-import { FiltersRestService } from '@rest/filters';
-import { CompaniesRestService } from '@rest/companies';
-import { MarketsRestService } from '@rest/markets';
-import { CategoriesRestService } from '@rest/categories';
-import { ProductsRestService } from '@rest/products';
-import { ProductAttributesRestService } from '@rest/product-attributes';
-import { ProductLinesRestService } from '@rest/product-lines';
-import { SearchRestService } from '@rest/search';
-
-import { AggregatedProductDto, AggregatedProductItemDto } from '@rest/products/product-full.dto';
+import { FiltersService } from './filters.service';
+import { MenuService } from './menu.service';
+import { Utils } from './utils';
+import { AnalyticsService } from './analytics.service';
 
 @Component({
 	selector: 'root',
-	templateUrl: './root.html',
-	styleUrls: ['./root.scss'],
-	providers: [
-		FiltersRestService,
-		CompaniesRestService,
-		MarketsRestService,
-		CategoriesRestService,
-		ProductsRestService,
-		ProductAttributesRestService,
-		ProductLinesRestService,
-		SearchRestService
-	]
+	templateUrl: './root.html'
 })
 
 export class RootComponent {
-	opennedSideBar = true;
-	filters: any[] = [];
-
-	queries: any = {
-		attributes: [],
-		markets: [],
-		companies: [],
-		categories: [],
-		productLines: [],
-		productAttributes: [],
-		page: 0,
-		itemsPerPage: 25,
-		search: ''
-	};
-
-	filtersSelections: any = {};
-
-	companies: CompanyDto[] = [];
-	markets: MarketDto[] = [];
-	categories: CategoryDto[] = [];
-	productLines: ProductLineDto[] = [];
-	productAttributes: ProductAttributeDto[] = [];
-
-	productsTotal = 0;
-	searchProducts: { query: string }[] = [];
-	products: AggregatedProductDto[] = [];
+	queriesMap = new Map<string, string[]>();
+	menu: any;
+	search = '';
 
 	constructor(
+		breadcrumb: BreadcrumbService,
+		analyticsService: AnalyticsService,
+		private menuService: MenuService,
+		private filters: FiltersService,
 		private router: Router,
-		private route: ActivatedRoute,
-		private filtersService: FiltersRestService,
-		private companiesService: CompaniesRestService,
-		private marketsService: MarketsRestService,
-		private categoriesService: CategoriesRestService,
-		private productsService: ProductsRestService,
-		private productAttributesService: ProductAttributesRestService,
-		private productLinesService: ProductLinesRestService,
-		private searchRestService: SearchRestService
+		meta: Meta,
+		route: ActivatedRoute
 	) {
-		window['a'] = this;
+		router.events.subscribe(event => {
+			if (event instanceof NavigationEnd) {
+				analyticsService.changeUrl();
+				(<any>window).ga('set', 'page', event.urlAfterRedirects);
+				(<any>window).ga('send', 'pageview');
+			}
+		});
 
-		console.log('===-----------');
-		route.queryParams
-			.pipe(debounceTime(200))
-			.subscribe(p => {
-				console.log('-----------', p);
-				this.queries = this.fixRouteQueries(p);
-				this.convertQueriesToPlainObject();
-				this.fetchProducts();
+		meta.updateTag({
+			property: 'og:site_name',
+			content: 'Hoogle.com.ua'
+		});
+		breadcrumb.add([
+			new BreadcrumbModel({
+				title: 'Главная',
+				url: ['/'],
+				code: 'home',
+				icon: 'home'
+			})
+		]);
+
+		this.menuService.get()
+			.subscribe(menu => {
+				this.menu = menu;
+				this.filters.get()
+					.subscribe(p => {
+						this.queriesMap = new Map<string, string[]>();
+						Object.keys(p)
+							.forEach(prop => {
+								let value = p[prop];
+								value = Array.isArray(value) ? value : [value];
+								this.queriesMap.set(prop, value);
+							});
+
+						breadcrumb.remove('products');
+						breadcrumb.remove('mixes');
+						let code = 'products';
+						if (this.filters.getCode() === 'MIXES') {
+							code = 'mixes';
+						}
+						breadcrumb.replaceAll([
+							this.genPath()
+						], code);
+					});
 			});
-		this.fetchCompanies();
-		this.fetchMarkets();
-		this.fetchProductAttributes();
-		this.fetchProductLines();
-		this.fetchCategories();
 
-		this.filtersService.list()
-			.subscribe(d => {
-				this.filters = d.map(i => {
-					return {
-						label: i.label,
-						type: i.type,
-						attribute: i.attribute,
-						opened: false
-					};
-				});
+		route.queryParams
+			.subscribe(p => {
+				this.search = p.search || '';
 			});
 	}
 
 	performSearch(text: string) {
-		this.router.navigate([], {
+		const path = Utils.genPathUrl(this.queriesMap, this.filters.getCode() === 'MIXES');
+		this.router.navigate(path, {
 			queryParams: {
 				page: 0,
 				search: text
@@ -112,346 +92,94 @@ export class RootComponent {
 		});
 	}
 
-	searchProduct(text: string) {
-		console.log(text);
-		this.fetchProductsBySearch(text);
-	}
+	private genPath(): BreadcrumbModel {
+		const resource = this.queriesMap.get('resource') || [];
+		const category = this.queriesMap.get('category') || [];
+		const company = this.queriesMap.get('company') || [];
+		const unitLine = this.queriesMap.get('unit-line') || [];
+		const weight = this.queriesMap.get('WEIGHT') || [];
 
-	searchReset() {
-		this.searchProducts = [];
-	}
+		let resourceLine = Utils.isNotEmptyArray(resource) ? resource.join(',') : '';
+		let categoryLine = Utils.isNotEmptyArray(category) ? category.join(',') : '';
+		let companyLine = Utils.isNotEmptyArray(company) ? company.join(',') : '';
+		let unitLineLine = Utils.isNotEmptyArray(unitLine) ? unitLine.join(',') : '';
+		const weightLine = Utils.isNotEmptyArray(weight) ? weight.join(',') : '';
 
-	getMarket(id: string) {
-		return this.markets.find(i => i._id === id);
-	}
-
-	getCompany(id: string) {
-		return this.companies.find(i => i._id === id);
-	}
-
-	getSelected(type, attrId: string) {
-		if (type === 'PRODUCT_ATTRIBUTE') {
-			const attribute = this.productAttributes.find(i => i._id === attrId);
-			if (!attribute) {
-				return new Map();
+		const titles = [];
+		if (weightLine && !unitLineLine) {
+			unitLineLine = 'all';
+		}
+		if (unitLineLine && !companyLine) {
+			companyLine = 'all';
+		}
+		if (companyLine && !categoryLine) {
+			categoryLine = 'all';
+		}
+		if (categoryLine && !resourceLine) {
+			resourceLine = 'all';
+		}
+		if (resource.length && this.menu.menu) {
+			const item = this.menu.menu.find(m => m.code === 'resource');
+			const labels = item.options
+				.filter(o => !!~resource.indexOf(o.code))
+				.map(o => o.label);
+			if (labels.length) {
+				titles.push('○ Магазины: ' + labels.join(', '));
 			}
-			return this.filtersSelections.attributes.get(attribute);
 		}
-		if (type === 'CATEGORY') {
-			return this.filtersSelections.categories || new Map();
+		if (category.length && this.menu.menu) {
+			const item = this.menu.menu.find(m => m.code === 'category');
+			const labels = item.options
+				.filter(o => !!~category.indexOf(o.code))
+				.map(o => o.label);
+			if (labels.length) {
+				titles.push('○ Категории: ' + labels.join(', '));
+			}
 		}
-		if (type === 'COMPANIES') {
-			return this.filtersSelections.companies || new Map();
+		if (company.length && this.menu.menu) {
+			const item = this.menu.menu.find(m => m.code === 'company');
+			const labels = item.options
+				.filter(o => !!~company.indexOf(o.code))
+				.map(o => o.label);
+			if (labels.length) {
+				titles.push('○ Компании: ' + labels.join(', '));
+			}
 		}
-		if (type === 'MARKETS') {
-			return this.filtersSelections.markets || new Map();
+		if (unitLine.length && this.menu.menu) {
+			const item = this.menu.menu.find(m => m.code === 'unit-line');
+			const labels = item.options
+				.filter(o => !!~unitLine.indexOf(o.code))
+				.map(o => o.label);
+			if (labels.length) {
+				titles.push('○ Линейки: ' + labels.join(', '));
+			}
 		}
-		if (type === 'PRODUCT_LINE') {
-			return this.filtersSelections.productLines || new Map();
+		if (weight.length && this.menu.menu) {
+			const item = this.menu.menu.find(m => m.code === 'WEIGHT');
+			const labels = item.options
+				.filter(o => !!~weight.indexOf(o.code))
+				.map(o => o.label);
+			if (labels.length) {
+				titles.push('○ Вес: ' + labels.join(', '));
+			}
 		}
-	}
+		if (this.filters.getCode() === 'MIXES') {
+			const url = [companyLine, unitLineLine]
+				.filter(d => !!d);
 
-	handleQueries(list: any, filter: any) {
-		if (filter.type === 'PRODUCT_ATTRIBUTE') {
-			this.queries.attributes = this.queries.attributes.filter(l => {
-				return !l.startsWith(filter.attribute);
+			return new BreadcrumbModel({
+				title: titles.length ? 'Отфильтрованные' : 'Миксы табаков',
+				url: url.length ? url : ['./'],
+				code: 'mixes'
 			});
-			this.queries.attributes.push(filter.attribute + '-' + list
-				.map(n => n.value)
-				.join('='));
 		}
-		if (filter.type === 'CATEGORY') {
-			this.queries.categories = list.map(i => i._id);
-		}
-		if (filter.type === 'COMPANIES') {
-			this.queries.companies = list.map(i => i._id);
-		}
-		if (filter.type === 'MARKETS') {
-			this.queries.markets = list.map(i => i._id);
-		}
-		if (filter.type === 'PRODUCT_LINE') {
-			this.queries.productLines = list.map(i => i._id);
-		}
-		this.router.navigate([], {
-			queryParams: this.queries,
-			queryParamsHandling: 'merge'
+		const url = [resourceLine, categoryLine, companyLine, unitLineLine, weightLine]
+			.filter(d => !!d);
+
+		return new BreadcrumbModel({
+			title: titles.length ? 'Отфильтрованные' : 'Продукты',
+			url: url.length ? url : ['./'],
+			code: 'products'
 		});
-		this.convertQueriesToPlainObject();
-	}
-
-	fixRouteQueries(obj: any) {
-		console.log(obj, '===');
-		const o: any = {
-			attributes: [],
-			markets: [],
-			companies: [],
-			categories: [],
-			productLines: [],
-			productAttributes: [],
-			page: 0,
-			itemsPerPage: 25,
-			search: ''
-		};
-		const keys = Object.keys(obj);
-		if (!keys.length) {
-			return o;
-		}
-		keys.forEach(p => {
-			let value = obj[p];
-			if (p === 'search') {
-				o[p] = value;
-				return;
-			}
-			if (p === 'page') {
-				value = +obj[p] || 0;
-				o[p] = value;
-				return;
-			}
-			if (p === 'itemsPerPage') {
-				value = +obj[p] || 25;
-				o[p] = value;
-				return;
-			}
-			if (!value) {
-				value = [];
-			} else {
-				value = Array.isArray(value) ? value : [value];
-				if (p === 'attributes') {
-					value = value.filter(a => {
-						const segments = a.split('-');
-						return !!segments[1];
-					});
-				}
-			}
-			o[p] = value;
-		});
-
-		return o;
-	}
-
-	convertQueriesToPlainObject() {
-		const attributesMap = new Map<ProductAttributeDto, Map<any, boolean>>();
-		this.queries.attributes
-			.forEach((n: string) => {
-				const f = n.split('-');
-				const attributeId = f[0];
-				const attributeValues = f[1].split('=');
-				const attribute = this.productAttributes.find(i => i._id === attributeId);
-				if (!attribute) {
-					return;
-				}
-				const valuesMap = new Map<any, boolean>();
-				attribute.values
-					.filter(v => attributeValues.includes(v.value))
-					.forEach(v => {
-						valuesMap.set(v, true);
-					});
-				attributesMap.set(attribute, valuesMap);
-			});
-
-		const marketsMap = new Map<MarketDto, boolean>();
-		this.queries.markets.forEach(id => {
-			const market = this.markets.find(i => i._id === id);
-			if (!market) {
-				return;
-			}
-			marketsMap.set(market, true);
-		});
-
-		const categoriesMap = new Map<CategoryDto, boolean>();
-		this.queries.categories.forEach(id => {
-			const market = this.categories.find(i => i._id === id);
-			if (!market) {
-				return;
-			}
-			categoriesMap.set(market, true);
-		});
-
-		const companiessMap = new Map<CompanyDto, boolean>();
-		this.queries.companies.forEach(id => {
-			const market = this.companies.find(i => i._id === id);
-			if (!market) {
-				return;
-			}
-			companiessMap.set(market, true);
-		});
-
-		const productLinesMap = new Map<ProductLineDto, boolean>();
-		this.queries.productLines.forEach(id => {
-			const market = this.productLines.find(i => i._id === id);
-			if (!market) {
-				return;
-			}
-			productLinesMap.set(market, true);
-		});
-
-		const obj = {
-			attributes: attributesMap,
-			markets: marketsMap,
-			categories: categoriesMap,
-			companies: companiessMap,
-			productLines: productLinesMap,
-		};
-		this.filtersSelections = obj;
-	}
-
-	getProductAttribute(attributeId: string) {
-		return this.productAttributes.find(i => i._id === attributeId);
-	}
-
-	getChildrenByType(type: string) {
-		if (type === 'MARKETS') {
-			return this.markets;
-		}
-		if (type === 'COMPANIES') {
-			return this.companies;
-		}
-		if (type === 'CATEGORY') {
-			return this.categories;
-		}
-		if (type === 'PRODUCT_ATTRIBUTE') {
-			return this.productAttributes;
-		}
-		if (type === 'PRODUCT_LINE') {
-			return this.productLines;
-		}
-		return [];
-	}
-
-	openFilter(filter: any) {
-		filter.opened = !filter.opened;
-		this.filters
-			.filter(a => a !== filter)
-			.forEach(a => a.opened = false);
-	}
-
-	fetchCompanies() {
-		this.companiesService.list({})
-			.subscribe(d => {
-				this.companies = d;
-				this.convertQueriesToPlainObject();
-			});
-	}
-
-	fetchCategories() {
-		this.categoriesService.list({})
-			.subscribe(d => {
-				this.categories = d;
-				this.convertQueriesToPlainObject();
-			});
-	}
-
-	fetchMarkets() {
-		this.marketsService.list({})
-			.subscribe(d => {
-				this.markets = d;
-				this.convertQueriesToPlainObject();
-			});
-	}
-
-	fetchProductLines() {
-		this.productLinesService.list({})
-			.subscribe(d => {
-				this.productLines = d;
-				this.convertQueriesToPlainObject();
-			});
-	}
-
-	fetchProductAttributes() {
-		const s = this.productAttributesService.list({});
-		s.subscribe(d => {
-			this.productAttributes = d;
-			this.convertQueriesToPlainObject();
-		});
-		return s;
-	}
-
-	fetchProductsBySearch(text: string) {
-		this.searchRestService.list({
-			query: text
-		})
-		// const products = this.productsService.list({
-		// 	search: text,
-		// 	itemsPerPage: 5
-		// });
-		// products
-			.subscribe(list => {
-				this.searchProducts = list;
-			});
-	}
-
-	getItems(p: AggregatedProductDto) {
-		const map = new Map<string, AggregatedProductItemDto[]>();
-
-		p.items.forEach(pm => {
-			const pa = pm.productAttributes[0];
-			if (pa) {
-				let list2 = map.get(pa.values[0]) || [];
-				list2.push(pm);
-				list2 = list2
-					.sort((a, b) => {
-						return a.price - b.price;
-					});
-				map.set(pa.values[0], list2);
-			}
-		});
-		const info = [];
-		if (!map.size) {
-			let prices = '';
-			if (p.items.length > 1) {
-				prices += p.items[0].price;
-				prices += '-' + p.items[p.items.length - 1].price;
-			} else {
-				prices += p.items[0].price;
-			}
-			info.push({
-				attr: null,
-				prices: prices
-			});
-			return info;
-		}
-
-
-		map.forEach((mps, key) => {
-			let prices = '';
-			if (mps.length > 1) {
-				prices += mps[0].price;
-				prices += '-' + mps[mps.length - 1].price;
-			} else {
-				prices += mps[0].price;
-			}
-
-			info.push({
-				attr: key,
-				prices: prices
-			});
-		});
-		return info;
-	}
-
-	fetchProducts() {
-		const available = true;
-		const products = this.productsService.list({
-			available: available,
-			markets: this.queries.markets,
-			company: this.queries.companies,
-			categories: this.queries.categories,
-			attributes: this.queries.attributes,
-			page: this.queries.page,
-			itemsPerPage: this.queries.itemsPerPage,
-			search: this.queries.search
-		});
-		products
-			.subscribe(list => {
-				this.products = list.items;
-				this.productsTotal = list.total;
-
-				if (this.productsTotal && this.queries.search) {
-					this.searchRestService.create({
-						query: this.queries.search
-					})
-					.subscribe();
-				}
-			});
 	}
 }

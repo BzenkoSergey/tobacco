@@ -1,0 +1,32 @@
+.pagination {
+	text-align: center;
+
+	.item {
+		background-color: #fff;
+		border-radius: 9px;
+		display: inline-block;
+		padding: 11px 16px;
+		font-size: 16px;
+		font-weight: bold;
+		color: #222;
+		margin: 3px;
+		box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.050980392156862744);
+		transition: background-color 2s;
+		@media (min-width: 425px) {
+			padding: 9px 14px;
+			font-size: 14px;
+		}
+
+		&:hover,
+		&:focus,
+		&.active {
+			background-color: #ffeb3b;
+		}
+
+		&,
+		&:hover,
+		&:focus {
+			text-decoration: none;
+		}
+	}
+}

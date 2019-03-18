@@ -1,67 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
-
 html {
 	-webkit-font-smoothing: antialiased;
 }
 
 body {
-	// background-color: #f3f3f3;
 	font-family: Roboto, "Myriad Pro", Arial, sans-serif;
-	// background-image: url(http://www.dronestagr.am/wp-content/uploads/2016/02/DJI_0008-1200x674.jpg);
-	// background-position: center top;
-	// background-repeat: no-repeat;
-	font-size: 13px;
+	font-size: 14px;
 	line-height: 1.33;
 	color: #4f4f4f;
+	fill: #4f4f4f;
 	margin: 0;
-
-	background-color: #fbfbfb;
-	// background-position: center -169px;
-    // background-repeat: no-repeat;
-    // /* background-size: cover; */
-	// background-image:
-	// 	linear-gradient(to bottom, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.66) 80%, #fbfbfb 100%),
-	// 	url('./assets/DJI_0008-1200x674_2.jpg');
-	// background-color: #fbfbfb;
-}
-
-.center-layout {
-	margin-left: auto;
-	margin-right: auto;
+	background-color: #fff;
 }
 
 * {
 	box-sizing: border-box;
 }
 
-@media (min-width: 768px) {
-	.container {
-		width: 100%;
-		max-width: calc(100% - 30px);
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 500;
+}
+
+b {
+	font-weight: 500;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.title-page {
+	padding: 0 7px;
+	margin: 5px 0;
+	font-size: 19px;
+	font-weight: normal;
+
+	@media (min-width: 588px) {
+		padding: 0 13px;
+		margin: 5px 0 16px;
+		font-size: 29.5px;
 	}
 }
 
-@media (min-width: 992px) {
-	.container {
-		width: 100%;
-		max-width: 965px;
+.container {
+	width: 100%;
+	@media (min-width: 768px) {
+		padding: 0 20px;
+		max-width: 100%;
+	}
+
+	@media (min-width: 992px) {
+		max-width: 1300px;
+	}
+
+	@media (min-width: 1300px) {
+		padding: 0;
 	}
 }
 
-@media (min-width: 1200px) {
-	.center-layout {
-		width: 100%;
-		max-width: 1250px;
-	}
-}
-
-
-.clearfix:before,
-.clearfix:after {
-	content: " ";
-	display: table;
-}
-
-.clearfix:after {
-	clear: both;
-}
+@import "./sass/components/components.scss";
+@import "./sass/helpers/helpers.scss";
+@import "./sass/libs/fontawesome.scss";

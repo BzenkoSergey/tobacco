@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Output, Input, OnChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 
-import { debounceTime, filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import { SearchRestService } from '@rest/search';
 
@@ -14,39 +13,41 @@ import { SearchRestService } from '@rest/search';
 	]
 })
 
-export class SearchComponent implements OnChanges {
+export class SearchComponent {
 	@Output() changed = new EventEmitter<string>();
 	@Input() query = '';
+	originQuery = '';
+
+	private sub: Subscription;
 
 	searchProducts: { query: string }[] = [];
-	control = new FormControl();
 	index = -1;
+	timeout: number|null = null;
 
 	constructor(
 		private searchRestService: SearchRestService
-	) {
-		this.control.valueChanges
-			.pipe(
-				debounceTime(300)
-			)
-			.subscribe(d => {
-				this.query = d;
-				if (!d) {
-					this.resetAutocomplete();
-					return;
-				}
-				this.fetchProductsBySearch(d);
-			});
-	}
+	) {}
 
-	ngOnChanges() {
-		this.control.setValue(this.query, {
-			emitEvent: false
-		});
+	keyup(e: KeyboardEvent) {
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+		}
+		if (!!~['ArrowDown', 'ArrowUp', 'Enter'].indexOf(e.code)) {
+			return;
+		}
+		this.query = (e.target as HTMLInputElement).value;
+		this.originQuery = this.query;
+		this.timeout = setTimeout(() => {
+			if (!this.query) {
+				this.resetAutocomplete();
+				return;
+			}
+			this.fetchProductsBySearch(this.query);
+		}, 200);
 	}
 
 	down(e: KeyboardEvent) {
-		if (!['ArrowDown', 'ArrowUp'].includes(e.code)) {
+		if (!~['ArrowDown', 'ArrowUp'].indexOf(e.code)) {
 			return;
 		}
 
@@ -70,26 +71,33 @@ export class SearchComponent implements OnChanges {
 
 	setQuery(query: string) {
 		this.query = query;
-		this.control.setValue(query, {
-			emitEvent: false
-		});
 		this.performSearch();
 	}
 
-	performSearch() {
-		this.query = this.control.value;
+	performSearch(e?: Event) {
+		if (e) {
+			e.preventDefault();
+		}
+		if (this.timeout) {
+			clearTimeout(this.timeout);
+		}
+		if (this.sub) {
+			this.sub.unsubscribe();
+		}
 		this.index = -1;
 		this.searchProducts = [];
 		this.changed.emit(this.query);
 	}
 
 	resetAutocomplete() {
-		this.index = -1;
-		this.searchProducts = [];
+		setTimeout(() => {
+			this.index = -1;
+			this.searchProducts = [];
+		}, 300);
 	}
 
 	fetchProductsBySearch(text: string) {
-		this.searchRestService
+		this.sub = this.searchRestService
 			.list({
 				query: text
 			})
@@ -101,12 +109,11 @@ export class SearchComponent implements OnChanges {
 	private select() {
 		let query = '';
 		if (this.index === -1) {
-			query = this.query;
+			query = this.originQuery || this.query;
 		} else {
+			this.originQuery = this.originQuery || this.query;
 			query = this.searchProducts[this.index].query;
 		}
-		this.control.setValue(query, {
-			emitEvent: false
-		});
+		this.query = query;
 	}
 }

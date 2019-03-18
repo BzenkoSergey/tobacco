@@ -1,0 +1,393 @@
+<section
+	*ngIf="product"
+	class="content clearfix">
+
+	<div class="image-wrap">
+		<img
+			class="image"
+			offset="100"
+			[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + product.logo"
+			alt="{{product.company?.name}} {{product.productLine?.name}} {{product.name}}">
+	</div>
+
+	<div class="summary">
+		<div class="warning summary-widget">
+			Нет доступных предложений для покупки.
+		</div>
+		<div
+			class="prices-range summary-widget"
+			itemtype="http://schema.org/AggregateOffer"
+			itemprop="offers"
+			itemscope>
+
+			<meta content="{{product.items.length}}" itemprop="offerCount">
+			<meta content="{{priceRange(product.items)[1]}}" itemprop="highPrice">
+			<meta content="{{priceRange(product.items)[0]}}" itemprop="lowPrice">
+			<meta content="UAH" itemprop="priceCurrency">
+
+			<b>Диапазон цен по Украине:</b>
+
+			<div class="items">
+				<div
+					*ngFor="let item of getItems(product)"
+					class="item">
+
+					<span
+						*ngIf="item.attr"
+						class="attribute">
+						{{item.attr}}
+					</span>
+					<span class="price">
+						<span *ngFor="let item2 of item.pricesList; last as isLast; first as isFirst">
+							<span *ngIf="isLast && !isFirst"> - </span>
+							<span class="value">{{item2}}</span> грн
+						</span>
+					</span>
+				</div>
+			</div>
+
+			<div class="positions">
+				<b>{{product.items.length}}</b> предложений
+			</div>
+		</div>
+
+		<span
+			*ngIf="commonRating"
+			class="rating summary-widget">
+			<span>
+				Оценка: <b>{{commonRating}}</b>
+			</span>
+			<span class="rating-items">
+				<icon
+					*ngFor="let i of [1,2,3,4,5]"
+					[icon]="(i > (commonRating / 2)) ? 'empty-star' : 'star'">
+				</icon>
+			</span>
+		</span>
+
+		<ul class="info-items summary-widget list-unstyled">
+			<li *ngIf="product.company as company">
+				Бренд: {{company.name}}
+			</li>
+			<li *ngIf="product.company as company">
+				Продукт: {{product.name}}
+			</li>
+			<li *ngIf="product.productLine?.name as productLineName">
+				Линейка: {{productLineName}}
+			</li>
+			<li *ngIf="product.categories.length">
+				Категории: <ng-container *ngFor="let c of product.categories">{{c.name}}</ng-container>
+			</li>
+		</ul>
+
+		<ng-container *ngIf="screenWidth >= 588">
+			<ng-container *ngIf="sortItems(product.items) as offers">
+				<div
+					*ngIf="offers.length"
+					class="top-prices summary-widget">
+					<h2>Лучшие цены</h2>
+
+					<div class="items">
+						<a
+							*ngFor="let item of offers"
+							class="item"
+							target="_blank"
+							rel="noopener noindex"
+							[href]="item.url"
+							itemprop="offers"
+							itemscope
+							itemtype="https://schema.org/Offer">
+
+							<meta itemprop="availability" content="{{item.available ? 'InStock' : 'OutOfStock'}}"/>
+							<meta itemprop="url" content="{{item.url}}"/>
+							<meta itemprop="priceCurrency" content="UAH"/>
+
+							<div class="info">
+								<span class="price"><span itemprop="price">{{item.price}}</span> грн</span>
+								<ng-container *ngIf="item.productAttributes.length">
+									<ng-container *ngFor="let attr of item.productAttributes">
+										<span
+											*ngIf="attr.name === 'Weight'"
+											class="weight">
+											Вес: {{attr.value}}
+										</span>
+									</ng-container>
+								</ng-container>
+								<span class="buy">
+									Купить
+								</span>
+							</div>
+							<div
+								*ngIf="item.market as market"
+								class="image text-center">
+
+								<img
+									*ngIf="market.logo"
+									offset="100"
+									[lazyLoad]="market.logo"
+									[alt]="market.name">
+
+								<ng-container *ngIf="!market.logo">{{market.name}}</ng-container>
+							</div>
+						</a>
+					</div>
+				</div>
+			</ng-container>
+		</ng-container>
+
+		<section
+			*ngIf="screenWidth >= 588 && product.reviews"
+			class="reviews summary-widget">
+
+			<div class="heading">
+				<h2>Последние отзывы</h2>
+
+				<a [routerLink]="['./', 'reviews']">
+					<icon
+						class="middle"
+						icon="comment"
+						width="14"
+						height="15">
+					</icon>
+					посмотреть все ({{product.reviews}})
+				</a>
+			</div>
+
+			<div class="items">
+				<review
+					*ngFor="let review of reviews"
+					[review]="review"
+					[hideDate]="true">
+				</review>
+			</div>
+		</section>
+	</div>
+
+	<div
+		*ngIf="product.description"
+		class="description"
+		itemprop="description"
+		[innerHTML]="product.description">
+	</div>
+
+	<unit-navigation
+		*ngIf="screenWidth <= 588"
+		[productId]="product.productId"
+		[reviews]="product.reviews">
+	</unit-navigation>
+
+	<section
+		*ngIf="mixes.length"
+		class="mixes">
+
+		<h2>Миксы</h2>
+
+		<div class="items">
+			<mix
+				*ngFor="let m of mixes"
+				[absolute]="true"
+				[brand]="product.company.code"
+				[d]="m">
+			</mix>
+		</div>
+	</section>
+
+	<section
+		*ngIf="screenWidth >= 588 && productsQueries"
+		class="products">
+
+		<h2 *ngIf="productsTotal">Похожие продукты</h2>
+
+		<div class="items">
+			<products
+				titleAs="translate"
+				[hideOffers]="true"
+				[hideEmpty]="true"
+				[absolutePath]="true"
+				[queries]="productsQueries"
+				(total)="productsTotal = $event">
+			</products>
+		</div>
+	</section>
+</section>
+
+
+<!-- <div class="row">
+	<div class="col">1</div>
+	<div class="col">2</div>
+</div>
+
+<section
+	*ngIf="product"
+	class="full-product">
+
+	<div class="full-product-main">
+		<img
+			class="full-product-logo"
+			offset="100"
+			[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + product.logo"
+			alt="{{product.company?.name}} {{product.productLine?.name}} {{product.name}}">
+	</div>
+
+	<div class="full-product-items">
+		<div
+			class="desc-line"
+			itemtype="http://schema.org/AggregateOffer"
+			itemprop="offers"
+			itemscope>
+
+			<meta content="{{product.items.length}}" itemprop="offerCount">
+			<meta content="{{priceRange(product.items)[1]}}" itemprop="highPrice">
+			<meta content="{{priceRange(product.items)[0]}}" itemprop="lowPrice">
+			<meta content="UAH" itemprop="priceCurrency">
+
+			Диапазон цен по Украине:
+
+			<div class="prices-block">
+				<div
+					*ngFor="let item of getItems(product)"
+					class="prices">
+
+					<span
+						*ngIf="item.attr"
+						class="attribute">
+						{{item.attr}}
+					</span>
+					<span class="price-block">
+						<span *ngFor="let item2 of item.pricesList; last as isLast; first as isFirst">
+							<span *ngIf="isLast && !isFirst"> - </span>
+							<span class="price-value">{{item2}}</span> грн
+						</span>
+					</span>
+				</div>
+			</div>
+
+			<b>{{product.items.length}} предложений</b>
+		</div>
+
+		<ul class="list">
+			<li
+				*ngIf="product.company as company"
+				class="full-product-item">
+				Бренд: {{company.name}}
+			</li>
+			<li
+				*ngIf="product.company as company"
+				class="full-product-item">
+				Продукт: {{product.name}}
+			</li>
+			<li
+				*ngIf="product.productLine?.name as productLineName"
+				class="full-product-item">
+
+				Линейка: {{productLineName}}
+			</li>
+			<li
+				*ngIf="product.categories.length"
+				class="full-product-item">
+				Категории: <ng-container *ngFor="let c of product.categories">{{c.name}}</ng-container>
+			</li>
+		</ul>
+
+		<div
+			*ngIf="product.description"
+			class="desc-line description"
+			itemprop="description"
+			[innerHTML]="product.description">
+		</div>
+	</div>
+
+	<ng-container *ngIf="sortItems(product.items) as offers">
+		<div
+			*ngIf="offers.length"
+			class="widgets">
+			<h2>Лучшие цены</h2>
+
+			<div class="offers">
+				<div
+					*ngFor="let item of offers"
+					class="offer"
+					itemprop="offers"
+					itemscope
+					itemtype="https://schema.org/Offer">
+
+					<meta itemprop="availability" content="{{item.available ? 'InStock' : 'OutOfStock'}}"/>
+					<meta itemprop="url" content="{{item.url}}"/>
+					<meta itemprop="priceCurrency" content="UAH"/>
+
+					<div
+						*ngIf="item.market as market"
+						class="offer-image text-center">
+
+						<img
+							*ngIf="market.logo"
+							offset="100"
+							[lazyLoad]="market.logo"
+							[alt]="market.name">
+
+						<ng-container *ngIf="!market.logo">{{market.name}}</ng-container>
+					</div>
+					<div class="offer-info">
+						<span class="price"><span itemprop="price">{{item.price}}</span> грн</span>
+						<ng-container *ngIf="item.productAttributes.length">
+							<ng-container *ngFor="let attr of item.productAttributes">
+								<span
+									*ngIf="attr.name === 'Weight'"
+									class="weight">
+									Вес: {{attr.value}}
+								</span>
+							</ng-container>
+						</ng-container>
+						<a
+							class="offer-buy"
+							target="_blank"
+							rel="noopener noindex"
+							[href]="item.url">
+							Купить
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ng-container>
+</section>
+
+<div class="row">
+	<section
+		*ngIf="mixes.length"
+		class="mixes-wrap col-mixes">
+
+		<h2>Миксы</h2>
+
+		<div class="mixes">
+			<mix
+				*ngFor="let m of mixes"
+				[absolute]="true"
+				[brand]="product.company.code"
+				[d]="m">
+			</mix>
+		</div>
+	</section>
+
+	<section
+		*ngIf="product.reviews"
+		class="col-reviews">
+
+		<div class="reviews-row">
+			<h2>Последние отзывы</h2>
+
+			<a [routerLink]="['./', 'reviews']">
+				<i class="far fa-comment"></i>
+				посмотреть все
+			</a>
+		</div>
+
+		<div class="">
+			<review
+				*ngFor="let review of reviews"
+				[review]="review"
+				[hideDate]="true">
+			</review>
+		</div>
+	</section>
+</div> -->

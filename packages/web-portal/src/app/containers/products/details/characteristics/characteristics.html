@@ -1,0 +1,46 @@
+<section
+	*ngIf="product"
+	class="content">
+
+	<img
+		class="image"
+		offset="100"
+		[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + product.logo"
+		alt="{{product.company?.name}} {{product.productLine?.name}} {{product.name}}">
+
+	<div class="items">
+		<h2>
+			Характеристики
+			<ng-container *ngIf="product.company as company">
+				{{company.name}}
+			</ng-container>
+			<ng-container *ngIf="product.productLine as productLine">
+				{{productLine.name}}
+			</ng-container>
+			{{product.name}}
+		</h2>
+
+		<ul
+			*ngIf="product.fields.length"
+			class="list-unstyled">
+
+			<li
+				*ngFor="let field of product.fields"
+				itemprop="description">
+
+				{{field.label}}:
+				<ng-container *ngIf="isLink(field.value); else elseBlock">
+					<a
+						target="_blank"
+						rel="noindex"
+						href="{{field.value}}">
+						{{field.value}}
+					</a>
+				</ng-container>
+				<ng-template #elseBlock>
+					{{field.value}}
+				</ng-template>
+			</li>
+		</ul>
+	</div>
+</section>

@@ -1,5 +1,4 @@
 .search {
-	// padding: 0 5px 5px;
 	padding: 5px;
 
 	input {
@@ -12,6 +11,16 @@
 		font-weight: normal;
 		width: 100%;
 		border-radius: 3px;
+		height: 35px;
+		@media (min-width: 425px) {
+			height: auto;
+		}
+		@media (min-width: 768px) and (max-width: 1024px) {
+			height: 35px;
+		}
+		@media (orientation: landscape) and (max-width: 1024px) {
+			height: 35px;
+		}
 	}
 }
 
@@ -19,36 +28,59 @@ ul {
 	margin: 0;
 	padding: 0;
 	list-style: none;
-	max-height: 250px;
+
+	@media (min-width: 587px) {
+		max-height: 261px;
+	}
 	overflow: auto;
 
 	li {
 		display: block;
 		border-top: 1px solid #f3f3f3;
-
-		label {
+		a {
 			display: block;
-			margin: 0;
-			padding: 3px 10px;
+			padding: 9px 10px;
+			color: inherit;
 			transition: background-color;
 			transition-duration: .3s;
 
+			&:focus,
 			&:hover {
 				background-color: #fbfbfb;
 			}
+			@media (min-width: 425px) {
+				padding: 4px 10px;
+			}
+			@media (min-width: 768px) and (max-width: 1024px) {
+				padding: 8px 10px;
+			}
+			@media (orientation: landscape) and (max-width: 1024px) {
+				padding: 8px 10px;
+			}
 
-			span {
+			i {
+				margin-right: 5px;
+				font-size: 130%;
 				display: inline-block;
-				vertical-align: middle;
+				vertical-align: bottom;
+			}
+
+			icon {
+				width: 18.2px;
+				height: 21px;
+				@media (min-width: 587px) {
+					width: 14.8px;
+					height: 17px;
+				}
+				margin-right: 5px;
+				vertical-align: bottom;
+				fill: inherit;
 			}
 		}
 
-		input[type="checkbox"] {
-			position: static;
-			display: inline-block;
-			vertical-align: middle;
-			margin: 0;
-			margin-right: 5px;
+		&.group-title {
+			background-color: #f7f7f7;
+			padding: 2px 10px;
 		}
 	}
 }

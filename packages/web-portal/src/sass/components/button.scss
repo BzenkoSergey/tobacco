@@ -1,0 +1,30 @@
+.btn {
+	background-color: #ffeb3b;
+	border-radius: 4px;
+	padding: 10px 15px;
+	text-align: center;
+	font-size: 15px;
+	color: #3e3e3e;
+	fill: #3e3e3e;
+	font-weight: 500;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	transition: background-color;
+	transition-duration: .3s;
+	display: inline-block;
+
+	&.mini {
+		padding: 7px;
+		font-size: 13px;
+	}
+
+	&:focus,
+	&:hover {
+		background-color: #fbe533
+	}
+
+	&.disabled {
+		background-color: #e6e3ca;
+	}
+}

@@ -1,0 +1,132 @@
+h1 {
+	font-size: 21px;
+	font-weight: 300;
+}
+
+h2 {
+	font-size: 18px;
+	font-weight: 300;
+	margin: 0;
+	margin-bottom: 10px;
+}
+
+.mix {
+	color: #222;
+
+	.image {
+		width: 100%;
+		border-radius: 2px;
+	}
+}
+
+.options {
+	display: flex;
+	flex-flow: column;
+	margin-top: 20px;
+	margin-bottom: 20px;
+
+	@media (min-width: 757px) {
+		flex-flow: row;
+
+		& > .col {
+			flex-grow: 1;
+		}
+	}
+}
+
+.available {
+	&.success {
+		color: green;
+	}
+	&.fail {
+		color: red;
+	}
+}
+
+.units {
+	max-width: 100%;
+	padding: 5px;
+	display: flex;
+	flex-flow: column;
+	@media (min-width: 588px) {
+		flex-flow: row;
+		padding: 0;
+	}
+
+	.item {
+		margin-bottom: 10px;
+		color: initial;
+		display: flex;
+		align-items: center;
+		transition: box-shadow;
+		transition-duration: .3s;
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		@media (min-width: 588px) {
+			width: 50%;
+			min-width: 50%;
+			border-radius: 2px;
+			padding: 1%;
+
+			&:hover {
+				box-shadow: 1px 1px 1px 1px #00000026;
+			}
+		}
+		@media (min-width: 757px) {
+			width: 33.3%;
+			min-width: 33.3%;
+		}
+
+
+		.image {
+			min-width: 100px;
+			min-height: 100px;
+			max-width: 100px;
+			max-height: 100px;
+			border-radius: 50%;
+			box-shadow: 0 0 1px 1px #0000002b;
+			border: 1px solid #fff;
+		}
+
+		.name {
+			padding-left: 7px;
+			font-size: 15px;
+			font-weight: 500;
+
+			.company {
+				text-transform: uppercase;
+				font-size: 13px;
+				font-weight: normal;
+			}
+
+			.prices {
+				font-size: 13px;
+
+				.values {
+					display: inline-block;
+					margin-left: 10px;
+				}
+
+				.attribute {
+					color: #929228;
+					display: inline-block;
+					min-width: 28px;
+				}
+
+				.value {
+					font-weight: bold;
+					color: #268c21;
+					font-size: 14px;
+				}
+
+				.total {
+					font-size: 12px;
+				}
+			}
+		}
+	}
+
+}

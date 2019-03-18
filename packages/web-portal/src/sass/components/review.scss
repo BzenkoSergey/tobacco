@@ -1,0 +1,58 @@
+review:last-child .review {
+	border-bottom: none;
+}
+
+.review {
+	font-size: 15px;
+	padding: 10px 5px;
+	border-bottom: 1px solid #f3f3f3;
+
+	&.mini .heading .rating {
+		@media (min-width: 578px) {
+			width: 50%;
+		}
+	}
+
+	.heading {
+		display: flex;
+		flex-flow: column;
+		padding-bottom: 10px;
+
+		@media (min-width: 578px) {
+			flex-flow: row wrap;
+			flex-direction: row;
+			padding-bottom: 15px;
+		}
+
+		.author {
+			font-size: 18px;
+			font-weight: 500;
+			@media (min-width: 578px) {
+				width: 50%;
+			}
+		}
+
+		.rating {
+			@media (min-width: 578px) {
+				width: calc(50% - 100px);
+			}
+			color: #f3a03a;
+			fill: #f3a03a;
+
+			icon {
+				width: 17px;
+				height: 18px;
+				vertical-align: middle;
+			}
+		}
+
+		.time {
+			@media (min-width: 578px) {
+				width: 100px;
+				text-align: right;
+			}
+			font-size: 13px;
+			color: #999;
+		}
+	}
+}

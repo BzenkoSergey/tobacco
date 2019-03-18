@@ -1,0 +1,48 @@
+<ul>
+	<li>
+		<a
+			routerLinkActive="active"
+			[routerLinkActiveOptions]="{exact: true}"
+			[routerLink]="['./']">
+			О товаре
+
+			<icon icon="angle-right"></icon>
+		</a>
+	</li>
+	<li>
+		<a
+			routerLinkActive="active"
+			[routerLink]="['characteristics']">
+			Характеристики
+
+			<icon icon="angle-right"></icon>
+		</a>
+	</li>
+	<li>
+		<a
+			routerLinkActive="active"
+			[routerLink]="['prices']">
+			Цены
+
+			<icon icon="angle-right"></icon>
+		</a>
+	</li>
+	<li *ngIf="hasMixes">
+		<a
+			routerLinkActive="active"
+			[routerLink]="['mixes']">
+			Миксы
+
+			<icon icon="angle-right"></icon>
+		</a>
+	</li>
+	<li *ngIf="reviews">
+		<a
+			routerLinkActive="active"
+			[routerLink]="['reviews']">
+			Отзывы ({{reviews}})
+
+			<icon icon="angle-right"></icon>
+		</a>
+	</li>
+</ul>

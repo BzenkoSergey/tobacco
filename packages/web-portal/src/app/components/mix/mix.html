@@ -1,0 +1,50 @@
+<section
+	itemscope
+	itemtype="http://schema.org/Recipe">
+
+	<meta itemprop="image" content="{{'https://res.cloudinary.com/dwkakr4wt/image/upload/origin-' + d.image}}">
+
+	<a
+		class="mix-item"
+		[routerLink]="getUrl()">
+
+		<div
+			class="logo"
+			[ngStyle]="{'background-image': 'url(https://res.cloudinary.com/dwkakr4wt/image/upload/sm-'+ d.image2 +')'}">
+		</div>
+
+		<div class="main">
+			<h2 itemprop="name">{{d.name}}</h2>
+			<div class="units">
+				<ng-container *ngFor="let recipe of d.recipes">
+					<meta
+						itemprop="recipeIngredient"
+						content="%{{recipe.percentage}} {{recipe.unit.company?.name}} {{recipe.unit.productLine?.name}} {{recipe.unit.name}}">
+
+					<div class="units-item">
+						<div class="units-logo">
+							<picture>
+								<source
+									media="(min-width: 425px)"
+									offset="100"
+									[attr.lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + recipe.unit.logo">
+
+								<img
+									offset="200"
+									[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/md-' + recipe.unit.logo"
+									alt="{{recipe.unit.company?.name}} {{recipe.unit.productLine?.name}} {{recipe.unit.name}}">
+							</picture>
+						</div>
+						<div class="units-name">
+							<div class="units-company">
+								{{recipe.unit.company.name}}
+								{{recipe.unit.productLine?.name}}
+							</div>
+							{{recipe.unit.name}}
+						</div>
+					</div>
+				</ng-container>
+			</div>
+		</div>
+	</a>
+</section>

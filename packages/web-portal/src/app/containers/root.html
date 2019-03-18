@@ -1,141 +1,61 @@
 <div class="header-wrap">
-	<header class="header clearfix">
+	<header class="header clearfix container center-layout">
 		<a
 			class="logo"
-			href="#">
+			[routerLink]="['/']">
 			<div class="name">
 				Hoogle
 			</div>
 			<div class="description">
-				Кальянный портал вещей
+				Кальянный навигатор
 			</div>
 		</a>
 		<div class="header-content">
 			<search
-				[query]="queries.search"
+				[query]="search"
 				(changed)="performSearch($event)">
 			</search>
 		</div>
 	</header>
 
-	<div class="nav">
-		<ul class="items">
-			<li *ngFor="let i of filters">
-				<a
-					href="javascript:void(0)"
-					(click)="openFilter(i)">
-
-					{{i.label}}
-					<i
-						*ngIf="getChildrenByType(i.type).length"
-						class="fa fa-caret-down"
-						[class.fa-caret-up]="i.opened">
-					</i>
-				</a>
-
-				<div
-					*ngIf="getChildrenByType(i.type).length"
-					class="sub-items"
-					[class.open]="i.opened">
-
-					<filter-items
-						*ngIf="i.type === 'PRODUCT_ATTRIBUTE' && getProductAttribute(i.attribute)"
-						[items]="getProductAttribute(i.attribute).values"
-						[selectedItems]="getSelected(i.type, i.attribute)"
-						(selected)="handleQueries($event, i)">
-					</filter-items>
-					<filter-items
-						*ngIf="i.type !== 'PRODUCT_ATTRIBUTE'"
-						[items]="getChildrenByType(i.type)"
-						[selectedItems]="getSelected(i.type, null)"
-						(selected)="handleQueries($event, i)">
-					</filter-items>
-				</div>
-			</li>
-		</ul>
-	</div>
+	<ul class="menu container center-layout">
+		<li>
+			<a [routerLink]="['products']">
+				<icon icon="store"></icon>
+				Все продукты
+			</a>
+		</li>
+		<li>
+			<a [routerLink]="['products']">
+				<icon icon="leaf"></icon>
+				Табак для кальяна
+			</a>
+		</li>
+		<li>
+			<a [routerLink]="['products']">
+				<icon icon="cubes"></icon>
+				Уголь
+			</a>
+		</li>
+		<li>
+			<a [routerLink]="['products']">
+				<icon
+					icon="ring"
+					width="18"
+					height="20">
+				</icon>
+				Чаши
+			</a>
+		</li>
+		<li>
+			<a [routerLink]="['mixes']">
+				<icon icon="mortar-pestle"></icon>
+				Миксы
+			</a>
+		</li>
+	</ul>
 </div>
 
-<main class="content">
-	<div class="products">
-		<section
-			*ngFor="let product of products; let i = index"
-			class="product">
-
-			<div class="product-main">
-				<div class="product-logo-wrap">
-					<img
-						class="product-logo"
-						[src]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + product.logo">
-				</div>
-
-				<div class="product-name">
-					<span *ngIf="product.company as company">
-						{{company.name}}
-					</span>
-					<span *ngIf="product.productLine as productLine">
-						{{productLine.name}}
-					</span>
-					{{product.name}}
-				</div>
-
-				<ul class="product-summary">
-					<li
-						*ngFor="let item of getItems(product)"
-						class="product-summary-item">
-
-						<div
-							*ngIf="item.attr"
-							class="attr">
-
-							{{item.attr}}
-						</div>
-						<div class="price">
-							{{item.prices}}
-						</div>
-						грн
-					</li>
-				</ul>
-			</div>
-
-			<ul class="product-items">
-				<li
-					*ngFor="let item of product.items"
-					class="product-item">
-					<a
-						class="product-item-info"
-						target="_blank"
-						[href]="item.url">
-
-						<div
-							*ngIf="item.market as market"
-							class="market">
-
-							<img *ngIf="market.logo" [src]="market.logo">
-							<span *ngIf="!market.logo">{{market.name}}</span>
-						</div>
-						<div class="attrs">
-							<span *ngIf="item.productAttributes.length">
-								<span *ngFor="let attr of item.productAttributes">
-									<span *ngIf="attr.name === 'Weight'">
-										<span *ngFor="let v of attr.values">{{v}}</span>
-									</span>
-								</span>
-							</span>
-						</div>
-						<div class="price">
-							{{item.price}}грн
-						</div>
-					</a>
-				</li>
-			</ul>
-		</section>
-	</div>
-
-	<pagination
-		class="pagination"
-		[itemsPerPage]="queries.itemsPerPage"
-		[page]="queries.page"
-		[total]="productsTotal">
-	</pagination>
+<main class="container center-layout">
+	<!-- <router-outlet></router-outlet> -->
 </main>

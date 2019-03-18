@@ -1,12 +1,13 @@
 <nav
-	*ngIf="pages.length">
+	*ngIf="pages.length"
+	class="pagination">
 
 	<a
 		*ngFor="let item of pages; let i = index; let first = first; let last = last"
 		class="item"
 		queryParamsHandling="merge"
 		[routerLink]="['./']"
-		[queryParams]="{ page: item }"
+		[queryParams]="{ page: item || undefined }"
 		[class.active]="item === page"
 		[class.f]="first || last">
 

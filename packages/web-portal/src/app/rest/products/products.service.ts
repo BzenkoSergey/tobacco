@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 
 import { AggregatedProductDto } from './product-full.dto';
 
+import { apiUrl } from './../api';
+
 type Page = {
 	total: number,
 	items: AggregatedProductDto[]
@@ -25,7 +27,18 @@ export class ProductsRestService {
 			);
 	}
 
+	get(unitCode: string) {
+		const url = this.apiUrl() + '/' + unitCode;
+		return this.http.get<AggregatedProductDto>(url)
+			.pipe(
+				map(d => {
+					return new AggregatedProductDto(d);
+				})
+			);
+	}
+
 	private apiUrl() {
-		return `http://localhost:5000/products`;
+		// return window.location.protocol + `//api.` + window.location.hostname + `/products`;
+		return apiUrl + `products`;
 	}
 }

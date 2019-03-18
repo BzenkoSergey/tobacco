@@ -1,0 +1,123 @@
+<ng-container *ngIf="product">
+	<section
+		class="summary"
+		itemtype="http://schema.org/AggregateOffer"
+		itemprop="offers"
+		itemscope>
+
+		<meta content="{{product.items.length}}" itemprop="offerCount">
+		<meta content="{{priceRange(product.items)[1]}}" itemprop="highPrice">
+		<meta content="{{priceRange(product.items)[0]}}" itemprop="lowPrice">
+		<meta content="UAH" itemprop="priceCurrency">
+
+		<h2>
+			Цены на {{product.company?.name}} {{product.productLine?.name}} {{product.name}} по Украине
+		</h2>
+
+		<div class="prices">
+			<div
+				*ngFor="let item of getItems(product)"
+				class="item">
+
+				<span
+					*ngIf="item.attr"
+					class="attribute">
+
+					{{item.attr}}
+				</span>
+
+				<span class="values">
+					<ng-container *ngFor="let price of item.pricesList; last as isLast; first as isFirst">
+						<ng-container *ngIf="isLast && !isFirst"> - </ng-container>
+						<span class="value">{{price}}</span> грн
+					</ng-container>
+				</span>
+			</div>
+		</div>
+
+		<b>Всего {{product.items.length}} предложений</b>
+
+
+		<div class="description">
+			<div
+				*ngIf="available()"
+				class="available success">
+				Есть доступные позиции для покупки.
+			</div>
+			<div
+				*ngIf="!available()"
+				class="available fail">
+				Не доступных позиции для покупки.
+			</div>
+			Список всех позиций по украине в таблице снизу.
+		</div>
+	</section>
+
+	<section class="markets">
+		<table>
+			<tr>
+				<th class="market">Магазин</th>
+				<th class="text-left">Доступность</th>
+				<th class="text-right">Вес</th>
+				<th class="text-right">Цена</th>
+				<th></th>
+			</tr>
+
+			<tr
+				*ngFor="let item of sortItems(product.items)"
+				itemprop="offers"
+				itemscope
+				itemtype="https://schema.org/Offer">
+
+				<td class="market">
+					<ng-container *ngIf="item.market as market">
+						<img
+							*ngIf="market.logo"
+							offset="100"
+							[lazyLoad]="market.logo"
+							[alt]="market.name">
+
+						<ng-container *ngIf="!market.logo">
+							{{market.name}
+						</ng-container>
+					</ng-container>
+				</td>
+
+				<td>
+					<meta itemprop="availability" content="{{item.available ? 'InStock' : 'OutOfStock'}}">
+					<ng-container *ngIf="item.available; else elseAvailable">Доступен</ng-container>
+					<ng-template #elseAvailable>Не доступен</ng-template>
+				</td>
+
+				<td class="text-right">
+					<ng-container *ngIf="item.productAttributes.length">
+						<ng-container *ngFor="let attr of item.productAttributes">
+							<ng-container *ngIf="attr.name === 'Weight'">
+								{{attr.value}}
+							</ng-container>
+						</ng-container>
+					</ng-container>
+				</td>
+
+				<td class="text-right">
+					<meta itemprop="url" content="{{item.url}}">
+					<meta itemprop="priceCurrency" content="UAH">
+					<span itemprop="price">{{item.price}}</span>грн
+				</td>
+
+				<td class="text-right">
+					<a
+						class="btn mini"
+						target="_blank"
+						rel="noopener noindex"
+						[class.disabled]="!item.available"
+						[href]="item.url">
+
+						<ng-container *ngIf="item.available; else elseBlock">Купить</ng-container>
+						<ng-template #elseBlock>Читать</ng-template>
+					</a>
+				</td>
+			</tr>
+		</table>
+	</section>
+</ng-container>

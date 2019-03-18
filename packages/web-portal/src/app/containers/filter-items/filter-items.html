@@ -1,21 +1,33 @@
 <div class="search">
 	<input
 		type="search"
+		autocomplete="off"
 		placeholder="Поиск"
+		aria-label="Искать в фильтре"
 		name="search"
-		[(ngModel)]="search"
-		(ngModelChange)="defineDisplayed()">
+		[value]="search"
+		(keyup)="defineDisplayed($event)">
 </div>
 
 <ul>
-	<li *ngFor="let item of displayed">
-		<label>
-			<input
-				type="checkbox"
-				[checked]="selectedItems.get(item)"
-				(change)="select(item)">
+	<ng-container *ngFor="let group of groups">
+		<ng-container *ngIf="group.code !== 'default'">
+			<li class="group-title">
+				{{group.label}}
+			</li>
+		</ng-container>
+		<ng-container *ngIf="group.items.length">
+			<li *ngFor="let item of group.items">
+				<a
+					queryParamsHandling="merge"
+					[attr.rel]="code === 'WEIGHT' ? 'noindex': null"
+					[routerLink]="urls.get(item.code)"
+					[queryParams]="queriesToLink">
 
-			<span>{{item.name || item.value}}</span>
-		</label>
-	</li>
+					<icon [icon]="isSelected(item.code) ? 'check-square' : 'square'"></icon>
+					{{item.label}}
+				</a>
+			</li>
+		</ng-container>
+	</ng-container>
 </ul>

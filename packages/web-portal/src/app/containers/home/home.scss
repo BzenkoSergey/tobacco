@@ -1,0 +1,139 @@
+.content {
+	padding-bottom: 20px;
+
+	@media (orientation: landscape) {
+		padding-bottom: 110px;
+	}
+}
+
+h2 {
+	padding: 0 7px;
+	font-size: 22px;
+	font-weight: 500;
+	text-transform: uppercase;
+
+	@media (min-width: 588px) {
+		padding: 15px 20px 10px;
+		margin: 16px 0;
+		font-size: 25px;
+	}
+}
+
+.row {
+	display: flex;
+	flex-flow: column;
+
+	@media (min-width: 757px) {
+		flex-flow: row wrap;
+
+		.col-6 {
+			display: flex;
+			width: 60%;
+			flex-flow: column;
+		}
+
+		.col-4 {
+			display: flex;
+			width: 40%;
+			flex-flow: column;
+		}
+	}
+}
+
+.mixes {
+	box-shadow: 0px 1px 2px #00000045;
+	border-radius: 2px;
+	margin: 0 10px;
+
+	mix {
+		display: block;
+		border-bottom: 1px solid #92929245;
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+}
+
+.brands {
+	list-style: none;
+	margin: 0;
+	padding: 20px 0 0;
+	text-align: center;
+
+	li {
+		display: inline-block;
+		vertical-align: middle;
+		max-width: 18%;
+		margin: 2px;
+		@media (min-width: 588px) {
+			max-width: 95px;
+			margin: 5px;
+		}
+	}
+
+	img {
+		border-radius: 10px;
+	}
+
+	a {
+		opacity: .8;
+		transition: opacity;
+		transition-duration: .3s;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+}
+
+.cats {
+	display: flex;
+	flex-direction: column;
+	flex-flow: column;
+	border-top: 1px solid #00000012;
+	margin-top: 30px;
+	border-bottom: 1px solid #00000012;
+
+	@media (min-width: 757px) {
+		flex-direction: row;
+		flex-flow: row wrap;
+		justify-content: space-around;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	a {
+		background-color: #fff;
+		padding: 10px;
+		margin: 5px;
+		border-radius: 10px;
+		display: flex;
+		flex-flow: row wrap;
+		align-items: center;
+		transition: box-shadow;
+		transition-duration: .3s;
+		color: inherit;
+		font-size: 25px;
+		font-weight: 300;
+		@media (min-width: 769px) {
+			font-size: 28px;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		&:hover {
+			box-shadow: 0 0 113px 1px #00000026;
+		}
+
+		img {
+			width: 80px;
+			height: 80px;
+			border-radius: 50%;
+			box-shadow: 0px 0px 1px 1px #0000002b;
+			border: 1px solid #fff;
+			margin-right: 15px;
+		}
+	}
+}

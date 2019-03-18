@@ -1,75 +1,40 @@
 <form
+	role="search"
 	class="search clearfix"
-	(submit)="performSearch()">
+	itemprop="potentialAction"
+	itemscope
+	itemtype="https://schema.org/SearchAction"
+	(submit)="performSearch($event)">
 
-	<button
-		class="search-btn"
-		type="submit">
+	<meta itemprop="target" content="https://hoogle.com.ua/products?search={search_term_string}">
+
+	<button type="submit">
 		Искать
 	</button>
 
-	<div class="search-field-wrapper">
+	<div class="search-field">
 		<input
 			type="search"
+			name="search_term_string"
+			aria-label="Искать по сайту"
+			itemprop="query-input"
 			placeholder="Tangiers, 250 грамм, Noir Kashmir..."
-			[formControl]="control"
+			[value]="query"
+			(keyup)="keyup($event)"
 			(keydown)="down($event)"
 			(blur)="resetAutocomplete()">
 
 		<ul
 			*ngIf="searchProducts.length"
-			class="search-items"
 			(mouseenter)="index = -1">
 
 			<li *ngFor="let p of searchProducts; index as i">
 				<button
 					type="button"
-					class="search-item-btn"
 					[class.active]="index === i"
 					(click)="setQuery(p.query)">
 
-					<div class="product-name">
-						{{p.query}}
-					</div>
-
-					<!-- <div class="product-info">
-						<div class="product-logo-wrap">
-							<img class="product-logo" [src]="p.logo" alt="">
-						</div>
-
-						<div class="product-name">
-							<span *ngIf="getCompany(p.company) as company">
-								{{company.name}}
-							</span>
-							{{p.name}}
-						</div>
-					</div>
-
-					<ul class="products-items">
-						<li
-							*ngFor="let item of p.items"
-							class="products-item clearfix">
-							<a
-								class="products-item-info"
-								target="_blank"
-								[href]="item.url">
-
-								<div class="price">
-
-									<span class="price-attr">
-										<span *ngFor="let attr of item.attributes">
-											<span *ngIf="attr.name === 'Weight'">
-												{{attr.value}}
-											</span>
-										</span>
-									</span>
-									<span class="price-value">
-										{{item.price}}
-									</span>
-								</div>
-							</a>
-						</li>
-					</ul> -->
+					{{p.query}}
 				</button>
 			</li>
 		</ul>

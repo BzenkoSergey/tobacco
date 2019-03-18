@@ -1,0 +1,30 @@
+<div
+	class="content"
+	itemscope
+	itemtype="https://schema.org/Product">
+
+	<meta itemprop="brand" content="{{unit?.company.name}}">
+	<meta itemprop="image" content="{{'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + unit?.logo}}">
+
+	<h1
+		*ngIf="unit"
+		class="title"
+		itemprop="name">
+
+		<ng-container *ngIf="unit.company as company">
+			{{company.name}}
+		</ng-container>
+		<ng-container *ngIf="unit.productLine as productLine">
+			{{productLine.name}}
+		</ng-container>
+		{{unit.name}}
+	</h1>
+
+	<unit-navigation
+		*ngIf="screenWidth >= 588"
+		[productId]="unit.productId"
+		[reviews]="unit.reviews">
+	</unit-navigation>
+
+	<router-outlet></router-outlet>
+</div>
