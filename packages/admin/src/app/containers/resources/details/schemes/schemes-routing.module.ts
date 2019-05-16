@@ -20,7 +20,7 @@ const routes: Routes = [
 				loadChildren: './schemes-overview.module#OverviewModule'
 			},
 			{
-				path: 'process/:processId',
+				path: 'scheme/:schemeId/process/:processId',
 				loadChildren: './schemes-process.module#ProcessModule',
 				data: {
 					breadcrumb: 'Process'

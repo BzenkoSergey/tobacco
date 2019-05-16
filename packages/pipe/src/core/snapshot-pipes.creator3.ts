@@ -1,7 +1,10 @@
 import { Observable, combineLatest } from 'rxjs';
 import { tap, mergeMap, map } from 'rxjs/operators';
 import { ObjectId } from 'mongodb';
+import  * as cassandra from "cassandra-driver";
+
 import { MongoDb } from './../core/db';
+import { CassandraDb } from './../core/db-cassandra';
 import { async } from './../async';
 
 import { DIService } from './di';
@@ -25,7 +28,8 @@ export interface Scheme {
 }
 
 export class SnapshotPipesCreator3 {
-	private mongoDbProcessesPipes = new MongoDb('scheme-processes-pipe', true);
+	// private mongoDbProcessesPipes = new MongoDb('scheme-processes-pipe', true);
+	private mongoDbProcessesPipes = new CassandraDb('', true);
 	private mongoDbScheme = new MongoDb('scheme', true);
 	private mongoDbPipes = new MongoDb('pipes', true);
 	private schemeId: string;
@@ -95,7 +99,7 @@ export class SnapshotPipesCreator3 {
 			children: [],
 			config: scheme.config,
 			path: '',
-			parent: parent,
+			parent: parent || '',
 			process: {
 				createdTime: Date.now(),
 				startDate: null,
@@ -123,29 +127,40 @@ export class SnapshotPipesCreator3 {
 		return async<PipeInput>(input)
 			.pipe(
 				mergeMap(input => {
+					const id = cassandra.types.Uuid.random();
+					// @ts-ignore
+					input.id = id.toString();
+					input.processId = id.toString();
 					return this.mongoDbProcessesPipes.insertOne(input)
 						.pipe(
-							mergeMap(r => {
-								return this.mongoDbProcessesPipes
-									.updateOne(
-										{
-											_id: r.insertedId
-										},
-										{
-											$set: {
-												processId: r.insertedId.toString()
-											}
-										}
-									)
-									.pipe(
-										map(() => {
-											input._id = r.insertedId;
-											input.processId = r.insertedId.toString();
-											this.processId = input.processId;
-											return input;
-										})
-									);
+							map(r => {
+								input._id = r.insertedId;
+								input.processId = r.insertedId.toString();
+								this.processId = input.processId;
+								return input;
 							})
+							// ,
+							// mergeMap(r => {
+							// 	return this.mongoDbProcessesPipes
+							// 		.updateOne(
+							// 			{
+							// 				_id: r.insertedId
+							// 			},
+							// 			{
+							// 				$set: {
+							// 					processId: r.insertedId.toString()
+							// 				}
+							// 			}
+							// 		)
+							// 		.pipe(
+							// 			map(() => {
+							// 				input._id = r.insertedId;
+							// 				input.processId = r.insertedId.toString();
+							// 				this.processId = input.processId;
+							// 				return input;
+							// 			})
+							// 		);
+							// })
 						);
 				}),
 				mergeMap(input => {
@@ -193,7 +208,7 @@ export class SnapshotPipesCreator3 {
 						processId: this.processId,
 						options: child.options,
 						input: child.input,
-						parent: parent,
+						parent: parent || '',
 						type: child.type,
 						jobName: pipe.jobName,
 						label: pipe.label,

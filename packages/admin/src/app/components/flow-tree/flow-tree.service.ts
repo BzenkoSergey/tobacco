@@ -1,33 +1,63 @@
 import { Subject } from 'rxjs';
+
 import * as d3 from 'd3';
+import { Selection, HierarchyNode, TreeLayout, HierarchyPointNode } from 'd3';
+
+export type FlowTreeHierarchyNode = {
+	x0: number;
+	y0: number;
+};
+
+export type FlowTreeUnit = {
+	process: {
+		status: string;
+	};
+	path: string;
+	label: string;
+	jobName: string;
+};
+
+type FlowTreeStore = {
+	x0?: number;
+	y0?: number;
+};
+
+export type FlowTreeNode = HierarchyPointNode<FlowTreeUnit> & FlowTreeStore;
+
+type HierarchyDatum = {
+	name: string;
+	value: number;
+	children?: Array<HierarchyDatum>;
+};
 
 export class FlowTreeService {
-	runned: Subject<any>;
-	runnedFn: any;
-	next: Subject<any>;
-	nextFn: any;
+	private runned: Subject<any>;
+	private runnedFn: any;
+	private next: Subject<any>;
+	private nextFn: any;
+	private current: string;
+	private margin = {
+		top: 5,
+		right: 20,
+		bottom: 5,
+		left: 20
+	};
+	private svg: Selection<SVGGElement, {}, null, undefined>;
+	private wrapper: Selection<SVGSVGElement, {}, null, undefined>;
+	private treemap: TreeLayout<{}>;
+	private root: HierarchyNode<HierarchyDatum> & FlowTreeStore;
+	private base: Selection<HTMLElement, {}, null, undefined>;
 
 	selected = new Subject<any>();
 	selectedBranch = new Subject<any>();
-	private current: string;
-
-	margin = {top: 5, right: 20, bottom: 5, left: 20};
-	width = 960 - this.margin.left - this.margin.right;
-	height = 960 - this.margin.top - this.margin.bottom;
-	svg;
-	wrapper;
-	treemap;
-	root;
-	duration = 0;
-	i = 0;
-	base;
 
 	setCurrent(path: string) {
 		this.current = path;
 		if (!this.svg) {
 			return;
 		}
-		this.svg.selectAll('g.node circle')
+		this.svg
+			.selectAll<HTMLElement, HierarchyPointNode<FlowTreeUnit>>('g.node circle')
 			.attr('state', (d) => {
 				if (this.current && this.current === d.data.path) {
 					return 'selected';
@@ -54,34 +84,20 @@ export class FlowTreeService {
 		}
 	}
 
-	runNext() {
-		if (!this.next || !this.nextFn) {
-			return;
-		}
-		this.runned = this.next;
-		this.runnedFn = this.nextFn;
-		this.runnedFn();
-	}
-
-	run2(treeData: any, viewElement: HTMLElement, subj?: Subject<any>) {
-
+	run(treeData: any, viewElement: HTMLElement) {
 		this.base = d3.select(viewElement);
 		this.wrapper = this.base.append('svg');
 		this.svg = this.wrapper
 			.append('g')
-			.attr('transform', 'translate('
-				+ this.margin.left + ',' + this.margin.top + ')')
-
+			.attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
 			.on('click.g.node', () => {
 				this.click(d3.select(d3.event.target).datum());
 			});
 
 		// declares a tree layout and assigns the size
-		this.treemap = d3.tree()
+		this.treemap = d3.tree<FlowTreeNode>()
 			.nodeSize([18, 18])
-			.separation(() => {
-				return 1;
-			});
+			.separation(() => 1);
 
 		if (!treeData) {
 			return;
@@ -89,7 +105,7 @@ export class FlowTreeService {
 		this.update(treeData);
 	}
 
-	click(d) {
+	private click(d) {
 		this.selected.next(d.data);
 		this.selectedBranch.next({
 			current: d.data,
@@ -97,10 +113,10 @@ export class FlowTreeService {
 		});
 	}
 
-	update(data?: any) {
+	private update(data?: any) {
 		const f = Date.now();
 		console.log('RUNen update');
-		this.root = d3.hierarchy(data, function(d) { return d.children; });
+		this.root = d3.hierarchy<HierarchyDatum>(data, (d) => d.children);
 
 		this.base.transition().on('end', () => {
 			console.log(Date.now() - f);
@@ -128,37 +144,19 @@ export class FlowTreeService {
 		this.root.y0 = 0;
 
 		// Compute the new tree layout.
-		const nodes = treeData.descendants();
-		const links = treeData.descendants().slice(1);
+		const nodes = treeData.descendants() as FlowTreeNode[];
+		const links = treeData.descendants().slice(1) as FlowTreeNode[];
 
 
 		// Normalize for fixed-depth.
 		nodes.forEach(function(d) {
-			// const hasParent = d.parent;
-			// if (hasParent) {
-			// 	const index = d.parent.children.indexOf(d);
-			// 	const isLast = d.parent.children.length === index + 1;
-			// 	if (!index) {
-			// 		d.x = d.parent.x;
-			// 	} else {
-			// 		d.x = d.parent.children[index - 1].x + 20;
-			// 		// if (isLast) {
-			// 		// 	d.x = d.x + 12;
-			// 		// } else {
-			// 		// }
-			// 	}
-			// 	// console.log(d.parent.children.indexOf(d));
-			// } else {
-			// 	d.x = d.children[0].x;
-			// 	console.log(d.x);
-			// }
 			return d.y = d.depth * 45;
 		});
 
 		// ****************** Nodes section ***************************
 
 		// Update the nodes...
-		const node = this.svg.selectAll('g.node')
+		const node = this.svg.selectAll<SVGSVGElement, FlowTreeNode>('g.node')
 			.data(nodes, (d) => {
 				if (!d.data.process) {
 					return '';
@@ -210,7 +208,7 @@ export class FlowTreeService {
 		// ****************** links section ***************************
 
 		// Update the links...
-		const link = this.svg.selectAll('path.link')
+		const link = this.svg.selectAll<SVGPathElement, FlowTreeNode>('path.link')
 			.data(links, (d) => {
 				return d.data.path;
 			});
@@ -237,7 +235,7 @@ export class FlowTreeService {
 		link.exit().remove();
 
 		// Store the old positions for transition.
-		nodes.forEach(function(d) {
+		nodes.forEach(d => {
 			d.x0 = d.x;
 			d.y0 = d.y;
 		});
@@ -253,5 +251,14 @@ export class FlowTreeService {
 
 			return path;
 		}
+	}
+
+	private runNext() {
+		if (!this.next || !this.nextFn) {
+			return;
+		}
+		this.runned = this.next;
+		this.runnedFn = this.nextFn;
+		this.runnedFn();
 	}
 }

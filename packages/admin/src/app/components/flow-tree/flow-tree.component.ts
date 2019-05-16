@@ -19,6 +19,7 @@ export class FlowTreeComponent implements OnChanges, AfterContentInit, OnInit, O
 	@Input() data: any;
 
 	private sub: Subscription;
+	private branch: Subscription;
 	s = Date.now();
 	inited = false;
 
@@ -26,7 +27,7 @@ export class FlowTreeComponent implements OnChanges, AfterContentInit, OnInit, O
 		this.sub = service.selected.subscribe(d => {
 			this.selected.emit(d);
 		});
-		this.sub = service.selectedBranch.subscribe(d => {
+		this.branch = service.selectedBranch.subscribe(d => {
 			this.selectedBranch.emit(d);
 		});
 	}
@@ -38,6 +39,9 @@ export class FlowTreeComponent implements OnChanges, AfterContentInit, OnInit, O
 	ngOnDestroy() {
 		if (this.sub) {
 			this.sub.unsubscribe();
+		}
+		if (this.branch) {
+			this.branch.unsubscribe();
 		}
 	}
 
@@ -66,7 +70,7 @@ export class FlowTreeComponent implements OnChanges, AfterContentInit, OnInit, O
 
 	run(data: any) {
 		this.data = data;
-		this.service.run2(data, this.view.nativeElement);
+		this.service.run(data, this.view.nativeElement);
 	}
 
 	ngAfterContentInit() {
@@ -76,6 +80,6 @@ export class FlowTreeComponent implements OnChanges, AfterContentInit, OnInit, O
 
 		this.inited = true;
 		this.service.setCurrent(this.current);
-		this.service.run2(this.data, this.view.nativeElement);
+		this.service.run(this.data, this.view.nativeElement);
 	}
 }

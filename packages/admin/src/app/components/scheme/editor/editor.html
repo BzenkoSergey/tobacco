@@ -58,7 +58,7 @@
 						class="list-group-item list-group-item-action p-2"
 						[class.text-danger]="p.process.status === 'ERROR'"
 						[class.text-warning]="p.process.status === 'IN_PROCESS'"
-						[routerLink]="[processPath, 'process', p._id]"
+						[routerLink]="[processPath, 'scheme', p.schemeId, 'process', p._id || p.id]"
 						queryParamsHandling="merge"
 						[queryParams]="{ path: '' }">
 						{{p.process.createdTime | date: 'M/d/yy h:mm:ss'}}

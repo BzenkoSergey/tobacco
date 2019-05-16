@@ -77,7 +77,7 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	}
 
 	hasRunning() {
-		this.activeRestService.list(this.item._id, this.backgroud)
+		this.activeRestService.list(this.item._id || this.item.id, this.backgroud)
 			.subscribe((list) => {
 				this.running = list.length;
 			});
@@ -142,12 +142,12 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	saveScheme() {
 		this.view = this.genSchemeChild(this.item);
 		this.defineParents(this.item);
-		this.schemesRestService.update(this.item._id, this.item)
+		this.schemesRestService.update(this.item._id || this.item.id, this.item)
 			.subscribe();
 	}
 
 	runProcess() {
-		this.schemeProcessesRestService.create(this.item._id, this.backgroud)
+		this.schemeProcessesRestService.create(this.item._id || this.item.id, this.backgroud)
 			.subscribe();
 
 		setTimeout(() => {
@@ -159,7 +159,7 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	runProcessWithInput() {
 		const modalRef = this.modalService.open(RunInputComponent);
 		modalRef.componentInstance.submitted.subscribe(l => {
-			this.schemeProcessesRestService.createWithData(this.item._id, l, this.backgroud)
+			this.schemeProcessesRestService.createWithData(this.item._id || this.item.id, l, this.backgroud)
 				.subscribe();
 
 			setTimeout(() => {
@@ -177,7 +177,7 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	}
 
 	private genSchemeChild(e: any, path = '0') {
-		const pipe = this.pipes.find(p => p._id === e.id) || {
+		const pipe = this.pipes.find(p => (p._id || p.id) === e.id) || {
 			jobName: ''
 		};
 
@@ -211,7 +211,7 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	private fetchProcesses() {
 		this.schemeProcessesRestService
 			.list({
-				schemeId: this.item._id,
+				schemeId: this.item._id || this.item.id,
 				parent: null
 			})
 			.subscribe(d => {

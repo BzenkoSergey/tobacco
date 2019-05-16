@@ -23,12 +23,13 @@ export class SchemeProcessesRestService {
 			);
 	}
 
-	get(id: string) {
+	get(id: string, schemeId: string) {
 		return this.restService
 			.runSchemeOptions<any, any>(
 				'PROCESSES',
 				{
 					processId: id,
+					schemeId: schemeId,
 					modes: ['DB_NO_SYNC']
 					// _id: '$' + id
 				}

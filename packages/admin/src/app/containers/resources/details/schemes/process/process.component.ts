@@ -10,12 +10,14 @@ import { Subscription } from 'rxjs';
 export class ProcessComponent implements OnDestroy {
 	private sub: Subscription;
 	private itemId: string;
+	private schemeId: string;
 
 	constructor(
 		route: ActivatedRoute
 	) {
 		this.sub = route.params.subscribe(params => {
 			this.itemId = params.processId;
+			this.schemeId = params.schemeId;
 		});
 	}
 

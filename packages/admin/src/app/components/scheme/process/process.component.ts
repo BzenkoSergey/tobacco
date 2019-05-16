@@ -27,6 +27,7 @@ import { FlowTreeComponent } from '@components/flow-tree/flow-tree.component';
 export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewInit {
 	@ViewChild(FlowTreeComponent) flowTree: FlowTreeComponent;
 	@Input() processId: string;
+	@Input() schemeId: string;
 
 	private sub: Subscription;
 
@@ -138,10 +139,11 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 	}
 
 	private fetch() {
-		return this.schemeProcessesRestService.get(this.processId)
+		return this.schemeProcessesRestService.get(this.processId, this.schemeId)
 			.pipe(
 				tap(d => {
 					this.item = d;
+					console.log(d);
 					this.definePipe();
 					console.error('FETCHED AND RUN UPDATE');
 					this.flowTree.updateData(this.item);
