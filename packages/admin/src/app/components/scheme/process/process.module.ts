@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AceEditorModule } from 'ng2-ace-editor';
 
 import { FlowTreeModule } from './../../flow-tree/flow-tree.module';
+import { FlowTreeData } from './../../flow-tree/flow-tree.data';
 import { SchemeProcessComponent } from './process.component';
 
 @NgModule({
@@ -22,6 +23,9 @@ import { SchemeProcessComponent } from './process.component';
 	],
 	exports: [
 		SchemeProcessComponent
+	],
+	providers: [
+		FlowTreeData
 	]
 })
 

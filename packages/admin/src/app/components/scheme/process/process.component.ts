@@ -10,6 +10,7 @@ import { SchemeProcessesOptionsRestService } from '@rest/scheme-processes-option
 import { SchemesRestService } from '@rest/schemes';
 import { PipeRestService, PipeDto } from '@rest/pipes';
 
+import { FlowTreeData } from './../../flow-tree/flow-tree.data';
 import { FlowTreeComponent } from '@components/flow-tree/flow-tree.component';
 
 @Component({
@@ -48,7 +49,8 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 		private schemeProcessesRestService: SchemeProcessesRestService,
 		private schemeProcessesDataRestService: SchemeProcessesDataRestService,
 		private schemesRestService: SchemesRestService,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private flowTreeData: FlowTreeData
 	) {
 		this.sub = route.queryParams.subscribe(p => {
 			this.path = p.path || '0';
@@ -122,6 +124,8 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 			.pipe(delay(3500))
 			.subscribe(d => {
 				console.log('watch done');
+
+				// @ts-ignore
 				if (d.process.status !== 'DONE' && d.process.status !== 'ERROR') {
 					this.watch();
 				}
@@ -142,8 +146,8 @@ export class SchemeProcessComponent implements OnChanges, OnDestroy, AfterViewIn
 		return this.schemeProcessesRestService.get(this.processId, this.schemeId)
 			.pipe(
 				tap(d => {
-					this.item = d;
-					console.log(d);
+					this.flowTreeData.update(d);
+					this.item = this.flowTreeData.getTree();
 					this.definePipe();
 					console.error('FETCHED AND RUN UPDATE');
 					this.flowTree.updateData(this.item);

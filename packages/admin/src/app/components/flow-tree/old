@@ -1,0 +1,383 @@
+import { Injectable } from '@angular/core';
+
+import { Subject } from 'rxjs';
+
+import * as d3 from 'd3';
+import { Selection, HierarchyNode, TreeLayout, HierarchyPointNode } from 'd3';
+
+export type FlowTreeHierarchyNode = {
+	x0: number;
+	y0: number;
+};
+
+export type FlowTreeUnit = {
+	process: {
+		status: string;
+	};
+	path: string;
+	label: string;
+	jobName: string;
+};
+
+type FlowTreeStore = {
+	x0?: number;
+	y0?: number;
+};
+
+export type FlowTreeNode = HierarchyPointNode<FlowTreeUnit> & FlowTreeStore;
+
+type HierarchyDatum = {
+	name: string;
+	value: number;
+	children?: Array<HierarchyDatum>;
+};
+
+@Injectable()
+export class FlowTreeService {
+	private runned: Subject<any>;
+	private runnedFn: any;
+	private next: Subject<any>;
+	private nextFn: any;
+	private current: string;
+	private margin = {
+		top: 5,
+		right: 20,
+		bottom: 5,
+		left: 20
+	};
+	private svg: Selection<SVGGElement, {}, null, undefined>;
+	private wrapper: Selection<SVGSVGElement, {}, null, undefined>;
+	private treemap: TreeLayout<{}>;
+	private root: HierarchyNode<HierarchyDatum> & FlowTreeStore;
+	private base: Selection<HTMLElement, {}, null, undefined>;
+
+	selected = new Subject<any>();
+	selectedBranch = new Subject<any>();
+
+	setCurrent(path: string) {
+		this.current = path;
+		if (!this.svg) {
+			return;
+		}
+		this.svg
+			.selectAll<HTMLElement, HierarchyPointNode<FlowTreeUnit>>('g.node circle')
+			.attr('state', (d) => {
+				if (this.current && this.current === d.data.path) {
+					return 'selected';
+				}
+				return '';
+			});
+	}
+
+	runUpdate(data: any, subj?: Subject<any>) {
+		subj = subj || new Subject();
+		if (this.runned) {
+			this.next = subj;
+			this.nextFn = () => {
+				console.log('RUN UDATE');
+				this.update(data);
+			};
+		} else {
+			this.runned = subj;
+			this.runnedFn = () => {
+				console.log('RUN UDATE');
+				this.update(data);
+			};
+			this.runnedFn();
+		}
+	}
+
+	run(treeData: any, viewElement: HTMLElement) {
+		this.base = d3.select(viewElement);
+		this.wrapper = this.base.append('svg');
+		this.svg = this.wrapper
+			.append('g')
+			.attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
+			.on('click.g.node', () => {
+				this.click(d3.select(d3.event.target).datum());
+			});
+
+		// declares a tree layout and assigns the size
+		this.treemap = d3.tree<FlowTreeNode>()
+			.nodeSize([30, 30])
+			.separation(() => 1);
+
+		if (!treeData) {
+			return;
+		}
+		this.update(treeData);
+	}
+
+	private click(d) {
+		this.selected.next(d.data);
+		this.selectedBranch.next({
+			current: d.data,
+			parent: d.parent ? d.parent.data : null
+		});
+	}
+
+	private removeHidden(i: any) {
+		// i.children = i.children.filter(c => !c.hide);
+		// i.children.forEach(c => this.removeHidden(c));
+		// console.log(this.flatChildren(i));
+		return i;
+	}
+
+	private flatChildren(i: any) {
+		let list = i.children.concat([]);
+		list.concat([]).forEach(item => {
+			const y = this.flatChildren(item);
+			list = list.concat(y);
+		});
+		return list;
+	}
+
+	private update(data?: any) {
+		const f = Date.now();
+		console.log('RUNen update');
+		this.root = d3.hierarchy<HierarchyDatum>(this.removeHidden(data), (d) => d.children);
+
+		this.base.transition().on('end', () => {
+			console.log('DONE', Date.now() - f);
+			setTimeout(() => {
+				console.log('DONE');
+				const n = this.svg.node();
+				const box = n.getBBox();
+				this.svg.attr('transform', 'translate('
+					+ this.margin.left + ',' + ((- box.y) + this.margin.top) + ')');
+
+				this.wrapper
+					.attr('width', box.width + this.margin.right + this.margin.left)
+					.attr('height', box.height + this.margin.top + this.margin.bottom);
+
+				console.log('RUN updated');
+				this.runned = null;
+				this.runnedFn = null;
+				this.runNext();
+			}, 100);
+		});
+
+		// Assigns the x and y position for the nodes
+		const treeData = this.treemap(this.root);
+		this.root.x0 = 0;
+		this.root.y0 = 0;
+
+
+		// ****************** nodes section ***************************
+		// Compute the new tree layout.
+		const nodes = this.createNodes(treeData);
+
+		// Update the nodes...
+		const node = this.svg.selectAll<SVGSVGElement, FlowTreeNode>('g.node')
+			.data(nodes, (d) => {
+				if (!d.data.process) {
+					return '';
+				}
+				return d.data.path + '-' + d.data.process.status + '-' + d.data.label + '-' + d.data.jobName;
+			});
+
+		this.initItems(node);
+
+		// ****************** links section ***************************
+		// Update the links...
+		const links = treeData.descendants().slice(1) as FlowTreeNode[];
+		const link = this.svg.selectAll<SVGPathElement, FlowTreeNode>('path.link')
+			.data(links, (d) => {
+				return d.data.path;
+			});
+
+		this.initLinks(link);
+	}
+
+	private createNodes(treeData: d3.HierarchyPointNode<{}>) {
+		// Compute the new tree layout.
+		const nodes = (treeData.descendants() as FlowTreeNode[])
+			// .filter(d => {
+			// 	// @ts-ignore
+			// 	return !d.data.hide;
+			// });
+
+		// Normalize for fixed-depth.
+		nodes
+			.forEach(function(d) {
+				let depth = 45;
+				if (d.parent && d.parent.children.length > 100) {
+					depth = 120;
+				}
+				return d.y = d.depth * depth;
+			});
+
+		// Store the old positions for transition.
+		nodes.forEach(d => {
+			d.x0 = d.x;
+			d.y0 = d.y;
+		});
+
+		return nodes;
+	}
+
+	private initItems(node: d3.Selection<SVGSVGElement, FlowTreeNode, SVGGElement, {}>) {
+		// Enter any new modes at the parent's previous position.
+		const nodeEnter = node.enter()
+			// .filter(d => {
+			// 	// @ts-ignore
+			// 	return !d.data.hide;
+			// })
+			.append('g')
+			.attr('class', 'node');
+
+		const boxes = nodeEnter
+			.filter(d => {
+				// @ts-ignore
+				return d.data.box;
+			});
+
+		const pipes = nodeEnter
+			.filter(d => {
+				// @ts-ignore
+				return !d.data.box;
+			});
+
+		this.initPipes(nodeEnter);
+		// this.initBoxes(boxes);
+		// this.initPipes(pipes);
+
+		// UPDATE
+		const nodeUpdate = nodeEnter.merge(node);
+
+		// Transition to the proper position for the node
+		nodeUpdate
+			.attr('transform', function(d) {
+				return 'translate(' + d.y + ',' + d.x + ')';
+			});
+
+		// Remove any exiting nodes
+		node.exit().remove();
+	}
+
+	private initBoxes(boxes: d3.Selection<SVGGElement, FlowTreeNode, SVGGElement, {}>) {
+		boxes
+			.append('foreignObject')
+			.attr('status', function(d) {
+				if (!d.data.process) {
+					return '';
+				}
+				return d.data.process.status;
+			})
+			.attr('state', (d) => {
+				if (this.current && this.current === d.data.path) {
+					return 'selected';
+				}
+				return '';
+			})
+			.attr('width', (d) => {
+				return '100px';
+			})
+			.attr('height', () => {
+				return '25px';
+			})
+			.append('xhtml')
+			.html((d: any) => {
+				return `
+					<div class="box">
+						<div class="box-statuses">
+							<div class="box-status box-done" style="width: ${d.data.percentage.done}%">
+								${d.data.percentage.done}%
+							</div>
+							<div class="box-status box-error" style="width: ${d.data.percentage.error}%">
+								${d.data.percentage.error}%
+							</div>
+							<div class="box-status box-in-process" style="width: ${d.data.percentage.inProcess}%">
+								${d.data.percentage.inProcess}%
+							</div>
+							<div class="box-status box-skipped-job" style="width: ${d.data.percentage.skippedJob}%">
+								${d.data.percentage.skippedJob}%
+							</div>
+							<div class="box-status box-pending" style="width: ${d.data.percentage.pending}%">
+								${d.data.percentage.pending}%
+							</div>
+						</div>
+					</div>
+				`;
+			});
+	}
+
+	private initPipes(pipes: d3.Selection<SVGGElement, FlowTreeNode, SVGGElement, {}>) {
+		pipes
+			.append('circle')
+			.attr('status', function(d) {
+				if (!d.data.process) {
+					return '';
+				}
+				return d.data.process.status;
+			})
+			.attr('state', (d) => {
+				if (this.current && this.current === d.data.path) {
+					return 'selected';
+				}
+				return '';
+			});
+
+		pipes
+			.append('text')
+			.attr('dy', '-1.1em')
+			.text((d) => {
+				const value = d.data.label || '';
+				return value + '\r\n(' + d.data.jobName + ')';
+			});
+	}
+
+	private initLinks(link: d3.Selection<SVGPathElement, FlowTreeNode, SVGGElement, {}>) {
+		// Enter any new links at the parent's previous position.
+		const linkEnter = link.enter()
+			.filter(d => {
+				// @ts-ignore
+				return !d.data.hide;
+			})
+			.insert('path', 'g')
+			.attr('class', 'link')
+			.attr('d', (d) => {
+				return diagonal(d, d.parent);
+				// const o = {x: this.root.x0, y: this.root.y0};
+				// return diagonal(o, o);
+			});
+
+		// UPDATE
+		const linkUpdate = linkEnter.merge(link);
+
+		// Transition back to the parent element position
+		linkUpdate.attr('d', (d) => {
+			return diagonal(d, d.parent);
+		});
+
+		// Remove any exiting links
+		link.exit().remove();
+
+		// Creates a curved (diagonal) path from parent to the child nodes
+		function diagonal(s, parent) {
+			let x = s.x;
+
+			// @ts-ignore
+			if (s.data.box) {
+				// @ts-ignore
+				console.log('box');
+				x = s.x + 10;
+			}
+			const path = `M ${s.y} ${x}
+					C ${(s.y + parent.y) / 2} ${x},
+						${(s.y + parent.y) / 2} ${parent.x},
+						${parent.y} ${parent.x}`;
+
+			return path;
+		}
+	}
+
+	private runNext() {
+		if (!this.next || !this.nextFn) {
+			return;
+		}
+		this.runned = this.next;
+		this.runnedFn = this.nextFn;
+		this.runnedFn();
+	}
+}

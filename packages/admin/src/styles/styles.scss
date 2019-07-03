@@ -16,6 +16,47 @@
 	}
 }
 
+.node rect {
+	width: 10px;
+	height: 10px;
+}
+
+.node .box {
+	width: 100%;
+	height: 100%;
+	border: 1px solid red;
+
+	.box-statuses {
+		overflow: hidden;
+	}
+
+	.box-status {
+		height: 100%;
+		float: left;
+	}
+
+	.box-pending {
+		background-color: #a5a2a2;
+	}
+
+	.box-in-process {
+		background-color: #ffbd00;
+	}
+
+	.box-skipped-job {
+		background-color: #9aa4e8;
+	}
+
+	.box-done {
+		background-color: #78d42e;
+	}
+
+	.box-error {
+		background-color: #ea0000;
+	}
+}
+
+.node rect,
 .node circle {
   fill: #90bbde;
   stroke: steelblue;

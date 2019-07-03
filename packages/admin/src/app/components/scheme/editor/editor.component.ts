@@ -214,8 +214,11 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 				schemeId: this.item._id || this.item.id,
 				parent: null
 			})
-			.subscribe(d => {
-				this.processes = d.reverse();
+			.subscribe((d: any) => {
+				this.processes = d
+					.sort((a, b) => {
+						return +b.process.createdTime - +a.process.createdTime;
+					});
 			});
 	}
 }
