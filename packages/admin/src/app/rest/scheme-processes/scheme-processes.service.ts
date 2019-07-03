@@ -15,28 +15,44 @@ export class SchemeProcessesRestService {
 
 	list(query?: any) {
 		query = query || {};
+
+		const url = this.restService.apiUrl(false) + '/pp';
+		return this.http.get(url, {
+			params: query
+		});
+
 		// query.modes = ['DB_NO_SYNC'];
-		return this.restService
-			.runSchemeOptions<any[], any>(
-				'PROCESSES',
-				query || {}
-			);
+		// return this.restService
+		// 	.runSchemeOptions<any[], any>(
+		// 		'PROCESSES',
+		// 		query || {}
+		// 	);
 	}
 
 	get(id: string, schemeId: string) {
-		return this.restService
-			.runSchemeOptions<any, any>(
-				'PROCESSES',
-				{
-					processId: id,
-					schemeId: schemeId,
-					modes: ['DB_NO_SYNC']
-					// _id: '$' + id
-				}
-			)
-			.pipe(
-				map(d => d[0])
-			);
+		const query = {
+			processId: id,
+			schemeId: schemeId
+		};
+
+		const url = this.restService.apiUrl(false) + '/pp';
+		return this.http.get(url, {
+			params: query
+		});
+
+		// return this.restService
+		// 	.runSchemeOptions<any, any>(
+		// 		'PROCESSES',
+		// 		{
+		// 			processId: id,
+		// 			schemeId: schemeId,
+		// 			modes: ['DB_NO_SYNC']
+		// 			// _id: '$' + id
+		// 		}
+		// 	)
+		// 	.pipe(
+		// 		map(d => d[0])
+		// 	);
 	}
 
 	createWithData(schemeId: string, data: any, background = false) {
