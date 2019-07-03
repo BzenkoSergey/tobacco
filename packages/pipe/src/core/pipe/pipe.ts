@@ -1,11 +1,11 @@
 import { Observable, Subscription, Subject, zip, combineLatest } from 'rxjs';
 import { tap, mergeMap, catchError, delay, map } from 'rxjs/operators';
 
-import { async } from './../async';
+import { async } from '../../async';
 import { PipeStatus } from './pipe-status.enum';
 import { PipeInput } from './pipe-input.interface';
 import { PipeDb } from './pipe-db';
-import { Queue } from './queue';
+import { Queue } from '../queue';
 import { PipeMode } from './pipe-mode.enum';
 
 export class Pipe extends PipeDb {

@@ -1,11 +1,11 @@
-import { HttpStack } from './http-stack';
-import { Navigator } from './navigator';
-import { Manipulator } from './manipulator';
-import { Store } from './store';
-import { ExtService } from './ext.service';
-import { SchemeProcessService } from './scheme-process.service';
-import { DbService } from './db.service';
-import { Session } from './session.service';
+import { HttpStack } from './services/http-stack';
+import { Navigator } from './services/navigator';
+import { Manipulator } from './services/manipulator';
+import { Store } from './services/store';
+import { ExtService } from './services/ext.service';
+import { SchemeProcessService } from './services/scheme-process.service';
+import { DbService } from './trash/db.service';
+import { Session } from './services/session.service';
 
 export enum DIService {
 	HTTP_STACK = 'HTTP_STACK',
@@ -29,7 +29,6 @@ export class DI {
 		this.services.set(DIService.NAVIGATOR, Navigator);
 		this.services.set(DIService.MANIPULATOR, Manipulator);
 		this.services.set(DIService.STORE, Store);
-		this.services.set(DIService.EXT, ExtService);
 		this.services.set(DIService.EXT, ExtService);
 		this.services.set(DIService.SCHEME_PROCESS, SchemeProcessService);
 		this.services.set(DIService.DB, DbService);

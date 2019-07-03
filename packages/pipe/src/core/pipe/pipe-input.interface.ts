@@ -1,7 +1,7 @@
-import { JobRegister } from './../job-register';
+import { JobRegister } from '../../job-register';
 import { PipeType } from './pipe-type.enum';
 import { Process } from './pipe-process.interface';
-import { DIService } from './di';
+import { DIService } from '../di';
 
 export interface PipeInput {
 	_id?: any;

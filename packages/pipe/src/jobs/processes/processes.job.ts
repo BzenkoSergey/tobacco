@@ -2,16 +2,17 @@ import { from, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { tap, mergeMap, map } from 'rxjs/operators';
 
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './../../core/db';
-import { CassandraDb } from './../../core/db-cassandra';
-import { MongoExtDb } from './../../core/db-ext';
+import { MongoDb } from './../../core/trash/db';
+import { CassandraDb } from '../../core/trash/db-cassandra';
+import { MongoExtDb } from '../../core/trash/db-ext';
 
 import { async } from './../../async';
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI, DIService } from './../../core/di';
-import { ExtService } from './../../core/ext.service';
+import { ExtService } from '../../core/services/ext.service';
+import { DB } from './../../core/db';
 
 const cache = new Map<string, any>();
 
@@ -51,25 +52,23 @@ export class ProcessesJob implements Job {
 
 	run(query: any) {
 		const a = Date.now();
-		console.log('start', this.processQueries(query));
+		// console.log('start', this.processQueries(query));
 
 		return this.getList(query)
 			.pipe(
 				mergeMap(list => {
-					console.log(list.length, 'length');
-					console.log(Date.now() - a);
 					if (!list.length) {
 						return async(list);
 					}
 					list.forEach(i => {
-						i.process = {
-							input: i.processInput,
-							output: i.processOutput,
-							startDate: i.processStartDate,
-							status: i.processStatus,
-							endDate: i.processEndDate,
-							createdTime: i.processCreatedTime,
-						}
+						// i.process = {
+						// 	input: i.processInput,
+						// 	output: i.processOutput,
+						// 	startDate: i.processStartDate,
+						// 	status: i.processStatus,
+						// 	endDate: i.processEndDate,
+						// 	createdTime: i.processCreatedTime,
+						// }
 						const parent = i.parent ? i.parent.toString() : null;
 						const f = this.map.get(parent) || [];
 						f.push(i);
@@ -80,9 +79,7 @@ export class ProcessesJob implements Job {
 					const r = list
 						.filter(i => !i.parent)
 						.map(i => this.getTree(i));
-					
-					console.log(list
-						.filter(i => !i.parent));
+
 					return async(r);
 					// const subjs = list.map(i => this.genOne(i));
 					// return combineLatest(...subjs);
@@ -104,16 +101,17 @@ export class ProcessesJob implements Job {
 	}
 
 	private getList(queries: any) {
-		console.log(this.processQueries(queries));
 		// if (!queries.processId) {
 		// 	queries.processId = 'NOT_NULL';
 		// }
-		let cas = new CassandraDb('parent114');
+		let cas = new DB('parent214');
 		if (queries.processId) {
-			cas = new CassandraDb('parent113');
+			cas = new DB('parent213');
 		}
 		return cas
-			.find(this.processQueries(queries))
+			.list<any>({
+				query: this.processQueries(queries)
+			})
 			.pipe(map(i => {
 				// console.log(i);
 				return i;
@@ -122,60 +120,60 @@ export class ProcessesJob implements Job {
 		// 	.find(this.processQueries(queries));
 	}
 
-	private genOne(process: any) {
-		return this.fetchPipes((process._id || process.id).toString())
-			.pipe(
-				map(pipes => {
-					const map = new Map();
-					pipes.forEach(i => {
-						map.set((i._id || i.id).toString(), i);
-					});
+	// private genOne(process: any) {
+	// 	return this.fetchPipes((process._id || process.id).toString())
+	// 		.pipe(
+	// 			map(pipes => {
+	// 				const map = new Map();
+	// 				pipes.forEach(i => {
+	// 					map.set((i._id || i.id).toString(), i);
+	// 				});
 
-					const i = this.genChildren(process, map);
-					// i._id = process._id;
-					i.id = process.id;
-					return i;
-				})
-			);
-	}
+	// 				const i = this.genChildren(process, map);
+	// 				// i._id = process._id;
+	// 				i.id = process.id;
+	// 				return i;
+	// 			})
+	// 		);
+	// }
 
-	private genChildren(process: any, pipes: Map<string, any>) {
-		if (!process.id) {
-			return {};
-		}
-		const id = process.id.toString();
-		const pipe = pipes.get(id);
-		if (!pipe) {
-			return {};
-		}
-		if (process.children.length) {
-			pipe.children = process.children
-				.filter(i => !!i)
-				.map(c => this.genChildren(c, pipes))
-				.filter(i => !!i);
-		}
-		return pipe;
-	}
+	// private genChildren(process: any, pipes: Map<string, any>) {
+	// 	if (!process.id) {
+	// 		return {};
+	// 	}
+	// 	const id = process.id.toString();
+	// 	const pipe = pipes.get(id);
+	// 	if (!pipe) {
+	// 		return {};
+	// 	}
+	// 	if (process.children.length) {
+	// 		pipe.children = process.children
+	// 			.filter(i => !!i)
+	// 			.map(c => this.genChildren(c, pipes))
+	// 			.filter(i => !!i);
+	// 	}
+	// 	return pipe;
+	// }
 
-	private fetchPipes(processId: string) {
-		return new MongoDb('scheme-processes-pipe', true)
-			.find({
-				processId: processId
-			});
-	}
+	// private fetchPipes(processId: string) {
+	// 	return new MongoDb('scheme-processes-pipe', true)
+	// 		.find({
+	// 			processId: processId
+	// 		});
+	// }
 
-	private getIds(process: any) {
-		if (!process) {
-			// happend when proces in progrress of db filling
-			return [];
-		}
-		let ids = [process.id];
-		if (process.children) {
-			const ciDS = process.children.map(c => this.getIds(c));
-			ids = ids.concat(...ciDS);
-		}
-		return ids;
-	}
+	// private getIds(process: any) {
+	// 	if (!process) {
+	// 		// happend when proces in progrress of db filling
+	// 		return [];
+	// 	}
+	// 	let ids = [process.id];
+	// 	if (process.children) {
+	// 		const ciDS = process.children.map(c => this.getIds(c));
+	// 		ids = ids.concat(...ciDS);
+	// 	}
+	// 	return ids;
+	// }
 
 	private processQueries(obj: any, idMark = '$') {
 		if (typeof obj === 'boolean') {

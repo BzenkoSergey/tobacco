@@ -5,12 +5,12 @@ import * as schedule from 'node-schedule';
 import * as moment from 'moment';
 
 import { async } from './../async';
-import { PipeInjector } from './../pipes/pipe-injector.interface';
-import { Messager } from './../pipes/messager.interface';
+import { PipeInjector } from '../core/pipe-injector.interface';
+import { Messager } from '../core/messager.interface';
 import { Job } from './job.interface';
 import { DI, DIService } from './../core/di';
-import { Navigator } from './../core/navigator';
-import { Manipulator } from './../core/manipulator';
+import { Navigator } from '../core/services/navigator';
+import { Manipulator } from '../core/services/manipulator';
 
 export class DelayJob implements Job {
 	private subj = new Subject<any>();
@@ -56,10 +56,16 @@ export class DelayJob implements Job {
 		return this;
 	}
 
-	run(data: any) {
-		let delay = data.delay || this.options.delay;
-		const interval = data.interval || this.options.interval;
-		const date = data.date || this.options.date;
+	run(info: any) {
+		let delay = info.delay || this.options.delay;
+		let interval = info.interval || this.options.interval;
+		const date = info.date || this.options.date;
+		let data = info.data || info;
+
+		if (this.options.full) {
+			data = info;
+		}
+
 		if (delay === undefined) {
 			return async('$stop');
 		}
@@ -67,8 +73,9 @@ export class DelayJob implements Job {
 			delay = new Date(delay);
 		}
 		
+		console.log(delay);
 		this.task = schedule.scheduleJob(delay, () => {
-			this.next(data.data || data, interval);
+			this.next(data, interval);
 			if (date) {
 			console.log(this.task.nextInvocation(), '=====');
 			}
@@ -76,7 +83,7 @@ export class DelayJob implements Job {
 
 		if (!this.task) {
 			setTimeout(() => {
-				this.next(data.data || data, interval);
+				this.next(data, interval);
 			});
 		} else {
 			console.log(this.task.nextInvocation(), '=====');
@@ -87,7 +94,7 @@ export class DelayJob implements Job {
 			// console.log(isAfter, delay, '=====22');
 			if (isAfter) {
 				setTimeout(() => {
-					this.next(data.data || data, interval);
+					this.next(data, interval);
 				});
 			}
 		}

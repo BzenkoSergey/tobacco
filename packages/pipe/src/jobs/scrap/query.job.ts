@@ -1,11 +1,11 @@
 const cheerio = require('cheerio');
 // import * as URL from 'URL';
 import { async } from './../../async';
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from './../../core/pipe-injector.interface';
+import { Messager } from './../../core/messager.interface';
 import { Job } from '../job.interface';
 import { DI, DIService } from '../../core/di';
-import { Store } from './../../core/store';
+import { Store } from '../../core/services/store';
 
 export class QueryJob implements Job {
 	private store: Store;

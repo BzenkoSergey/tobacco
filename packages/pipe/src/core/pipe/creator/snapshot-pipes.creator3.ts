@@ -1,18 +1,17 @@
 import { Observable, combineLatest } from 'rxjs';
 import { tap, mergeMap, map } from 'rxjs/operators';
 import { ObjectId } from 'mongodb';
-import  * as cassandra from "cassandra-driver";
 
-import { MongoDb } from './../core/db';
-import { CassandraDb } from './../core/db-cassandra';
-import { async } from './../async';
+import { MongoDb } from '../../trash/db';
+import { DB } from './../../db';
+import { async } from '../../../async';
 
-import { DIService } from './di';
-import { JobRegister } from './../job-register';
-import { PipeType } from './pipe-type.enum';
-import { PipeStatus } from './pipe-status.enum';
-import { PipeInput } from './pipe-input.interface';
-import { PipeMode } from './pipe-mode.enum';
+import { DIService } from '../../di';
+import { JobRegister } from '../../../job-register';
+import { PipeType } from '../pipe-type.enum';
+import { PipeStatus } from '../pipe-status.enum';
+import { PipeInput } from '../pipe-input.interface';
+import { PipeMode } from '../pipe-mode.enum';
 
 export interface Scheme {
 	_id: string,
@@ -29,7 +28,7 @@ export interface Scheme {
 
 export class SnapshotPipesCreator3 {
 	// private mongoDbProcessesPipes = new MongoDb('scheme-processes-pipe', true);
-	private mongoDbProcessesPipes = new CassandraDb('', true);
+	private mongoDbProcessesPipes = new DB();
 	private mongoDbScheme = new MongoDb('scheme', true);
 	private mongoDbPipes = new MongoDb('pipes', true);
 	private schemeId: string;
@@ -127,11 +126,11 @@ export class SnapshotPipesCreator3 {
 		return async<PipeInput>(input)
 			.pipe(
 				mergeMap(input => {
-					const id = cassandra.types.Uuid.random();
+					const id = this.mongoDbProcessesPipes.createId();
 					// @ts-ignore
 					input.id = id.toString();
 					input.processId = id.toString();
-					return this.mongoDbProcessesPipes.insertOne(input)
+					return this.mongoDbProcessesPipes.create(id, input)
 						.pipe(
 							map(r => {
 								input._id = r.insertedId;
@@ -240,7 +239,7 @@ export class SnapshotPipesCreator3 {
 								})
 							);
 					}
-					return this.mongoDbProcessesPipes.insertOne(input)
+					return this.mongoDbProcessesPipes.create('', input)
 						.pipe(
 							map(r => {
 								input._id = r.insertedId;

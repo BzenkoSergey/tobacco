@@ -1,5 +1,5 @@
-import { PipeDb } from './pipe-db';
-import { PipeType } from './pipe-type.enum';
+import { PipeDb } from '../pipe/pipe-db';
+import { PipeType } from '../pipe/pipe-type.enum';
 
 export class Navigator {
 	private pipesPaths = new Map<PipeDb, string>();

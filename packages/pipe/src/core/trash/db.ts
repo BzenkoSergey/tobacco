@@ -4,17 +4,18 @@ import {
 	WriteOpResult,
 	InsertOneWriteOpResult,
 	InsertWriteOpResult,
-	UpdateWriteOpResult
+	UpdateWriteOpResult,
+	ObjectId
 } from 'mongodb';
 
-import { DbManager } from './db-manager';
+import { DbManager } from '../db/mongo/db-manager';
 const bbManager = new DbManager();
 
+export { ObjectId };
+
 export class MongoDb {
-	private url = 'mongodb://127.0.0.1:27017';
-	private queryReTryDelay = 100;
+	private url = 'mongodb://192.168.0.181:27017';
 	private manager = bbManager;
-	private isolated = false;
 
 	constructor(
 		private collection: string,
@@ -179,7 +180,12 @@ export class MongoDb {
 
 	find(query: Object, subj?: Subject<any>, limit?: number, skip?: number, sort?: any): Subject<any> {
 		subj = subj || new Subject<any>();
+		const f = Date.now();
+		console.log('S=>', query);
 		this.getDb('find', query).subscribe(db => {
+
+			const g = Date.now();
+			console.log('Connection got', g - f, query);
 			let find = db[0].collection(this.collection).find(query);
 			if (sort) {
 				find = find.sort(sort);
@@ -191,7 +197,15 @@ export class MongoDb {
 				find = find.skip(skip);
 			}
 			
+
+			// find.explain((a, b) => {
+			// 	console.log(a, b);
+			// });
+			
+			// find = find.limit(20000);
 			find.toArray((err, result) => {
+				const h = Date.now();
+				console.log('Response got', h - g, query);
 				if (err) {
 					db[1]();
 					if (this.needRetry(err)) {

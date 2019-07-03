@@ -9,11 +9,15 @@ import { postfix } from './postfix';
 import { match } from './match';
 import { doEval } from './eval';
 import { decode } from './decode';
+import { datefy } from './datefy';
 
 export class TransformsService {
 	perform(value: string, transform: GrabberTransform, options: any) {
 		if(!value && typeof value !== 'number') {
 			return value;
+		}
+		if(transform === GrabberTransform.DATEFY) {
+			return datefy(value);
 		}
 		if(transform === GrabberTransform.NUMBERIFY) {
 			return numberify(value);

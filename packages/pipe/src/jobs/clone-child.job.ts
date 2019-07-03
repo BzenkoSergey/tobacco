@@ -2,12 +2,12 @@ import { from, Subject, BehaviorSubject, zip } from 'rxjs';
 import { tap, mergeMap } from 'rxjs/operators';
 
 import { async } from '../async';
-import { PipeInjector } from '../pipes/pipe-injector.interface';
-import { Messager } from '../pipes/messager.interface';
+import { PipeInjector } from './../core/pipe-injector.interface';
+import { Messager } from './../core/messager.interface';
 import { Job } from './job.interface';
 import { DI, DIService } from '../core/di';
-import { Navigator } from '../core/navigator';
-import { Manipulator } from '../core/manipulator';
+import { Navigator } from '../core/services/navigator';
+import { Manipulator } from '../core/services/manipulator';
 
 export class CloneChildJob implements Job {
 	private options: any;
@@ -47,7 +47,7 @@ export class CloneChildJob implements Job {
 	}
 
 	run(input) {
-		if(!input.length) {
+		if(!input.length && !this.options.single) {
 			return async(null);
 		}
 		this.navigator = this.di.get<Navigator>(this.pipePath, DIService.NAVIGATOR);

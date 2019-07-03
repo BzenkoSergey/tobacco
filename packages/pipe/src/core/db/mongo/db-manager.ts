@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { MongoClient, Db } from 'mongodb';
 
-import { Queue } from './queue';
+import { Queue } from '../../queue';
 
 export class DbManager {
 	private l = 1;
@@ -10,9 +10,9 @@ export class DbManager {
 	// queue: any[] = [];
 
 	constructor(
-		private url = 'mongodb://127.0.0.1:27017',
+		private url = 'mongodb://192.168.0.175:27017',
 		private dbName = 'tobacco',
-		limit = 1
+		limit = 10
 	) {
 		this.queue = new Queue(limit);
 	}
@@ -61,8 +61,10 @@ export class DbManager {
 				const dbs = client.db(this.dbName);
 				this.l = this.l + 1;
 				const l = this.l;
+
+				const f = Math.random();
 				let b = setInterval(() => {
-					console.error('AM NOIT CLOSED: ' + l, code, args);
+					console.error('AM NOIT CLOSED: ' + l, code, args, f);
 				}, 5000);
 
 				subj.next([dbs, () => {

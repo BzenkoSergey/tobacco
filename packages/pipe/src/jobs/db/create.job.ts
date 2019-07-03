@@ -1,17 +1,18 @@
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './../../core/db';
+import { MongoDb } from './../../core/trash/db';
 
 import { throwError } from 'rxjs';
 import { tap, mergeMap, catchError, delay, map } from 'rxjs/operators';
 
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI } from './../../core/di';
 
 export class DBCreateJob implements Job {
 	private db: MongoDb;
 	private options: any;
+	private pipePath: string;
 	staticOptions: any;
 
 	constructor(
@@ -35,6 +36,7 @@ export class DBCreateJob implements Job {
 	}
 
 	setPipePath(path: string) {
+		this.pipePath = path;
 		return this;
 	}
 
@@ -55,6 +57,7 @@ export class DBCreateJob implements Job {
 			document = this.deepValue(dom, this.options.dataPath);
 		}
 		let d = {};
+
 		Object.keys(document)
 			.forEach(p => {
 				if (p === '_id') {
@@ -63,6 +66,9 @@ export class DBCreateJob implements Job {
 				d[p] = document[p];
 			});
 
+		if(document.url === 'https://www.youtube.com/watch?v=f4EYvJK_1s0') {
+			console.warn(this.pipePath);
+		}
 		return new MongoDb(collection, true)
 			.insertOne(d)
 			.pipe(

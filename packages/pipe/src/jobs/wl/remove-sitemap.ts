@@ -1,14 +1,14 @@
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './../../core/db';
+import { MongoDb } from './../../core/trash/db';
 
 import { throwError, Observable } from 'rxjs';
 import { tap, mergeMap, catchError, delay, map, merge } from 'rxjs/operators';
 
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI, DIService } from './../../core/di';
-import { Store } from './../../core/store';
+import { Store } from '../../core/services/store';
 import { async } from './../../async';
 
 export class RemoveSitemapJob implements Job {

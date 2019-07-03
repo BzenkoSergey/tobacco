@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
-import { MongoExtDb } from './../../core/db-ext';
+import { MongoExtDb } from '../../core/trash/db-ext';
 import { Job } from './../job.interface';
 import { async } from './../../async';
 

@@ -2,12 +2,12 @@ const cheerio = require('cheerio');
 import { GrabberTransform } from './transforms/transform.enum';
 import { TransformsService } from './transforms/transforms.service';
 import { async } from './../../async';
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI, DIService } from '../../core/di';
 import * as URL from 'url';
-import { Session } from './../../core/session.service';
+import { Session } from '../../core/services/session.service';
 
 export class DomScrapJob implements Job {
 	private options: any;
@@ -47,10 +47,16 @@ export class DomScrapJob implements Job {
 	run(dom: any) {
 		let res;
 
+		let options = this.options;
+		if (dom.settings) {
+			const structure = dom.settings.structures.find(s => s.code === this.options.structureCode);
+			options = JSON.parse(structure.structure);
+		}
+
 		try {
 			const d = cheerio.load(dom.dom || dom.html).root().find('html');
 			// console.log('START');
-			res = this.parse(d, this.options, dom.url);
+			res = this.parse(d, options, dom.url);
 			// console.log('END');
 		} catch(e) {
 			console.error(e);
@@ -59,6 +65,8 @@ export class DomScrapJob implements Job {
 		// const res = this.parse(dom, this.staticOptions);
 
 		return async({
+			...dom,
+			html: '',
 			url: dom.url,
 			data: res
 		});
@@ -245,7 +253,19 @@ export class DomScrapJob implements Job {
 		selector = selectorInfo[0];
 		const toRemove = config[1];
 
-		let $el = $root.find(selector);
+		
+
+		let $el;
+		const or = selector.split('$or$');
+		if (or.length > 1) {
+			$el = $root.find(or[0]);
+			if (!$el.length) {
+				$el = $root.find(or[1]);
+			}
+		} else {
+			$el = $root.find(selector);
+		}
+
 		if (toRemove) {
 			$el.find(toRemove).remove();
 		}

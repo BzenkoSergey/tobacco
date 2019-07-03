@@ -2,11 +2,11 @@ import { from, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { tap, mergeMap } from 'rxjs/operators';
 
 import { async } from './../../async';
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI, DIService } from './../../core/di';
-import { ExtService } from './../../core/ext.service';
+import { ExtService } from '../../core/services/ext.service';
 
 export class ProductAttributesJob implements Job {
 	private options: any;

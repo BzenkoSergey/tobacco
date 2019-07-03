@@ -1,9 +1,9 @@
 import { Subject, from } from 'rxjs';
 
 import { async } from './../async';
-import { HttpStack } from './../core/http-stack';
-import { PipeInjector } from './../pipes/pipe-injector.interface';
-import { Messager } from './../pipes/messager.interface';
+import { HttpStack } from '../core/services/http-stack';
+import { PipeInjector } from '../core/pipe-injector.interface';
+import { Messager } from '../core/messager.interface';
 import { Job } from './job.interface';
 import { DI, DIService } from './../core/di';
 
@@ -42,8 +42,8 @@ export class HttpJob implements Job {
 		return this;
 	}
 
-	run(result: any) {
-		result = typeof result === 'string' ? result : result.url;
+	run(data: any) {
+		let result = typeof data === 'string' ? data : data.url;
 		let emitError = true;
 		if (this.options && this.options.emitError !== undefined) {
 			emitError = this.options.emitError
@@ -62,10 +62,21 @@ export class HttpJob implements Job {
 			},
 			() => {
 				// console.log('http real');
-				subj.next({
+				const res = {
 					html: html,
 					url: result
-				});
+				}
+				let d = {
+					...res
+				}
+				if (typeof data !== 'string') {
+					d = {
+						...d,
+						...data
+					}
+				}
+
+				subj.next(d);
 				subj.complete();
 			},
 			e => {

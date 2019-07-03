@@ -1,16 +1,16 @@
 import { Observable, combineLatest } from 'rxjs';
 import { tap, mergeMap, map } from 'rxjs/operators';
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './../core/db';
-import { async } from './../async';
+import { MongoDb } from '../../trash/db';
+import { async } from '../../../async';
 
-import { DIService } from './di';
-import { JobRegister } from './../job-register';
-import { PipeType } from './pipe-type.enum';
-import { PipeStatus } from './pipe-status.enum';
-import { Identifier } from './identifier';
-import { PipeInput } from './pipe-input.interface';
-import { ProcessPipeInput } from './process-pipe-input.interface';
+import { DIService } from '../../di';
+import { JobRegister } from '../../../job-register';
+import { PipeType } from '../pipe-type.enum';
+import { PipeStatus } from '../pipe-status.enum';
+import { Identifier } from '../../identifier';
+import { PipeInput } from '../pipe-input.interface';
+import { ProcessPipeInput } from '../process-pipe-input.interface';
 
 export interface Scheme {
 	_id: string,

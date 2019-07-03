@@ -1,8 +1,8 @@
 const cheerio = require('cheerio');
 
 import { async } from './../../async';
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from '../job.interface';
 import { DI } from '../../core/di';
 

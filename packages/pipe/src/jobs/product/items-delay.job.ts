@@ -5,12 +5,12 @@ import * as schedule from 'node-schedule';
 import * as moment from 'moment';
 
 import { async } from './../../async';
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI, DIService } from './../../core/di';
-import { Navigator } from './../../core/navigator';
-import { Manipulator } from './../../core/manipulator';
+import { Navigator } from '../../core/services/navigator';
+import { Manipulator } from '../../core/services/manipulator';
 
 export class ItemsDelayJob implements Job {
 	private options: any;

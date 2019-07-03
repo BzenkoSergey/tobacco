@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './db';
-import { async } from './../async';
+import { MongoDb } from '../trash/db';
+import { async } from '../../async';
 
 export class SchemeProcessService {
 	private db = new MongoDb('scheme-processes', true);

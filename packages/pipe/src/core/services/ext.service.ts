@@ -1,5 +1,5 @@
-import { MongoExtDb } from './db-ext';
-import { async } from './../async';
+import { MongoExtDb } from '../trash/db-ext';
+import { async } from '../../async';
 
 import { tap } from 'rxjs/operators';
 

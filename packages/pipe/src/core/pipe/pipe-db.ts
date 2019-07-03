@@ -1,17 +1,16 @@
 import { Observable, combineLatest, Subject, merge } from 'rxjs';
 import { mergeMap, map } from 'rxjs/operators';
 import { ObjectId } from 'mongodb';
-import  * as cassandra from "cassandra-driver";
 
-import { CassandraDb } from './../core/db-cassandra';
-import { async } from './../async';
-import { DIService } from './di';
+import { DB } from './../db';
+import { async } from '../../async';
+import { DIService } from '../di';
 import { Process } from './pipe-process.interface';
-import { DbService } from './db.service';
+import { DbService } from '../trash/db.service';
 import { PipeMode } from './pipe-mode.enum';
 import { PipeBase } from './pipe-base';
 import { PipeStatus } from './pipe-status.enum';
-import { Queue } from './queue';
+import { Queue } from '../queue';
 
 let cols = 0;
 export abstract class PipeDb extends PipeBase {
@@ -182,9 +181,6 @@ export abstract class PipeDb extends PipeBase {
 				);
 		}
 
-		if (this.jobName === 'DELAY') {
-			console.warn('SAVE OUT', this.jobName, this.processPipeId, this.process.input, output);
-		}
 		return this.getDbProcessesData('saveProcessOutput - updateOne').updateOne(
 			{
 				_id: ObjectId(this.process.output)
@@ -252,17 +248,20 @@ export abstract class PipeDb extends PipeBase {
 			// console.log(this.schemeProcessId);
 			// console.log('========================');
 			this.getDbProcessesPipe('performUpdate')
-				.updateOne(
-					{
-						// _id: ObjectId(this.processPipeId)
-						id: this.processPipeId
-						,
-						// parent: this.parent,
-						// processId: this.processPipeId,
-						schemeId: this.schemeId
-					},
+				.update(
+					this.processPipeId,
 					{
 						$set: this.updateObj
+					},
+					{
+						// _id: ObjectId(this.processPipeId)
+						// id: this.processPipeId
+						// ,
+						// parent: this.parent,
+						// processId: this.processPipeId,
+						query: {
+							schemeId: this.schemeId
+						}
 					}
 				)
 				.subscribe(
@@ -347,7 +346,7 @@ export abstract class PipeDb extends PipeBase {
 		if (!parent) {
 			// this.parent = ObjectId(this.parentPipe.getProcessPipeId());
 			this.parent = this.parentPipe.getProcessPipeId();
-			debugger;
+			// debugger;
 		}
 		const list = this.getPipesToCreate(parent, this);
 		const queue = new Queue();
@@ -386,38 +385,39 @@ export abstract class PipeDb extends PipeBase {
 		}
 		const clone = Object.assign({}, this.getScheme());
 		clone.children = [];
-		const id = cassandra.types.Uuid.random();
+		const id = this.getDbProcessesPipe().createId();
 		if (this.getPath() === '') {
 			this.setSchemeProcessId(id.toString());
 			clone.processId = id.toString();
 
-			console.log('======================')
-			console.log('======================')
-			console.log('======================')
-			console.log(clone.processId, id.toString(), this.label)
-			console.log('======================')
-			console.log('======================')
-			console.log('======================')
-			console.log('======================')
-			console.log('======================')
+			// console.log('======================')
+			// console.log('======================')
+			// console.log('======================')
+			// console.log(clone.processId, id.toString(), this.label)
+			// console.log('======================')
+			// console.log('======================')
+			// console.log('======================')
+			// console.log('======================')
+			// console.log('======================')
 		}
 		// @ts-ignore
 		clone.id = id;
 		this.log('create', this.path, this.process.status);
 		this.isCreating = true;
-		return this.getDbProcessesPipe('insertOne').insertOne(clone)
+
+		return this.getDbProcessesPipe('insertOne').create(id, clone)
 			.pipe(
 				mergeMap(r => {
 					if (this.getPath() === '') {
-					console.log('----------------------')
-					console.log('----------------------')
-					console.log('----------------------')
-					console.log(r.insertedId.toString(), this.label)
-					console.log('----------------------')
-					console.log('----------------------')
-					console.log('----------------------')
-					console.log('----------------------')
-					console.log('----------------------')
+					// console.log('----------------------')
+					// console.log('----------------------')
+					// console.log('----------------------')
+					// console.log(r.insertedId.toString(), this.label)
+					// console.log('----------------------')
+					// console.log('----------------------')
+					// console.log('----------------------')
+					// console.log('----------------------')
+					// console.log('----------------------')
 					}
 					this.processPipeId = r.insertedId.toString();
 					if (this.getPath() === '') {
@@ -465,7 +465,7 @@ export abstract class PipeDb extends PipeBase {
 							mergeMap((id: ObjectId) => {
 								if (this.getPath() === '' || this.process.input || this.process.output) {
 									if (typeof this.schemeProcessId !== 'string') {
-										debugger;
+										// debugger;
 									}
 									const toUpdate: any = {
 										'process.input': this.process.input,
@@ -473,9 +473,9 @@ export abstract class PipeDb extends PipeBase {
 									};
 									if (clone.processId !== this.schemeProcessId) {
 										toUpdate.processId = this.schemeProcessId;
-										console.log('89723876923486712937986413123497--------------------');
-										console.log(clone.processId, this.schemeProcessId);
-										console.log('89723876923486712937986413123497--------------------');
+										// console.log('89723876923486712937986413123497--------------------');
+										// console.log(clone.processId, this.schemeProcessId);
+										// console.log('89723876923486712937986413123497--------------------');
 									}
 									return this.complexUpdate(toUpdate)
 										.pipe(
@@ -500,17 +500,20 @@ export abstract class PipeDb extends PipeBase {
 		// console.log(this.schemeProcessId);
 		// console.log('//////////////////////////////');
 		return this.getDbProcessesPipe('complexUpdate')
-			.updateOne(
-				{
-					// _id: ObjectId(this.processPipeId)
-					id: this.processPipeId
-					,
-					// parent: this.parent,
-					// processId: this.processPipeId,
-					schemeId: this.schemeId
-				},
+			.update(
+				this.processPipeId,
 				{
 					$set: d
+				},
+				{
+					// _id: ObjectId(this.processPipeId)
+					// id: this.processPipeId
+					// ,
+					// parent: this.parent,
+					// processId: this.processPipeId,
+					query: {
+						schemeId: this.schemeId
+					}
 				}
 			);
 	}
@@ -534,7 +537,7 @@ export abstract class PipeDb extends PipeBase {
 			return list;
 		}
 		if (!itemToCreate) {
-			debugger;
+			// debugger;
 		}
 		if (!itemToCreate.getChildren().length) {
 			return list;
@@ -552,7 +555,7 @@ export abstract class PipeDb extends PipeBase {
 		}
 		const parent = this.findParentToCreate(child.parentPipe as PipeDb);
 		if (!parent && child !== this) {
-			debugger;
+			// debugger;
 			return child;
 		}
 		return parent;
@@ -565,7 +568,8 @@ export abstract class PipeDb extends PipeBase {
 			// console.error('cols', 'PIPE', this.path, this.process.status, info, this.processPipeId);
 		}
 
-		return new CassandraDb('');
+		return new DB();
+		// return new CassandraDb('');
 		// return this.di.get<DbService>(this.path, DIService.DB).get('scheme-processes-pipe');
 	}
 
@@ -583,6 +587,7 @@ export abstract class PipeDb extends PipeBase {
 	}
 
 	private canUseDb() {
+		return true;
 		if (this.process.status === PipeStatus.ERROR) {
 			return true;
 		}
@@ -614,8 +619,10 @@ export abstract class PipeDb extends PipeBase {
 		// console.warn('NOT SAVE!!!!!!!!!! UN ALOWW');
 		if (!!~modes.indexOf(PipeMode.DB_NO_SYNC)) {
 			// this.log('NO ALLOW DB - DB_NO_SYNC !!!!');
+			debugger;
 			return false;
 		}
+		debugger;
 		// this.log('NO ALLOW DB !!!!');
 		return false;
 	}

@@ -72,7 +72,21 @@ import { MoveAllJob } from './jobs/wl/move-all.job';
 import { MoveOneMixJob } from './jobs/wl/mix.job';
 import { ChangeProtocolJob } from './jobs/change-protocol.job';
 
+import { ResourceSettingsStructureQueryJob } from './jobs/resource/structure-query.job';
+import { ResourceSettingsJob } from './jobs/resource/settings.job';
+import { ResourceIdentifysJob } from './jobs/resource/identify.job';
+import { RequestJob } from './jobs/request.job';
+import { ResourceFilterPropsJob } from './jobs/resource/item-filter.job';
+import { ResourcePhoneJob } from './jobs/resource/phone.job';
+
+
 export enum JobRegister {
+	REQUEST = 'REQUEST',
+	RESOURCE_FILTER_PROPS = 'RESOURCE_FILTER_PROPS',
+	RESOURCE_PHONE = 'RESOURCE_PHONE',
+	RESOURCE_IDENTIFY = 'RESOURCE_IDENTIFY',
+	RESOURCE_STRUCTURE_QUERY = 'RESOURCE_STRUCTURE_QUERY',
+	RESOURCE_SETTINGS = 'RESOURCE_SETTINGS',
 	WL_ONE_MIX = 'WL_ONE_MIX',
 	CHANGE_PROTOCOL = 'CHANGE_PROTOCOL',
 	MOCK = 'MOCK',
@@ -149,6 +163,12 @@ export enum JobRegister {
 export namespace JobRegister {
 	const map = new Map<JobRegister, JobConstructor>();
 
+	map.set(JobRegister.RESOURCE_PHONE, ResourcePhoneJob)
+	map.set(JobRegister.RESOURCE_FILTER_PROPS, ResourceFilterPropsJob)
+	map.set(JobRegister.REQUEST, RequestJob)
+	map.set(JobRegister.RESOURCE_IDENTIFY, ResourceIdentifysJob)
+	map.set(JobRegister.RESOURCE_STRUCTURE_QUERY, ResourceSettingsStructureQueryJob)
+	map.set(JobRegister.RESOURCE_SETTINGS, ResourceSettingsJob);
 	map.set(JobRegister.MOCK, MockJob);
 	map.set(JobRegister.QUERY, QueryJob);
 	map.set(JobRegister.PHANTOM, PhantomJob);

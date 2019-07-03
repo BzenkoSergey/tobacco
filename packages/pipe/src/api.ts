@@ -8,13 +8,14 @@ import * as url from 'url';
 var cluster = require('express-cluster');
 import { mergeMap } from 'rxjs/operators';
 
-import { SnapshotPipesCreator3 } from './core/snapshot-pipes.creator3';
-import { Pipe } from './core/pipe';
+import { SnapshotPipesCreator3 } from './core/pipe/creator/snapshot-pipes.creator3';
+import { Pipe } from './core/pipe/pipe';
 import { DI } from './core/di';
 
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './core/db';
+import { MongoDb } from './core/trash/db';
 
+import { ProcessesJob } from './processes';
 
 function add (d: any, f: any) {}
 // debugger;
@@ -47,6 +48,13 @@ cluster(function(worker) {
 		res.send(null);
 	});
 
+	app.get('/pp', function (req, res) {
+		const inst = new ProcessesJob();
+		inst.run(req.query).subscribe(d => {
+			res.send(d);
+		})
+	});
+	
 	app.get('/process/:processId/paths/:paths', function (req, res) {
 		const processId = req.params.processId;
 		const paths = req.params.paths.split(',');

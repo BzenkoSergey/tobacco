@@ -20,12 +20,12 @@ class QueryInfo {
 	error: any;
 }
 
-import { DbManager } from './db-manager';
+import { DbManager } from '../db/mongo/db-manager';
 // const bbManager = new DbManager('mongodb://192.168.0.175:27017');
-const bbManager = new DbManager('mongodb://127.0.0.1:27017');
+const bbManager = new DbManager('mongodb://192.168.0.181:27017');
 
 export class MongoExtDb {
-	private url = 'mongodb://127.0.0.1:27017';
+	private url = 'mongodb://192.168.0.181:27017';
 	// private url = 'mongodb://192.168.0.175:27017';
 	private connections: ConnectionInfo[] = [];
 	private queries: QueryInfo[] = [];
@@ -39,8 +39,8 @@ export class MongoExtDb {
 	) {
 		this.isolated = isolated;
 		if (isolated) {
-			// this.manager = new DbManager('mongodb://192.168.0.175:27017');
-			this.manager = new DbManager('mongodb://127.0.0.1:27017');
+			this.manager = new DbManager('mongodb://192.168.0.181:27017');
+			// this.manager = new DbManager('mongodb://127.0.0.1:27017');
 		}
 	}
 

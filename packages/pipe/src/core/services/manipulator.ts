@@ -1,9 +1,9 @@
 import { combineLatest } from 'rxjs';
 import { mergeMap, map } from 'rxjs/operators';
-import { async } from './../async';
+import { async } from '../../async';
 
-import { PipeBase } from './pipe-base';
-import { Pipe } from './pipe';
+import { PipeBase } from '../pipe/pipe-base';
+import { Pipe } from '../pipe/pipe';
 
 export class Manipulator {
 	repeat(parent: PipeBase, child: PipeBase, input: any, isDirectChild = true) {
@@ -106,12 +106,12 @@ export class Manipulator {
 				}),
 				mergeMap(d => {
 					if (d) {
-						console.log('Manipulator: cant reapeat');
+						// console.log('Manipulator: cant reapeat');
 						child.setInput(input);
 						return async(true);
 					}
 
-					console.log('Manipulator: reapeat', child.getPath());
+					// console.log('Manipulator: reapeat', child.getPath());
 					return parent.cloneChild(child.getPath(), input, isDirectChild);
 				})
 			);

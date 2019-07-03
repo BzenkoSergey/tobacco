@@ -1,25 +1,15 @@
 import { Observable, combineLatest } from 'rxjs';
 import { tap, mergeMap, map } from 'rxjs/operators';
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './../core/db';
-import { async } from './../async';
+import { MongoDb } from '../../trash/db';
+import { async } from '../../../async';
 
-import { DIService } from './di';
-import { JobRegister } from './../job-register';
-import { PipeType } from './pipe-type.enum';
-import { PipeStatus } from './pipe-status.enum';
-import { Identifier } from './identifier';
-import { PipeInput } from './pipe-input.interface';
-import { ProcessPipeInput } from './process-pipe-input.interface';
-
-
-/**
- * 
- * {
- * 	_id: string,
- *  children: []
- * }
- */
+import { DIService } from '../../di';
+import { JobRegister } from '../../../job-register';
+import { PipeType } from '../pipe-type.enum';
+import { PipeStatus } from '../pipe-status.enum';
+import { Identifier } from '../../identifier';
+import { PipeInput } from '../pipe-input.interface';
 
 export interface Scheme {
 	_id: string,
@@ -33,7 +23,7 @@ export interface Scheme {
 	children: Scheme[]
 }
 
-export class SnapshotPipesCreator {
+export class SnapshotCreator {
 	private mongoDbProcesses = new MongoDb('scheme-processes', true);
 	private mongoDbProcessesOptions = new MongoDb('scheme-processes-options', true);
 	private mongoDbProcessesPipes = new MongoDb('scheme-processes-pipe', true);
@@ -41,7 +31,6 @@ export class SnapshotPipesCreator {
 	private mongoDbPipes = new MongoDb('pipes', true);
 	private schemeId: string;
 	private schemeCode: string;
-	private processId: string;
 
 	constructor(schemeId: string, schemeCode?: string) {
 		this.schemeId = schemeId;
@@ -55,50 +44,29 @@ export class SnapshotPipesCreator {
 					return this.fetchScheme();
 				}),
 				mergeMap(d => {
-					return this.createScheme({
-						id: null,
-						children: [],
-						createdDate: Date.now().toString()
-					})
-					.pipe(
-						map(processId => {
-							this.processId = processId;
-							return <[Scheme, string]>[d, processId];
-						})
-					);
-				}),
-				mergeMap(d => {
-					const scheme = d[0];
-					const processId = d[1];
-					this.schemeId = scheme._id.toString();
-					if (scheme.id) {
-						return this.fetchPipe(scheme.id)
+					this.schemeId = d._id.toString();
+					if (d.id) {
+						return this.fetchPipe(d.id)
 							.pipe(
 								mergeMap(pipe => {
-									return this.createSchemeInput(scheme, pipe, processId)
-										.pipe(
-											map(r => {
-												return <[ProcessPipeInput, string]>[r, processId];
-											})
-										);
+									return this.createSchemeInput(d, pipe);
 								})
 							);
 					}
-					return this.createSchemeInput(scheme, null, processId)
-						.pipe(
-							map(r => {
-								return <[ProcessPipeInput, string]>[r, processId];
-							})
-						);
+					return this.createSchemeInput(d);
 				}),
 				mergeMap(d => {
-					const processInput = d[0];
-					const processId = d[1];
-					processInput.entityId = this.schemeId;
-					processInput._id = processId;
-					return this.saveScheme(processInput)
+					return this.createScheme(d)
 						.pipe(
-							map(() => processInput)
+							tap(r => {
+								d.id = r.insertedId.toString();
+							}),
+							mergeMap(() => {
+								return this.saveScheme(d);
+							}),
+							map(() => {
+								return d;
+							})
 						);
 				})
 			);
@@ -116,10 +84,9 @@ export class SnapshotPipesCreator {
 			);
 	}
 
-	private createSchemeInput(scheme: Scheme, pipe?: Scheme, processId?: string): Observable<ProcessPipeInput> {
+	private createSchemeInput(scheme: Scheme, pipe?: Scheme): Observable<PipeInput> {
 		const input: PipeInput = {
-			// id: scheme.id,
-			processId: processId,
+			id: scheme.id,
 			schemeId: this.schemeId,
 			entityId: scheme._id.toString(),
 			options: null,
@@ -157,32 +124,22 @@ export class SnapshotPipesCreator {
 				}),
 				mergeMap(input => {
 					if (!scheme.children.length) {
-						return async<[PipeInput, ProcessPipeInput[]]>([input, []]);
+						return async(input);
 					}
 					return this.createPipeInputs(scheme.children, '')
 						.pipe(
-							map(children => {
-								// input.children = children;
-								return <[PipeInput, ProcessPipeInput[]]>[input, children];
+							tap(children => {
+								input.children = children;
+							}),
+							map(() => {
+								return input;
 							})
-							// ,
-							// map(() => {
-							// 	return input;
-							// })
 						);
 				}),
-				mergeMap(data => {
-					const input = data[0];
-					const childrenInputs = data[1];
+				mergeMap(input => {
 					return this.mongoDbProcessesPipes.insertOne(input)
 						.pipe(
-							map(r => {
-								return {
-									id: r.insertedId.toString(),
-									children: childrenInputs,
-									createdDate: Date.now().toString()
-								};
-							})
+							map(() => input)
 						);
 				})
 			);
@@ -193,8 +150,8 @@ export class SnapshotPipesCreator {
 		return combineLatest(...obs);
 	}
 
-	private createPipeInput(child: Scheme, parentPath: string, order: number): Observable<ProcessPipeInput> {
-		return async<ProcessPipeInput>()
+	private createPipeInput(child: Scheme, parentPath: string, order: number): Observable<PipeInput> {
+		return async()
 			.pipe(
 				mergeMap(() => {
 					return this.fetchPipe(child.id);
@@ -224,7 +181,6 @@ export class SnapshotPipesCreator {
 						id: Identifier.generate(),
 						entityId: pipe._id.toString(),
 						schemeId: this.schemeId,
-						processId: this.processId,
 						options: optionsId,
 						input: child.input,
 						type: child.type,
@@ -246,58 +202,38 @@ export class SnapshotPipesCreator {
 				}),
 				mergeMap(input => {
 					if (!child.children.length) {
-						return async<[PipeInput, ProcessPipeInput[]]>([input, []]);
+						return async(input);
 					}
 					return this.createPipeInputs(child.children, input.path + '.')
 						.pipe(
-							map(childrenInputs => {
-								return <[PipeInput, ProcessPipeInput[]]>[input, childrenInputs];
+							tap(childrenInputs => {
+								input.children = childrenInputs;
+							}),
+							map(() => {
+								return input;
 							})
 						);
 				}),
-				mergeMap(data => {
-					const input = data[0];
-					const childrenInputs = data[1];
-
+				mergeMap(input => {
 					return this.mongoDbProcessesPipes.insertOne(input)
 						.pipe(
-							map(r => {
-								return {
-									id: r.insertedId.toString(),
-									children: childrenInputs,
-									entityId: input.entityId,
-									createdDate: Date.now().toString()
-								}
-							})
+							map(() => input)
 						);
 				})
 			);
 	}
 
-	createScheme(scheme: ProcessPipeInput): Observable<string> {
-		return this.mongoDbProcesses.insertOne(scheme)
-			.pipe(
-				map(d => {
-					return d.insertedId.toString();
-				})
-			);
+	createScheme(scheme: PipeInput) {
+		return this.mongoDbProcesses.insertOne(scheme);
 	}
 
-	saveScheme(scheme: ProcessPipeInput) {
+	saveScheme(scheme: PipeInput) {
 		const update = {
-			$set: {}
+			$set: scheme
 		};
-		Object.keys(scheme)
-			.forEach(prop => {
-				if (prop === '_id') {
-					return;
-				}
-				update.$set[prop] = scheme[prop];
-			});
-
 		return this.mongoDbProcesses.updateOne(
 			{
-				_id: ObjectId(scheme._id)
+				_id: ObjectId(scheme.id)
 			},
 			update
 		);

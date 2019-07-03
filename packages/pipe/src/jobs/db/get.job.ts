@@ -1,8 +1,8 @@
 import { ObjectId } from 'mongodb';
-import { MongoDb } from './../../core/db';
+import { MongoDb } from './../../core/trash/db';
 
-import { PipeInjector } from './../../pipes/pipe-injector.interface';
-import { Messager } from './../../pipes/messager.interface';
+import { PipeInjector } from '../../core/pipe-injector.interface';
+import { Messager } from '../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI } from './../../core/di';
 

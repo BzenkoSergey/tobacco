@@ -1,9 +1,9 @@
 import { Subject, from } from 'rxjs';
 
 import { async } from './../async';
-import { HttpStack } from './../core/http-stack';
-import { PipeInjector } from './../pipes/pipe-injector.interface';
-import { Messager } from './../pipes/messager.interface';
+import { HttpStack } from '../core/services/http-stack';
+import { PipeInjector } from './../core/pipe-injector.interface';
+import { Messager } from './../core/messager.interface';
 import { Job } from './job.interface';
 import { DI, DIService } from './../core/di';
 

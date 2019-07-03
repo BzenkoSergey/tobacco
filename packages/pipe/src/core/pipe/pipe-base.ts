@@ -2,14 +2,14 @@ import { throwError, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { ObjectId } from 'mongodb';
 
-import { async } from './../async';
-import { DI, DIService } from './di';
+import { async } from '../../async';
+import { DI, DIService } from '../di';
 import { PipeType } from './pipe-type.enum';
 import { PipeStatus } from './pipe-status.enum';
 
-import { JobRegister } from './../job-register';
-import { JobConstructor, Job } from './../jobs/job.interface';
-import { Navigator } from './navigator';
+import { JobRegister } from '../../job-register';
+import { JobConstructor, Job } from '../../jobs/job.interface';
+import { Navigator } from '../services/navigator';
 import { PipeInput } from './pipe-input.interface';
 import { Process } from './pipe-process.interface';
 import { PipeMode } from './pipe-mode.enum';
