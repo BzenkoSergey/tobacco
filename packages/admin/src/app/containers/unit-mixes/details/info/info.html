@@ -6,22 +6,46 @@
 		<div class="col-5">
 			<div class="form-group">
 				<label for="readableName">Readable Name</label>
-				<input
-					id="readableName"
-					class="form-control"
-					placeholder="Readable Name"
-					name="readableName"
-					required
-					[(ngModel)]="item.readableName">
+
+				<div class="input-group mb-3">
+					<input
+						id="readableName"
+						class="form-control"
+						placeholder="Readable Name"
+						name="readableName"
+						required
+						[(ngModel)]="item.readableName">
+
+					<div class="input-group-append">
+						<button
+							class="btn btn-outline-secondary"
+							type="button"
+							(click)="genReadableName()">
+							R
+						</button>
+					</div>
+				</div>
 			</div>
+
 			<div class="form-group">
 				<label for="name">Name</label>
-				<input
-					id="name"
-					class="form-control"
-					placeholder="Name"
-					name="name"
-					[(ngModel)]="item.name">
+				<div class="input-group mb-3">
+					<input
+						id="name"
+						class="form-control"
+						placeholder="Name"
+						name="name"
+						[(ngModel)]="item.name">
+
+					<div class="input-group-append">
+						<button
+							class="btn btn-outline-secondary"
+							type="button"
+							(click)="genName()">
+							R
+						</button>
+					</div>
+				</div>
 			</div>
 
 			<div class="form-group">
@@ -184,6 +208,7 @@
 						<input
 							class="form-control form-control-sm"
 							name="color"
+							type="color"
 							[disabled]="!recipe.unit"
 							[ngModelOptions]="{standalone: true}"
 							[(ngModel)]="recipe.color">

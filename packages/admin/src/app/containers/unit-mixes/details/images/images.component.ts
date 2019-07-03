@@ -126,7 +126,8 @@ export class DetailsImagesComponent implements OnDestroy {
 			return {
 				label: unit ? unit.name : '',
 				sublabel: company ? (company.name + ' ' + (line ? line.name : '')) : '',
-				value: r.percentage
+				value: r.percentage,
+				color: r.color
 			};
 		});
 	}

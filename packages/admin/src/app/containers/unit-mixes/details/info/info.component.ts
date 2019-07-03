@@ -53,6 +53,66 @@ export class DetailsInfoComponent implements OnDestroy {
 		});
 	}
 
+	genName() {
+		const units = [];
+		this.item.recipes.forEach(r => {
+			units.push(this.units.find(u => u._id === r.unit));
+		});
+		let name = '';
+		units.forEach((u, i) => {
+			if (i) {
+				name += ' ';
+			}
+			name += u.translate;
+		});
+
+		this.item.name = name;
+	}
+
+	genReadableName() {
+		const units = [];
+		const companies = [];
+		this.item.recipes.forEach(r => {
+			if (!~companies.indexOf(r.company)) {
+				companies.push(r.company);
+			}
+			units.push(this.units.find(u => u._id === r.unit));
+		});
+		let name = '';
+		if (companies.length === 1) {
+			name = companies[0] + '_';
+		}
+		units.forEach((u, i) => {
+			if (i) {
+				name += '_';
+			}
+			name += this.makeAll(u, companies.length !== 1);
+		});
+
+		this.item.readableName = name;
+	}
+
+	makeAll(item: any, no = true) {
+		const company = this.companies.find(c => c._id === item.company);
+		const productLine = this.lines.find(pl => pl._id === item.productLine);
+
+		let fileName = '';
+		if (company && no) {
+			fileName += this.makeR(company.name);
+		}
+		if (productLine) {
+			fileName += (fileName ? '_' : '') + this.makeR(productLine.name);
+		}
+		fileName +=  (fileName ? '_' : '') + this.makeR(item.name);
+		return fileName;
+	}
+
+	makeR(str: string) {
+		return str.toLowerCase()
+			.replace(/ /g, '_')
+			.replace(/[^\w-]+/g, '');
+	}
+
 	aggregate() {
 		this.pipesService.runSchemeOptions<any, any>(
 			'MOVE_MIX',

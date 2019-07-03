@@ -80,6 +80,11 @@ export class UnitsDetailsReviewsComponent implements OnDestroy {
 	save() {
 		this.loading = true;
 		this.item.reviews = this.reviews.length;
+		let rating = 0;
+		this.reviews.forEach(i => {
+			rating = rating + (+i.rating);
+		});
+		this.item.reviewsRating = rating / this.reviews.length;
 		this.service.update(this.itemId, this.item)
 			.subscribe(
 				() => this.loading = false,

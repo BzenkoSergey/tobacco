@@ -15,6 +15,7 @@ export class UnitDto {
 	visible = false;
 	seo = new UnitSeoDto();
 	reviews: number;
+	reviewsRating: number;
 	description: string;
 
 	constructor(d?: UnitDto) {
@@ -33,6 +34,7 @@ export class UnitDto {
 		this.visible = d.visible;
 		this.seo = new UnitSeoDto(d.seo);
 		this.reviews = d.reviews;
+		this.reviewsRating = d.reviewsRating;
 
 		if (d.mappingKeys) {
 			this.mappingKeys = d.mappingKeys.map(m => new MappingKeyDto(m));
