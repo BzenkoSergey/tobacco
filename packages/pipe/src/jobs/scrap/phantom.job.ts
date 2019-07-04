@@ -494,6 +494,8 @@ export class PhantomJob implements Job {
 						// console.warn('=======================================');
 						html = await page.content();
 						console.warn('page.content', Date.now() - d1);
+
+						page.removeAllListeners(['request', 'response']);
 						await page.close();
 						console.warn('page.close', Date.now() - d1);
 						await browserContext.close();
@@ -519,6 +521,9 @@ export class PhantomJob implements Job {
 					}
 
 					html = await page.content();
+
+					page.removeAllListeners(['request', 'response']);
+					await page.close();
 					await browserContext.close();
 					await browser.close();
 					const res = {
@@ -550,6 +555,7 @@ export class PhantomJob implements Job {
 					console.error('////////////////////////////////');
 					console.error('////////////////////////////////');
 					if (page) {
+						page.removeAllListeners(['request', 'response']);
 						await page.close();
 					}
 					if (browserContext) {
