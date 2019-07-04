@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer-extra');
 var ProxyLists = require('proxy-lists');
 const pluginStealth = require("puppeteer-extra-plugin-stealth");
 const pluginAnonymizeUa = require('puppeteer-extra-plugin-anonymize-ua');
+const UserAgent = require('user-agents');
 
 import { PipeInjector } from './../../core/pipe-injector.interface';
 import { Messager } from './../../core/messager.interface';
@@ -305,8 +306,10 @@ export class PhantomJob implements Job {
 		}
 		store.set('userAgent', ag);
 		
-		console.warn(this.users[ag]);
-		puppeteer.use(pluginStealth());
+
+		const f = pluginStealth();
+		f.enabledEvasions.delete("chrome.runtime")
+		puppeteer.use(f);
 		puppeteer.use(pluginAnonymizeUa());
 		puppeteer
 			.launch({
@@ -323,8 +326,8 @@ export class PhantomJob implements Job {
 					'--disk-cache-size=0',
 					'--disable-webgl'
 				]
-				,
-				executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+				// ,
+				// executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 			})
 			.then(async browser => {
 				if (this.options.clickBefore) {
@@ -356,7 +359,7 @@ export class PhantomJob implements Job {
 
 					await page.emulate({
 						name: 'Desktop 1920x1080',
-						userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' || this.users[ag],
+						userAgent: new UserAgent(/Chrome/).toString() || 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36' || this.users[ag],
 						viewport: {
 							width: 1220,
 							height: 1080
@@ -379,7 +382,7 @@ export class PhantomJob implements Job {
 							'googletagservices.com',
 							'bidder.criteo.com',
 							'google.com',
-							'pixel',
+							// 'pixel',
 							'.css',
 							'prebid-eu.creativecdn.com',
 							'static.criteo.net',
@@ -389,10 +392,14 @@ export class PhantomJob implements Job {
 							'ib.adnxs.com',
 							'prg.smartadserver.com',
 							'inv-nets.admixer.net',
-							'www.olx.ua/akam',
+							// 'www.olx.ua/akam',
 							'secure.adnxs.com',
 							'acdn.adnxs.com'
 						];
+						if (resourceUrl.includes('pixel_')) {
+							console.log(request);
+							debugger;
+						}
 						if (ignore.some(i => resourceUrl.includes(i))) {
 							request.abort();
 							return;
@@ -427,6 +434,132 @@ export class PhantomJob implements Job {
 					if (this.options.clickBefore) {
 						console.warn('before page.goto', Date.now() - d1);
 					}
+
+					await page.evaluateOnNewDocument(() => {
+						// @ts-ignore
+						window.chrome = {
+							app: {
+								"isInstalled":false,
+								InstallState: {DISABLED: "disabled", INSTALLED: "installed", NOT_INSTALLED: "not_installed"},
+								RunningState: {CANNOT_RUN: "cannot_run", READY_TO_RUN: "ready_to_run", RUNNING: "running"}
+							},
+							csi: () => {},
+							loadTimes: () => {},
+							runtime: {
+								OnInstalledReason: {
+									INSTALL: 'install',
+									UPDATE: 'update',
+									CHROME_UPDATE: 'chrome_update',
+									SHARED_MODULE_UPDATE: 'shared_module_update'
+								},
+								OnRestartRequiredReason: {
+									APP_UPDATE: 'app_update',
+									OS_UPDATE: 'os_update',
+									PERIODIC: 'periodic'
+								},
+								PlatformArch: {
+									ARM: 'arm',
+									X86_32: 'x86-32',
+									X86_64: 'x86-64'
+								},
+								PlatformNaclArch: {
+									ARM: 'arm',
+									X86_32: 'x86-32',
+									X86_64: 'x86-64'
+								},
+								PlatformOs: {
+									MAC: 'mac',
+									WIN: 'win',
+									ANDROID: 'android',
+									CROS: 'cros',
+									LINUX: 'linux',
+									OPENBSD: 'openbsd'
+								},
+								RequestUpdateCheckStatus: {
+									THROTTLED: 'throttled',
+									NO_UPDATE: 'no_update',
+									UPDATE_AVAILABLE: 'update_available'
+								},
+								connect: () => {},
+								id: undefined,
+								sendMessage: () => {}
+							}
+						};
+						// @ts-ignore
+						window.navigator.chrome = {
+							// @ts-ignore
+							runtime: {
+								OnInstalledReason: {
+									INSTALL: 'install',
+									UPDATE: 'update',
+									CHROME_UPDATE: 'chrome_update',
+									SHARED_MODULE_UPDATE: 'shared_module_update'
+								},
+								OnRestartRequiredReason: {
+									APP_UPDATE: 'app_update',
+									OS_UPDATE: 'os_update',
+									PERIODIC: 'periodic'
+								},
+								PlatformArch: {
+									ARM: 'arm',
+									X86_32: 'x86-32',
+									X86_64: 'x86-64'
+								},
+								PlatformNaclArch: {
+									ARM: 'arm',
+									X86_32: 'x86-32',
+									X86_64: 'x86-64'
+								},
+								PlatformOs: {
+									MAC: 'mac',
+									WIN: 'win',
+									ANDROID: 'android',
+									CROS: 'cros',
+									LINUX: 'linux',
+									OPENBSD: 'openbsd'
+								},
+								RequestUpdateCheckStatus: {
+									THROTTLED: 'throttled',
+									NO_UPDATE: 'no_update',
+									UPDATE_AVAILABLE: 'update_available'
+								},
+								connect: () => {},
+								id: undefined,
+								sendMessage: () => {}
+							}
+							// etc.
+						};
+
+						Object.defineProperty(navigator, "languages", {
+							get: function() {
+								return ["en-US", "en"];
+							}
+						});
+						
+						Object.defineProperty(navigator, 'plugins', {
+							get: function() {
+								return [
+									"Chrome PDF Plugin",
+									"Chrome PDF Viewer",
+									"Native Client"
+								];
+							}
+						});
+						Object.defineProperty(navigator, 'webdriver', { get: () => false });
+						// @ts-ignore
+						navigator.maxTouchPoints = 0;
+
+						// @ts-ignore
+						const originalQuery = window.navigator.permissions.query;
+						// @ts-ignore
+						window.navigator.permissions.query = (parameters) => {
+							if (parameters.name === 'notifications') {
+								// @ts-ignore
+								return Promise.resolve({ state: Notification.permission })
+							}
+							return originalQuery(parameters);
+						};
+					});
 					await page.goto(uri, { waitUntil: 'domcontentloaded', timeout: 0 });
 					if (this.options.clickBefore) {
 						console.warn('page.goto', Date.now() - d1);
@@ -436,6 +569,12 @@ export class PhantomJob implements Job {
 						// sessionStorage.clear();
 					// });
 					// await page._client.send("Network.clearBrowserCookies");
+
+					const f4 = await page.evaluate(() => {
+						// @ts-ignore
+						return JSON.stringify(window.chrome);
+					});
+					debugger;
 					const cookies = await page.cookies();
 					if (this.options.clickBefore) {
 						console.error('===========cookies');
