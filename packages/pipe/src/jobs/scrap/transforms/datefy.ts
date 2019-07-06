@@ -50,7 +50,16 @@ const months = [
 ];
 
 export function datefy(value: string) {
-	const time = value.match(/[0-9]{2}:[0-9]{2}/ig)[0];
+	if (value.match(/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/)) {
+		return new Date(value).getTime();
+	}
+	const r = value.match(/[0-9]{2}:[0-9]{2}/ig);
+	const d = new Date();
+	let hours = d.getHours() + '';
+	let minutes = d.getMinutes() + '';
+	hours = hours.length === 1 ? '0' + hours : hours;
+	minutes = minutes.length === 1 ? '0' + minutes : minutes;
+	const time = r ? r[0] : hours + ':' + minutes;
 	value = value.replace(/[0-9]{2}:[0-9]{2}/ig, '');
 
 	const today = !!~value.indexOf('Сегодня');
@@ -72,20 +81,31 @@ export function datefy(value: string) {
 		}
 	}
 	if (!today && !yesterday) {
-		year = value.match(/[0-9]{4}/ig)[0];
+		const yearRes = value.match(/[0-9]{4}/ig);
+		year = yearRes ? yearRes[0] : null;
+		if (!year) {
+			const d = new Date();
+			year = d.getFullYear().toString();
+		}
 		value = value.replace(/[0-9]{4}/ig, '');
 	
-		day = value.match(/[0-9]{1,}/ig)[0];
+		const dayRes = value.match(/[0-9]{1,}/ig);
+		day = dayRes ? dayRes[0] : null;
 		value = value.replace(/[0-9]{4}/ig, '');
-	
-		month = months.find(m => !!~value.indexOf(m.v)).k.toString();
+		value = value.replace(/[0-9]{2}/ig, '');
+
+		const mRes = months.find(m => !!~value.indexOf(m.v));
+		month = mRes ? mRes.toString() : null;
 	}
 
-	if (month.length === 1) {
+	if (month && month.length === 1) {
 		month = '0' + month;
 	}
-	if (day.length === 1) {
+	if (day && day.length === 1) {
 		day = '0' + day;
+	}
+	if (!year || !month || !day) {
+		return null;
 	}
 
 	const date = year + '-' + month + '-' + day + 'T' + time + ':00';

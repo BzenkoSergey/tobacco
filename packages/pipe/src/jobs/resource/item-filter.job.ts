@@ -53,12 +53,15 @@ export class ResourceFilterPropsJob implements Job {
 		dom.data.price = dom.price;
 		const stop = this.options.some(s => {
 			const v = d[s.prop] || '';
+			if (!s.reg) {
+				return Array.isArray(v) ? !v.length : !v;
+			}
 			if (Array.isArray(v)) {
 				const status = v.some(value => {
 					const r = value.match(new RegExp(s.reg));
 					return r && r.length;
 				});
-				return status;
+				return !v.length && status;
 			}
 			const r = v.match(new RegExp(s.reg));
 			return r && r.length;

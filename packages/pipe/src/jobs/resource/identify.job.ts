@@ -30,6 +30,9 @@ export class ResourceIdentifysJob implements Job {
 
 		const obs = d.data
 			.filter(i => {
+				if (!i.date) {
+					return true;
+				}
 				return i.date >= resourceMinDate;
 			})
 			.map(i => {
