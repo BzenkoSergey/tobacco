@@ -173,6 +173,12 @@ export class PhantomJob implements Job {
 				let browserContext: any;
 				let page: any;
 				let html: any;
+
+				process.on('exit', (e) => {
+					this.closeAll(page, browserContext, browser);
+					subj.error(e);
+				});
+
 				try {
 					browserContext = await browser.createIncognitoBrowserContext();
 					page = await browserContext.newPage();
@@ -206,8 +212,12 @@ export class PhantomJob implements Job {
 						// @ts-ignore
 						return JSON.stringify(window.__INITIAL_STATE__);
 					});
+					if (this.options.addDelay) {
+						await this.timeout(this.options.addDelay);
+					}
 					html = await page.content();
 					html = html.replace('</body>', '<script id="parseSc">'+ initState +'<script></body>');
+					debugger;
 					await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
 				} catch(e) {
 					this.printError(e, uri, proxy, html);
@@ -215,7 +225,9 @@ export class PhantomJob implements Job {
 					this.run(data, subj);
 				}
 			})
-			.catch(e => subj.error(e));
+			.catch(e => {
+				subj.error(e);
+			});
 
 		return subj;
 	}
