@@ -95,7 +95,7 @@ export function datefy(value: string) {
 		value = value.replace(/[0-9]{2}/ig, '');
 
 		const mRes = months.find(m => !!~value.indexOf(m.v));
-		month = mRes ? mRes.toString() : null;
+		month = mRes ? mRes.k.toString() : null;
 	}
 
 	if (month && month.length === 1) {
@@ -107,6 +107,7 @@ export function datefy(value: string) {
 	if (!year || !month || !day) {
 		return null;
 	}
+
 
 	const date = year + '-' + month + '-' + day + 'T' + time + ':00';
 	return new Date(date).getTime();
