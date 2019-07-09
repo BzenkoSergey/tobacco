@@ -55,7 +55,7 @@
 		"s": "node --max_old_space_size=6096 --max-old-space-size=6096 --inspect -r ts-node/register src/api.ts",
 		"s2": "node --max_old_space_size=6096 --max-old-space-size=6096 --inspect=127.0.0.1:9429 -r ts-node/register src/api.ts",
 		"build": "tsc",
-		"serve": "node --inspect dist/api.js",
+		"serve": "node dist/api.js",
 		"run": "npm run build && npm run serve"
 	}
 }
