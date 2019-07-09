@@ -1,10 +1,10 @@
-export interface RecoveryOptions {
-	pipeLineId?: string,
-	pipeLineProcessId?: string,
+// export interface RecoveryOptions {
+// 	pipeLineId?: string,
+// 	pipeLineProcessId?: string,
 
-	pipeGroupId?: string,
-	pipeGroupProcessId?: string,
+// 	pipeGroupId?: string,
+// 	pipeGroupProcessId?: string,
 
-	pipeId?: string,
-	pipeProcessId?: string
-}
+// 	pipeId?: string,
+// 	pipeProcessId?: string
+// }

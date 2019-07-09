@@ -174,10 +174,11 @@ export class PhantomJob implements Job {
 				let page: any;
 				let html: any;
 
-				process.on('exit', (e) => {
+				const handler = (e) => {
 					this.closeAll(page, browserContext, browser);
 					subj.error(e);
-				});
+				};
+				const event = process.on('exit', handler);
 
 				try {
 					browserContext = await browser.createIncognitoBrowserContext();
@@ -203,6 +204,7 @@ export class PhantomJob implements Job {
 							});
 							await this.timeout(5000);
 						} catch (e) {
+							event.removeListener('exit', handler);
 							await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
 							return;
 						}
@@ -217,10 +219,12 @@ export class PhantomJob implements Job {
 					}
 					html = await page.content();
 					html = html.replace('</body>', '<script id="parseSc">'+ initState +'<script></body>');
-					debugger;
+					
+					event.removeListener('exit', handler);
 					await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
 				} catch(e) {
 					this.printError(e, uri, proxy, html);
+					event.removeListener('exit', handler);
 					await this.closeAll(page, browserContext, browser);
 					this.run(data, subj);
 				}
@@ -279,13 +283,17 @@ export class PhantomJob implements Job {
 				`--proxy-server=${proxy}`,
 				'--incognito',
 				'--disk-cache-size=0',
+				'--media-cache-size=0',
 				'--disable-webgl',
 				'--ignore-certifcate-errors',
 				'--ignore-certifcate-errors-spki-list',
+				'--js-flags=--expose-gc'
 			] : [
 				'--incognito',
 				'--disk-cache-size=0',
-				'--disable-webgl'
+				'--media-cache-size=0',
+				'--disable-webgl',
+				'--js-flags=--expose-gc'
 			]
 			// ,
 			// executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"

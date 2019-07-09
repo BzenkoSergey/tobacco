@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { PipeInjector } from './../pipes/pipe-injector.interface';
-import { Messager } from './../pipes/messager.interface';
+import { PipeInjector } from './../core/pipe-injector.interface';
+import { Messager } from './../core/messager.interface';	
 import { DI } from './../core/di';
 
 export interface JobConstructor {

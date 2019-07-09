@@ -321,11 +321,18 @@ export class Pipe extends PipeDb {
 		});
 	}
 
+	private canOutput() {
+		const modes = this.getModes();
+		return !~modes.indexOf(PipeMode.AVOID_OUTPUT);
+	}
+
 	private addToStream(obs: Observable<any>) {
 		this.streams.push(obs);
 		const sub = obs.subscribe(
 			d => {
-				this.childrenOutputs.push(d);
+				if (this.canOutput()) {
+					this.childrenOutputs.push(d);
+				}
 			},
 			e => {
 				this.stream.error(e);

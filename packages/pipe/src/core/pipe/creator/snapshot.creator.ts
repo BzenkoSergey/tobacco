@@ -59,6 +59,7 @@ export class SnapshotCreator {
 					return this.createScheme(d)
 						.pipe(
 							tap(r => {
+								// @ts-ignore
 								d.id = r.insertedId.toString();
 							}),
 							mergeMap(() => {
@@ -86,6 +87,7 @@ export class SnapshotCreator {
 
 	private createSchemeInput(scheme: Scheme, pipe?: Scheme): Observable<PipeInput> {
 		const input: PipeInput = {
+			// @ts-ignore
 			id: scheme.id,
 			schemeId: this.schemeId,
 			entityId: scheme._id.toString(),
@@ -233,6 +235,7 @@ export class SnapshotCreator {
 		};
 		return this.mongoDbProcesses.updateOne(
 			{
+				// @ts-ignore
 				_id: ObjectId(scheme.id)
 			},
 			update

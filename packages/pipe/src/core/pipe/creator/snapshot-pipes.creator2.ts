@@ -75,6 +75,7 @@ export class SnapshotPipesCreator2 {
 
 	private createSchemeInput(scheme: Scheme, pipe?: Scheme, processId?: string, parent?: string): Observable<ProcessPipeInput> {
 		const input: PipeInput = {
+			// @ts-ignore
 			id: scheme.id,
 			processId: processId,
 			schemeId: this.schemeId,
