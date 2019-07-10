@@ -4,6 +4,8 @@ const pluginStealth = require("puppeteer-extra-plugin-stealth");
 const pluginAnonymizeUa = require('puppeteer-extra-plugin-anonymize-ua');
 const UserAgent = require('user-agents');
 
+import * as cluster from 'cluster';
+
 import { PipeInjector } from './../../core/pipe-injector.interface';
 import { Messager } from './../../core/messager.interface';
 import { Job } from './../job.interface';
@@ -178,7 +180,8 @@ export class PhantomJob implements Job {
 					this.closeAll(page, browserContext, browser);
 					subj.error(e);
 				};
-				const event = process.on('exit', handler);
+
+				const event = cluster.worker.process.on('exit', handler);
 
 				try {
 					browserContext = await browser.createIncognitoBrowserContext();
