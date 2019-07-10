@@ -1,0 +1,10 @@
+{
+	"port": 4220,
+	"files": ["./src/**/*.{html,htm,css,js}"],
+	"server": { "baseDir": "./dist/admin" },
+	"codeSync": false,
+	"notify": false,
+	"watch": false,
+	"reloadOnRestart": false,
+	"host": "0.0.0.0"
+}
