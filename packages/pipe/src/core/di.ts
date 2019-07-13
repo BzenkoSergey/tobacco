@@ -6,6 +6,7 @@ import { ExtService } from './services/ext.service';
 import { SchemeProcessService } from './services/scheme-process.service';
 import { DbService } from './trash/db.service';
 import { Session } from './services/session.service';
+import { ProxyService } from './services/proxy.service';
 
 export enum DIService {
 	HTTP_STACK = 'HTTP_STACK',
@@ -15,7 +16,8 @@ export enum DIService {
 	EXT = 'EXT',
 	SCHEME_PROCESS = 'SCHEME_PROCESS',
 	DB = 'DB',
-	SESSION = 'SESSION'
+	SESSION = 'SESSION',
+	PROXY = 'PROXY'
 }
 
 export class DI {
@@ -33,6 +35,7 @@ export class DI {
 		this.services.set(DIService.SCHEME_PROCESS, SchemeProcessService);
 		this.services.set(DIService.DB, DbService);
 		this.services.set(DIService.SESSION, Session);
+		this.services.set(DIService.PROXY, ProxyService);
 	}
 
 	registrate(path: string, service: DIService) {

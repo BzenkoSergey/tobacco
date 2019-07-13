@@ -1,18 +1,17 @@
-import { Subject, from, merge, of } from 'rxjs';
+import { Subject, Observable, from, merge, of } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+
 const puppeteer = require('puppeteer-extra');
 const pluginStealth = require("puppeteer-extra-plugin-stealth");
 const pluginAnonymizeUa = require('puppeteer-extra-plugin-anonymize-ua');
 const UserAgent = require('user-agents');
-
-import * as cluster from 'cluster';
 
 import { PipeInjector } from './../../core/pipe-injector.interface';
 import { Messager } from './../../core/messager.interface';
 import { Job } from './../job.interface';
 import { DI, DIService } from './../../core/di';
 import { Store } from '../../core/services/store';
-
-import { proxies } from './proxy';
+import { ProxyService, Proxy } from '../../core/services/proxy.service';
 
 const pluginStealthInst = pluginStealth();
 pluginStealthInst.enabledEvasions.delete("chrome.runtime");
@@ -24,6 +23,7 @@ export class PhantomJob implements Job {
 	private messager: Messager;
 	private di: DI;
 	private pipePath: string;
+	private proxy: Proxy = null;
 
 	private fake = () => {
 		// @ts-ignore
@@ -167,74 +167,71 @@ export class PhantomJob implements Job {
 		const url = typeof data === 'string' ? data : (data.url || data.target);
 		let uri = this.handleUrl(url);
 
-		const proxy = this.getProxy();
+		this.getProxy()
+			.subscribe(
+				proxy => {
+					puppeteer
+						.launch(this.getLaunchOptions(proxy))
+						.then(async browser => {
+							let browserContext: any;
+							let page: any;
+							let html: any;
 
-		puppeteer
-			.launch(this.getLaunchOptions(proxy))
-			.then(async browser => {
-				let browserContext: any;
-				let page: any;
-				let html: any;
+							try {
+								browserContext = await browser.createIncognitoBrowserContext();
+								page = await browserContext.newPage();
+								await this.handlePage(page);
 
-				// const handler = (e) => {
-				// 	this.closeAll(page, browserContext, browser);
-				// 	subj.error(e);
-				// };
+								console.warn(uri);
+								await page.goto(uri, {
+									waitUntil: this.options.waitUntil || (this.options.loadFull ? 'networkidle2' : 'domcontentloaded'),
+									timeout: 8000
+								});
 
-				// const event = cluster.worker.process.on('exit', handler);
+								if (this.options.clickBefore) {
+									await this.timeout(2000);
 
-				try {
-					browserContext = await browser.createIncognitoBrowserContext();
-					page = await browserContext.newPage();
-					await this.handlePage(page);
-
-					console.warn(uri);
-
-					await page.goto(uri, {
-						waitUntil: this.options.waitUntil || (this.options.loadFull ? 'networkidle2' : 'domcontentloaded'),
-						timeout: 0
-					});
-
-					if (this.options.clickBefore) {
-						await this.timeout(2000);
-
-						try {
-							await page.$eval(this.options.clickBefore[0], e => {
-								if (!e) {
-									return;
+									try {
+										await page.$eval(this.options.clickBefore[0], e => {
+											if (!e) {
+												return;
+											}
+											e.click();
+										});
+										await this.timeout(5000);
+									} catch (e) {
+										// event.removeListener('exit', handler);
+										await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
+										return;
+									}
 								}
-								e.click();
-							});
-							await this.timeout(5000);
-						} catch (e) {
-							// event.removeListener('exit', handler);
-							await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
-							return;
-						}
-					}
 
-					const initState = await page.evaluate(() => {
-						// @ts-ignore
-						return JSON.stringify(window.__INITIAL_STATE__);
-					});
-					if (this.options.addDelay) {
-						await this.timeout(this.options.addDelay);
-					}
-					html = await page.content();
-					html = html.replace('</body>', '<script id="parseSc">'+ initState +'<script></body>');
-					
-					// event.removeListener('exit', handler);
-					await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
-				} catch(e) {
-					this.printError(e, uri, proxy, html);
-					// event.removeListener('exit', handler);
-					await this.closeAll(page, browserContext, browser);
-					this.run(data, subj);
-				}
-			})
-			.catch(e => {
-				subj.error(e);
-			});
+								const initState = await page.evaluate(() => {
+									// @ts-ignore
+									return JSON.stringify(window.__INITIAL_STATE__);
+								});
+								if (this.options.addDelay) {
+									await this.timeout(this.options.addDelay);
+								}
+								html = await page.content();
+								html = html.replace('</body>', '<script id="parseSc">'+ initState +'<script></body>');
+								
+								await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
+							} catch(e) {
+								if (this.proxy) {
+									this.proxy.fails = this.proxy.fails + 1;
+								}
+								this.printError(e, uri, proxy, html);
+								await this.closeAll(page, browserContext, browser);
+								this.run(data, subj);
+							}
+						})
+						.catch(e => {
+							subj.error(e);
+						});
+			},
+			e => subj.error(e)
+		);
 
 		return subj;
 	}
@@ -282,6 +279,7 @@ export class PhantomJob implements Job {
 	private getLaunchOptions(proxy?: string) {
 		return {
 			headless: true,
+			ignoreHTTPSErrors: true,
 			args: this.options.clickBefore || this.options.useProxy ? [
 				`--proxy-server=${proxy}`,
 				'--incognito',
@@ -318,16 +316,39 @@ export class PhantomJob implements Job {
 	}
 
 	private getProxy() {
-		const store = this.di.get<Store>(this.pipePath, DIService.STORE);
-		let proxyCount = store.get('proxyCount') || 0;
-
-		proxyCount = proxyCount + 1;
-		if (proxyCount > (proxies.length - 1)) {
-			proxyCount = 0;
+		if (!this.options.clickBefore && !this.options.useProxy) {
+			const subj = new Subject<string>();
+			setTimeout(() => {
+				subj.next('');
+				subj.complete();
+			})
+			return subj;
 		}
-		const proxy = proxies[proxyCount].IP + ':' + proxies[proxyCount].PORT;
-		store.set('proxyCount', proxyCount);
-		return proxy;
+
+		const proxyService = this.di.get<ProxyService>(this.pipePath, DIService.PROXY);
+		return proxyService.get()
+			.pipe(
+				map(p => {
+					this.proxy = p;
+					return p.IP + ':' + p.PORT;
+				})
+				// ,
+				// mergeMap(proxy => {
+				// 	debugger;
+				// 	return from(proxyChain.anonymizeProxy('https://' + proxy)) as Observable<string>;
+				// })
+			);
+
+		// const store = this.di.get<Store>(this.pipePath, DIService.STORE);
+		// let proxyCount = store.get('proxyCount') || 0;
+
+		// proxyCount = proxyCount + 1;
+		// if (proxyCount > (proxies.length - 1)) {
+		// 	proxyCount = 0;
+		// }
+		// const proxy = proxies[proxyCount].IP + ':' + proxies[proxyCount].PORT;
+		// store.set('proxyCount', proxyCount);
+		// return proxy;
 	}
 
 	private setInterceptor(page: any) {
