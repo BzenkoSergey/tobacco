@@ -176,12 +176,12 @@ export class PhantomJob implements Job {
 				let page: any;
 				let html: any;
 
-				const handler = (e) => {
-					this.closeAll(page, browserContext, browser);
-					subj.error(e);
-				};
+				// const handler = (e) => {
+				// 	this.closeAll(page, browserContext, browser);
+				// 	subj.error(e);
+				// };
 
-				const event = cluster.worker.process.on('exit', handler);
+				// const event = cluster.worker.process.on('exit', handler);
 
 				try {
 					browserContext = await browser.createIncognitoBrowserContext();
@@ -207,7 +207,7 @@ export class PhantomJob implements Job {
 							});
 							await this.timeout(5000);
 						} catch (e) {
-							event.removeListener('exit', handler);
+							// event.removeListener('exit', handler);
 							await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
 							return;
 						}
@@ -223,11 +223,11 @@ export class PhantomJob implements Job {
 					html = await page.content();
 					html = html.replace('</body>', '<script id="parseSc">'+ initState +'<script></body>');
 					
-					event.removeListener('exit', handler);
+					// event.removeListener('exit', handler);
 					await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
 				} catch(e) {
 					this.printError(e, uri, proxy, html);
-					event.removeListener('exit', handler);
+					// event.removeListener('exit', handler);
 					await this.closeAll(page, browserContext, browser);
 					this.run(data, subj);
 				}
