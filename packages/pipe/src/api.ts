@@ -20,8 +20,7 @@ import { ProcessesJob } from './processes';
 function add (d: any, f: any) {}
 // debugger;
 cluster(function(worker) {
-	// console.log(worker.isMaster);
-	// debugger;
+
 	var app = express();
 
 	app.use(bodyParser.text({limit: '50mb'}));
@@ -30,7 +29,7 @@ cluster(function(worker) {
 
 	app.use(methodOverride('X-HTTP-Method-Override'));
 	app.use(cors({
-		origin: ['http://localhost:4100', 'http://localhost:4200', 'http://localhost:4220', 'http://192.168.0.175:4100', 'http://192.168.0.175:4200', 'http://192.168.0.175:4220'],
+		origin: ['http://localhost:4100', 'http://localhost:4200', 'http://localhost:4220', 'http://192.168.0.175:4100', 'http://192.168.0.175:4200', 'http://192.168.0.175:4220', 'http://192.168.0.169:4220'],
 		optionsSuccessStatus: 200,
 		credentials: true
 	}));
