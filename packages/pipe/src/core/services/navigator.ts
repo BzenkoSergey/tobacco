@@ -35,6 +35,12 @@ export class Navigator {
 		return this.pathsPipes.get(path);
 	}
 
+	getParentOf(path: string) {
+		const segments = path.split('.');
+		const parent = segments.slice(0, segments.length - 2).join('.');
+		return this.getPipe(parent);
+	}
+
 	getParentGroup(childPath: string) {
 		const parents = Array.from(this.groups)
 			.filter(d => {

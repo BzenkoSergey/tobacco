@@ -78,9 +78,10 @@ import { ResourceIdentifysJob } from './jobs/resource/identify.job';
 import { RequestJob } from './jobs/request.job';
 import { ResourceFilterPropsJob } from './jobs/resource/item-filter.job';
 import { ResourcePhoneJob } from './jobs/resource/phone.job';
-
+import { CloneGroupJob } from './jobs/clone-group.job';
 
 export enum JobRegister {
+	CLONE_GROUP = 'CLONE_GROUP',
 	REQUEST = 'REQUEST',
 	RESOURCE_FILTER_PROPS = 'RESOURCE_FILTER_PROPS',
 	RESOURCE_PHONE = 'RESOURCE_PHONE',
@@ -162,8 +163,9 @@ export enum JobRegister {
 
 export namespace JobRegister {
 	const map = new Map<JobRegister, JobConstructor>();
-
-	map.set(JobRegister.RESOURCE_PHONE, ResourcePhoneJob)
+	
+	map.set(JobRegister.CLONE_GROUP, CloneGroupJob);
+	map.set(JobRegister.RESOURCE_PHONE, ResourcePhoneJob);
 	map.set(JobRegister.RESOURCE_FILTER_PROPS, ResourceFilterPropsJob)
 	map.set(JobRegister.REQUEST, RequestJob)
 	map.set(JobRegister.RESOURCE_IDENTIFY, ResourceIdentifysJob)
