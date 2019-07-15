@@ -61,6 +61,9 @@ export class ResourceFilterPropsJob implements Job {
 					const r = value.match(new RegExp(s.reg));
 					return r && r.length;
 				});
+				if (this.options.allowEmpty) {
+					return status;
+				}
 				return !v.length || status;
 			}
 			const r = v.match(new RegExp(s.reg));
