@@ -34,6 +34,9 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	backgroud = false;
 	running = 0;
 
+
+	runedProcessWithInput = false;
+	runedProcess = false;
 	processes: any[] = [];
 	saving = false;
 	view: any;
@@ -147,24 +150,28 @@ export class SchemeEditorComponent implements OnChanges, OnDestroy {
 	}
 
 	runProcess() {
+		this.runedProcess = true;
 		this.schemeProcessesRestService.create(this.item._id || this.item.id, this.backgroud)
 			.subscribe();
 
 		setTimeout(() => {
 			this.hasRunning();
 			this.fetchProcesses();
+			this.runedProcess = false;
 		}, 1000);
 	}
 
 	runProcessWithInput() {
 		const modalRef = this.modalService.open(RunInputComponent);
 		modalRef.componentInstance.submitted.subscribe(l => {
+			this.runedProcessWithInput = true;
 			this.schemeProcessesRestService.createWithData(this.item._id || this.item.id, l, this.backgroud)
 				.subscribe();
 
 			setTimeout(() => {
 				this.hasRunning();
 				this.fetchProcesses();
+				this.runedProcessWithInput = false;
 			}, 1000);
 		});
 	}

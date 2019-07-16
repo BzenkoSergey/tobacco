@@ -33,10 +33,12 @@
 						<span>
 
 						</span>
+
 						<button
 							type="button"
 							class="btn btn-link p-0 mr-2"
 							style="font-size: 2.8rem;"
+							[disabled]="runedProcessWithInput"
 							(click)="runProcessWithInput()">
 							<i class="fas fa-cog"></i>
 						</button>
@@ -44,6 +46,7 @@
 							type="button"
 							class="btn btn-link p-0"
 							style="font-size: 2.8rem;"
+							[disabled]="runedProcess"
 							(click)="runProcess()">
 							<i class="far fa-play-circle"></i>
 						</button>
