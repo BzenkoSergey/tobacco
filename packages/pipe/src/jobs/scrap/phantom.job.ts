@@ -227,7 +227,9 @@ export class PhantomJob implements Job {
 							}
 						})
 						.catch(e => {
-							subj.error(e);
+							this.run(data, subj);
+							console.error(e);
+							// subj.error(e);
 						});
 			},
 			e => subj.error(e)

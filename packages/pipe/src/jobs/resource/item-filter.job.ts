@@ -41,7 +41,7 @@ export class ResourceFilterPropsJob implements Job {
 		this.staticOptions = JSON.parse(options);
 		return this;
 	}
-
+	
 	run(dom: any) {
 		const store = this.di.get<Store>(this.pipePath, DIService.STORE);
 		const processed = store.get('PROCESSED') || [];
@@ -51,7 +51,8 @@ export class ResourceFilterPropsJob implements Job {
 			return async('$stop');
 		}
 		dom.data.price = dom.price;
-		const stop = this.options.some(s => {
+
+		const stop = this.options.filters.some(s => {
 			const v = d[s.prop] || '';
 			if (!s.reg) {
 				return Array.isArray(v) ? !v.length : !v;
