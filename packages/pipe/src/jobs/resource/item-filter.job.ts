@@ -51,10 +51,12 @@ export class ResourceFilterPropsJob implements Job {
 			return async('$stop');
 		}
 		dom.data.price = dom.price;
-
 		const stop = this.options.filters.some(s => {
 			const v = d[s.prop] || '';
 			if (!s.reg) {
+				if (this.options.allowEmpty) {
+					return Array.isArray(v) ? v.length : !!v;
+				}
 				return Array.isArray(v) ? !v.length : !v;
 			}
 			if (Array.isArray(v)) {
