@@ -43,11 +43,11 @@ export class ResourceFilterPropsJob implements Job {
 	}
 	
 	run(dom: any) {
-		const store = this.di.get<Store>(this.pipePath, DIService.STORE);
-		const processed = store.get('PROCESSED') || [];
+		// const store = this.di.get<Store>(this.pipePath, DIService.STORE);
+		// const processed = store.get('PROCESSED') || [];
 
 		const d = dom.data || dom;
-		if (!!~processed.indexOf(d.target) || !dom.data) {
+		if (!dom.data) {
 			return async('$stop');
 		}
 		dom.data.price = dom.price;
@@ -77,8 +77,8 @@ export class ResourceFilterPropsJob implements Job {
 			return async('$stop');
 		}
 
-		processed.push(d.target);
-		store.set('PROCESSED', processed);
+		// processed.push(d.target);
+		// store.set('PROCESSED', processed);
 		return async(dom);
 	}
 }
