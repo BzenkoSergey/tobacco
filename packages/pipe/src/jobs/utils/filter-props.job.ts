@@ -39,9 +39,15 @@ export class UtilsFilterPropsJob implements Job {
 
 	run(dom: any) {
 		const d = dom.data || dom;
-		const stop = this.options.some(s => {
+		const filters = Array.isArray(this.options) ? this.options : this.options.filters;
+		const inverse = Array.isArray(this.options) ? false : this.options.inverse;
+		const stop = filters.some(s => {
+			if (inverse) {
+				return !!d[s];
+			}
 			return !d[s];
 		});
+
 		if (stop) {
 			return async('$stop');
 		}
