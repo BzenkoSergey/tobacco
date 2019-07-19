@@ -73,7 +73,7 @@ export class RequestJob implements Job {
 				console.log(JSON.stringify(d));
 			});
 			res.on('end', () => {
-				subj.next();
+				subj.next(toSend);
 				subj.complete();
 			});
 		})
