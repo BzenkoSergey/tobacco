@@ -38,21 +38,21 @@ export class RequestJob implements Job {
 		if (this.options.wrapArray) {
 			obj = [obj];
 		}
-		const toSend = JSON.stringify(obj) as any;
 		const subj = new Subject();
 
 		const store = this.di.get<Store>(this.pipePath, DIService.STORE);
 					
 		const savedDate = Date.now();
-		const key = 'full_' + toSend.itemId;
+		const key = 'full_' + obj.itemId;
 		if (!store.get(key)) {
-			const definedDateKey = 'short_' + toSend.itemId;
-			toSend.savedDate = savedDate;
-			toSend.definedDate = store.get(definedDateKey);
-			toSend.flag = 'CODE';
+			const definedDateKey = 'short_' + obj.itemId;
+			obj.savedDate = savedDate;
+			obj.definedDate = store.get(definedDateKey);
+			obj.flag = 'CODE';
 			store.set(key, savedDate.toString());
 		}
 	
+		const toSend = JSON.stringify(obj) as any;
 		method.request({
 			hostname: urlInfo.hostname,
 			path: uri,
