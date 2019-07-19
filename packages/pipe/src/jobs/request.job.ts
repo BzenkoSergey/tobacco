@@ -43,12 +43,12 @@ export class RequestJob implements Job {
 		const store = this.di.get<Store>(this.pipePath, DIService.STORE);
 					
 		const savedDate = Date.now();
-		const key = 'full_' + obj.itemId;
+		const key = 'full_' + obj[0].itemId;
 		if (!store.get(key)) {
-			const definedDateKey = 'short_' + obj.itemId;
-			obj.savedDate = savedDate;
-			obj.definedDate = store.get(definedDateKey);
-			obj.flag = 'CODE';
+			const definedDateKey = 'short_' + obj[0].itemId;
+			obj[0].savedDate = savedDate;
+			obj[0].definedDate = store.get(definedDateKey);
+			obj[0].flag = 'CODE';
 			store.set(key, savedDate.toString());
 		}
 	
