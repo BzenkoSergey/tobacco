@@ -7,10 +7,13 @@ import { Subject } from 'rxjs';
 import { PipeInjector } from '../core/pipe-injector.interface';
 import { Messager } from '../core/messager.interface';
 import { Job } from './job.interface';
-import { DI } from './../core/di';
+import { DI, DIService } from './../core/di';
+import { Store } from './../core/services/store';
 
 export class RequestJob implements Job {
 	private options: any;
+	private di: DI;
+	private pipePath: string;
 
 	constructor(options: any, injector: PipeInjector, messager: Messager) {
 		this.options = options;
@@ -35,9 +38,21 @@ export class RequestJob implements Job {
 		if (this.options.wrapArray) {
 			obj = [obj];
 		}
-		const toSend = JSON.stringify(obj);
+		const toSend = JSON.stringify(obj) as any;
 		const subj = new Subject();
 
+		const store = this.di.get<Store>(this.pipePath, DIService.STORE);
+					
+		const savedDate = Date.now();
+		const key = 'full_' + toSend.itemId;
+		if (!store.get(key)) {
+			const definedDateKey = 'short_' + toSend.itemId;
+			toSend.savedDate = savedDate;
+			toSend.definedDate = store.get(definedDateKey);
+			toSend.flag = 'CODE';
+			store.set(key, savedDate.toString());
+		}
+	
 		method.request({
 			hostname: urlInfo.hostname,
 			path: uri,
@@ -53,10 +68,10 @@ export class RequestJob implements Job {
 		}, (res: any) => {
 			res.setEncoding('utf8');
 
-			res.on('data', (d) => {
-				console.log('RESSSSPONSEEEEEE');
-				console.log(d);
-			});
+			// res.on('data', (d) => {
+			// 	console.log('RESSSSPONSEEEEEE');
+			// 	console.log(JSON.stringify(d));
+			// });
 			res.on('end', () => {
 				subj.next();
 				subj.complete();
@@ -79,10 +94,12 @@ export class RequestJob implements Job {
 	}
 
 	setDI(di: DI) {
+		this.di = di;
 		return this;
 	}
 
 	setPipePath(path: string) {
+		this.pipePath = path;
 		return this;
 	}
 

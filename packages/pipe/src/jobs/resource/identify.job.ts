@@ -1,5 +1,5 @@
 import { combineLatest } from 'rxjs';
-import { map, filter, scan } from 'rxjs/operators';
+import { map, mergeMap, filter, scan } from 'rxjs/operators';
 
 import { MongoExtDb } from './../../core/trash/db-ext';
 
@@ -55,6 +55,16 @@ export class ResourceIdentifysJob implements Job {
 						.filter(i => !!i)
 						.map(i => {
 							i.settings = d.settings;
+
+							const store = this.di.get<Store>(this.pipePath, DIService.STORE);
+
+							const definedDate = Date.now();
+							const key = 'short_' + i.itemId;
+							if (!store.get(key)) {
+								i.definedDate = definedDate;
+								store.set(key, definedDate.toString());
+							}
+
 							return i;
 						})
 				}),
