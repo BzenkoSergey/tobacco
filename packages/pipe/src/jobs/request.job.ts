@@ -68,10 +68,10 @@ export class RequestJob implements Job {
 		}, (res: any) => {
 			res.setEncoding('utf8');
 
-			// res.on('data', (d) => {
-			// 	console.log('RESSSSPONSEEEEEE');
-			// 	console.log(JSON.stringify(d));
-			// });
+			res.on('data', (d) => {
+				console.log('RESSSSPONSEEEEEE');
+				console.log(JSON.stringify(d));
+			});
 			res.on('end', () => {
 				subj.next();
 				subj.complete();
