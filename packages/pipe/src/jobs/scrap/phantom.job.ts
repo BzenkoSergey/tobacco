@@ -191,6 +191,12 @@ export class PhantomJob implements Job {
 								if (this.options.clickBefore) {
 									await this.timeout(2000);
 
+									const emailBtns = await page.$$('.contact-button.button-email');
+									if (!emailBtns.length) {
+										await this.exit(page, browserContext, browser, subj, html, url, proxy, data, true);
+										return;
+									}
+
 									try {
 										await page.$eval(this.options.clickBefore[0], e => {
 											if (!e) {
@@ -238,9 +244,9 @@ export class PhantomJob implements Job {
 		return subj;
 	}
 
-	private async exit(page: any, browserContext: any, browser: any, subj: Subject<any>, html, url, proxy, data) {
+	private async exit(page: any, browserContext: any, browser: any, subj: Subject<any>, html, url, proxy, data, addProp = false) {
 		page.removeAllListeners(['request']);
-		const d = this.genResponse(html, url, proxy, data);
+		const d = this.genResponse(html, url, proxy, data, addProp);
 		subj.next(d);
 		subj.complete();
 		return this.closeAll(page, browserContext, browser);
@@ -370,11 +376,12 @@ export class PhantomJob implements Job {
 		});
 	}
 
-	private genResponse(html: string, url: string, proxy: string, data: any) {
+	private genResponse(html: string, url: string, proxy: string, data: any, addProp = false) {
 		const res = {
 			html: html,
 			url: url,
-			proxy: proxy
+			proxy: proxy,
+			addProp: addProp
 		}
 		let d = {
 			...res
