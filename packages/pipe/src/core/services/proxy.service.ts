@@ -9,7 +9,7 @@ export type Proxy = {
 }
 
 export class ProxyService {
-	private downloadUrl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=650&country=all&ssl=yes&anonymity=elite';
+	private downloadUrl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=1450&country=all&ssl=yes&anonymity=elite';
 	private map = new Map<string, Proxy>();
 	private syncInterval = 20 * (60 * 1000); // 20 mins
 	private lastSyncDate = null;
