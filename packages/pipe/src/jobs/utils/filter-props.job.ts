@@ -38,9 +38,13 @@ export class UtilsFilterPropsJob implements Job {
 	}
 
 	run(dom: any) {
-		const d = dom.data || dom;
+		let d = dom.data || dom;
 		const filters = Array.isArray(this.options) ? this.options : this.options.filters;
 		const inverse = Array.isArray(this.options) ? false : this.options.inverse;
+		const inRoot = Array.isArray(this.options) ? false : this.options.inRoot;
+		if (inRoot) {
+			d = dom;
+		}
 		const stop = filters.some(s => {
 			if (inverse) {
 				return !!d[s];

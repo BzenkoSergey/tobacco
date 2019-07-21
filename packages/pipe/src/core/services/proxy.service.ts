@@ -49,10 +49,12 @@ export class ProxyService {
 
 		let proxy = proxies[0];
 		if (!proxies.length) {
+			console.warn('NO PROXY---')
 			proxy = Array.from(this.map)[0][1];
 		}
 		proxy.used = proxy.used + 1;
 
+		// console.warn(proxy.IP + ':' + proxy.PORT);
 		return proxy;
 	}
 

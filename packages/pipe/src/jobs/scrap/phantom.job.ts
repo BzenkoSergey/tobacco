@@ -12,6 +12,7 @@ import { Job } from './../job.interface';
 import { DI, DIService } from './../../core/di';
 import { Store } from '../../core/services/store';
 import { ProxyService, Proxy } from '../../core/services/proxy.service';
+import { MongoDb } from './../../core/trash/db';
 
 const pluginStealthInst = pluginStealth();
 pluginStealthInst.enabledEvasions.delete("chrome.runtime");
@@ -170,8 +171,9 @@ export class PhantomJob implements Job {
 		this.getProxy()
 			.subscribe(
 				proxy => {
+					const options = this.getLaunchOptions(proxy);
 					puppeteer
-						.launch(this.getLaunchOptions(proxy))
+						.launch(options)
 						.then(async browser => {
 							let browserContext: any;
 							let page: any;
@@ -182,7 +184,9 @@ export class PhantomJob implements Job {
 								page = await browserContext.newPage();
 								await this.handlePage(page);
 
-								console.warn(uri);
+								if (this.options.clickBefore || this.options.useProxy) {
+									console.warn('Used proxy: ' + proxy);
+								}
 								await page.goto(uri, {
 									waitUntil: this.options.waitUntil || (this.options.loadFull ? 'networkidle2' : 'domcontentloaded'),
 									timeout: 8000
@@ -193,6 +197,20 @@ export class PhantomJob implements Job {
 
 									const emailBtns = await page.$$('.contact-button.button-email');
 									if (!emailBtns.length) {
+										
+										if (this.proxy) {
+											this.proxy.fails = this.proxy.fails + 1;
+										}
+
+										const html3 = await page.content();
+										this.saveLog({
+											message: 'no access',
+											options: options,
+											html: html3,
+											url: url,
+											proxy: proxy,
+											proxyObj: this.proxy
+										});
 										await this.exit(page, browserContext, browser, subj, html, url, proxy, data, true);
 										return;
 									}
@@ -206,6 +224,19 @@ export class PhantomJob implements Job {
 										});
 										await this.timeout(5000);
 									} catch (e) {
+										if (this.proxy) {
+											this.proxy.fails = this.proxy.fails + 1;
+										}
+
+										const html2 = await page.content();
+										this.saveLog({
+											message: 'no click btn',
+											options: options,
+											html: html2,
+											url: url,
+											proxy: proxy,
+											proxyObj: this.proxy
+										});
 										// event.removeListener('exit', handler);
 										await this.exit(page, browserContext, browser, subj, html, url, proxy, data);
 										return;
@@ -227,6 +258,13 @@ export class PhantomJob implements Job {
 								if (this.proxy) {
 									this.proxy.fails = this.proxy.fails + 1;
 								}
+								this.saveLog({
+									message: 'proxy error',
+									options: options,
+									url: url,
+									proxy: proxy,
+									proxyObj: this.proxy
+								});
 								this.printError(e, uri, proxy, html);
 								await this.closeAll(page, browserContext, browser);
 								this.run(data, subj);
@@ -244,6 +282,12 @@ export class PhantomJob implements Job {
 		return subj;
 	}
 
+	private saveLog(d) {
+		return new MongoDb('logs', true)
+			.insertOne(d)
+			.subscribe(() => {});
+	}
+
 	private async exit(page: any, browserContext: any, browser: any, subj: Subject<any>, html, url, proxy, data, addProp = false) {
 		page.removeAllListeners(['request']);
 		const d = this.genResponse(html, url, proxy, data, addProp);
@@ -251,7 +295,6 @@ export class PhantomJob implements Job {
 		subj.complete();
 		return this.closeAll(page, browserContext, browser);
 	}
-
 
 	private async handlePage(page: any) {
 		await page.setRequestInterception(true);
@@ -388,8 +431,8 @@ export class PhantomJob implements Job {
 		}
 		if (typeof data !== 'string') {
 			d = {
-				...d,
-				...data
+				...data,
+				...d
 			}
 		}
 		return d;
