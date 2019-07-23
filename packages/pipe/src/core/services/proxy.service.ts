@@ -36,7 +36,8 @@ export class ProxyService {
 	}
 
 	private getProxy(): Proxy {
-		const proxies = Array.from(this.map)
+		const array = Array.from(this.map);
+		const proxies = array
 			.map(d => {
 				return d[1];
 			})
@@ -50,7 +51,7 @@ export class ProxyService {
 		let proxy = proxies[0];
 		if (!proxies.length) {
 			console.warn('NO PROXY---')
-			proxy = Array.from(this.map)[0][1];
+			proxy = array[Math.floor(Math.random() * (array.length - 1)) + 1][1];
 		}
 		proxy.used = proxy.used + 1;
 
