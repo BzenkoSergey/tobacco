@@ -330,18 +330,22 @@ export class PhantomJob implements Job {
 	private getLaunchOptions(proxy?: string) {
 		return {
 			headless: true,
-			ignoreHTTPSErrors: true,
 			args: this.options.clickBefore || this.options.useProxy ? [
 				`--proxy-server=${proxy}`,
 				'--incognito',
 				'--disk-cache-size=0',
 				'--media-cache-size=0',
 				'--disable-webgl',
+				'--no-sandbox',
+				'--disable-setuid-sandbox',
 				'--ignore-certifcate-errors',
 				'--ignore-certifcate-errors-spki-list',
-				'--js-flags=--expose-gc'
+				'--js-flags=--expose-gc',
+				'--proxy-bypass-list=*'
 			] : [
 				'--incognito',
+				'--no-sandbox',
+				'--disable-setuid-sandbox',
 				'--disk-cache-size=0',
 				'--media-cache-size=0',
 				'--disable-webgl',
