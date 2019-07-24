@@ -339,16 +339,18 @@ export class PhantomJob implements Job {
 				'--no-sandbox',
 				'--disable-setuid-sandbox',
 				'--ignore-certifcate-errors',
-				'--ignore-certifcate-errors-spki-list',
-				'--js-flags=--expose-gc'
+				'--ignore-certifcate-errors-spki-list'
+				// ,
+				// '--js-flags=--expose-gc'
 			] : [
 				'--incognito',
 				'--no-sandbox',
 				'--disable-setuid-sandbox',
 				'--disk-cache-size=0',
 				'--media-cache-size=0',
-				'--disable-webgl',
-				'--js-flags=--expose-gc'
+				'--disable-webgl'
+				// ,
+				// '--js-flags=--expose-gc'
 			]
 			// ,
 			// executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
