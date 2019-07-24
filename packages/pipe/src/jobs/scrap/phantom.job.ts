@@ -340,8 +340,7 @@ export class PhantomJob implements Job {
 				'--disable-setuid-sandbox',
 				'--ignore-certifcate-errors',
 				'--ignore-certifcate-errors-spki-list',
-				'--js-flags=--expose-gc',
-				'--proxy-bypass-list=*'
+				'--js-flags=--expose-gc'
 			] : [
 				'--incognito',
 				'--no-sandbox',
