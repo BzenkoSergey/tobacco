@@ -25,6 +25,8 @@ export class PhantomJob implements Job {
 	private di: DI;
 	private pipePath: string;
 	private proxy: Proxy = null;
+	private inited = false;
+	private interval;
 
 	private fake = () => {
 		// @ts-ignore
@@ -168,19 +170,22 @@ export class PhantomJob implements Job {
 		const url = typeof data === 'string' ? data : (data.url || data.target);
 		let uri = this.handleUrl(url);
 
+		let browser: any;
+		let browserContext: any;
+		let page: any;
+		let html: any;
+
 		this.getProxy()
 			.subscribe(
 				proxy => {
 					const options = this.getLaunchOptions(proxy);
 					puppeteer
 						.launch(options)
-						.then(async browser => {
-							let browserContext: any;
-							let page: any;
-							let html: any;
+						.then(async b => {
 
 							try {
-								browserContext = await browser.createIncognitoBrowserContext();
+								browser = b;
+								browserContext = await b.createIncognitoBrowserContext();
 								page = await browserContext.newPage();
 								await this.handlePage(page);
 
@@ -279,6 +284,12 @@ export class PhantomJob implements Job {
 			e => subj.error(e)
 		);
 
+		if (!this.inited) {
+			this.inited = true;
+			this.interval = setTimeout(() => {
+				this.exit(page, browserContext, browser, subj, html, url, '', data, true);
+			}, 100000);
+		}
 		return subj;
 	}
 
@@ -290,6 +301,9 @@ export class PhantomJob implements Job {
 
 	private async exit(page: any, browserContext: any, browser: any, subj: Subject<any>, html, url, proxy, data, addProp = false) {
 		page.removeAllListeners(['request']);
+		if (this.interval) {
+			clearTimeout(this.interval);
+		}
 		const d = this.genResponse(html, url, proxy, data, addProp);
 		subj.next(d);
 		subj.complete();
