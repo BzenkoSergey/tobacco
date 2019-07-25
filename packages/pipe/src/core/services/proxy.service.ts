@@ -9,7 +9,8 @@ export type Proxy = {
 }
 
 export class ProxyService {
-	private downloadUrl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=1450&country=all&ssl=yes&anonymity=elite';
+	private downloadUrl = 'https://api.proxyscrape.com/?request=getproxies&proxytype=http&timeout=650&country=all&ssl=yes&anonymity=elite';
+	private secondDownloadUrl = 'https://www.cool-proxy.net/proxies.json';
 	private map = new Map<string, Proxy>();
 	private syncInterval = 20 * (60 * 1000); // 20 mins
 	private lastSyncDate = null;
@@ -19,6 +20,7 @@ export class ProxyService {
 	constructor() {
 		console.error('ProxyService CREATED!!!!!!!!!!!!!!!!');
 		this.sync();
+		this.syncSecond();
 	}
 
 	get() {
@@ -74,6 +76,7 @@ export class ProxyService {
 		const offset = Date.now() - this.lastSyncDate;
 		if (offset >= this.syncInterval) {
 			this.sync();
+			this.syncSecond();
 		}
 	}
 
@@ -87,6 +90,40 @@ export class ProxyService {
 			});
 			response.on('end', () => {
 				this.fill(data.split(/\n|\r/).filter(a => !!a));
+				this.syncing = false;
+				this.recive();
+			});
+			request.setTimeout(12000, () => {
+				request.abort();
+				this.syncing = false;
+				this.recive();
+			});
+		});
+	}
+
+
+	private syncSecond() {
+		this.syncing = true;
+		this.lastSyncDate = Date.now();
+		var request = https.get(this.secondDownloadUrl, response => {
+			var data = '';
+			response.on('data', (chunk) => {
+				data += chunk;
+			});
+			response.on('end', () => {
+				let list = [];
+				try {
+					list = JSON.parse(data);
+				} catch(e) {
+
+				}
+				const proxies = list
+					.filter(i => i.working_average > 90 && i. anonymous === 1).sort((a, b) => a.response_time_average - b.response_time_average)
+					.map(i => {
+						return i.ip + ':' + i.port;
+					});
+
+				this.fill(proxies);
 				this.syncing = false;
 				this.recive();
 			});
