@@ -5,7 +5,9 @@ import * as express from 'express';
 import * as compression from 'compression';
 import * as request from 'request';
 import * as url from 'url';
+import * as http from 'http';
 var cluster = require('express-cluster');
+var nodeCluster = require('cluster');
 import { mergeMap } from 'rxjs/operators';
 
 import { SnapshotPipesCreator3 } from './core/pipe/creator/snapshot-pipes.creator3';
@@ -389,3 +391,29 @@ cluster(function(worker) {
 	workerListener: function(msg) {
 	//   console.log('master with pid', process.pid, 'received', msg, 'from worker');
 	}})
+
+
+if (nodeCluster.isMaster) {
+	setTimeout(() => {
+		const schemes = [
+			{
+				path: '/scheme/5d0785923fc90524126e185b'
+			},
+			{
+				path: '/scheme/5d1e79e79e2c0b1620a95c2e'
+			}
+		];
+		schemes.forEach(s => {
+			http.get({
+				host: '0.0.0.0',
+				path: s.path,
+				port: 3330,
+				method: 'GET',
+				protocol: 'http:',
+				agent: false
+			}, (res: any) => {
+				res.setEncoding('utf8');
+			});
+		});
+	}, 10000)
+}
