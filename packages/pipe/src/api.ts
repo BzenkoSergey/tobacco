@@ -393,27 +393,32 @@ cluster(function(worker) {
 	}})
 
 
-// if (nodeCluster.isMaster) {
-// 	setTimeout(() => {
-// 		const schemes = [
-// 			{
-// 				path: '/scheme/5d0785923fc90524126e185b'
-// 			},
-// 			{
-// 				path: '/scheme/5d1e79e79e2c0b1620a95c2e'
-// 			}
-// 		];
-// 		schemes.forEach(s => {
-// 			http.get({
-// 				host: '0.0.0.0',
-// 				path: s.path,
-// 				port: 3330,
-// 				method: 'GET',
-// 				protocol: 'http:',
-// 				agent: false
-// 			}, (res: any) => {
-// 				res.setEncoding('utf8');
-// 			});
-// 		});
-// 	}, 10000)
-// }
+if (nodeCluster.isMaster) {
+	setTimeout(() => {
+		const schemes = [
+			{
+				path: '/scheme/5d0785923fc90524126e185b'
+			},
+			{
+				path: '/scheme/5d1e79e79e2c0b1620a95c2e'
+			}
+		];
+		schemes.forEach(s => {
+			const req = http.get({
+				host: '0.0.0.0',
+				path: s.path,
+				port: 3330,
+				method: 'GET',
+				protocol: 'http:',
+				agent: false
+			}, (res: any) => {
+				res.setEncoding('utf8');
+			});
+
+			req.on('error', (e) => {
+				console.error(`problem with request: ${e.message}`);
+			});
+			req.end();
+		});
+	}, 10000)
+}
