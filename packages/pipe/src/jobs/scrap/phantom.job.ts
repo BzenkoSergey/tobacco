@@ -200,6 +200,12 @@ export class PhantomJob implements Job {
 								if (this.options.clickBefore) {
 									await this.timeout(2000);
 
+									const offerbody = await page.$$('.offerbody');
+									if (!offerbody.length) {
+										await this.exit(page, browserContext, browser, subj, html, url, proxy, data, false);
+										return;
+									}
+
 									const emailBtns = await page.$$('.contact-button.button-email');
 									if (!emailBtns.length) {
 										
