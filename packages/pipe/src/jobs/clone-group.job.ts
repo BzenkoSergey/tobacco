@@ -46,7 +46,6 @@ export class CloneGroupJob implements Job {
 
 		const group = this.navigator.getParentGroup(this.pipePath);
 		const parent = this.navigator.getParentOf(group.getPath());
-		debugger;
 		return parent.cloneChild(group.getPath(), input, true);
 	}
 }

@@ -28,7 +28,7 @@ export class ResourceIdentifysJob implements Job {
 		store.set('resourceMinDate', resourceMinDate);
 		const resourceId = d.settings._id.toString();
 
-		const obs = d.data
+		const obs = (d.data || [])
 			.filter(i => {
 				if (!i.date) {
 					return true;

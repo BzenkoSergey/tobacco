@@ -58,12 +58,12 @@ export class RepeatJob implements Job {
 		a = a + 1;
 		// console.log(group);
 		if (result) {
-			console.log('repeat mock', result);
+			// console.log('repeat mock', result);
 			// return from([result]);
 			return async(result);
 		}
 
-		console.log('repeat', result, this.options);
+		// console.log('repeat', result, this.options);
 		// const f = new Subject();
 		// setTimeout(() => {
 		// 	f.next(1);

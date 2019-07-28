@@ -18,7 +18,6 @@ export class ProxyService {
 	private subjs: Subject<Proxy>[] = [];
 
 	constructor() {
-		console.error('ProxyService CREATED!!!!!!!!!!!!!!!!');
 		this.sync();
 		this.syncSecond();
 	}

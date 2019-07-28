@@ -282,12 +282,15 @@ export class PhantomJob implements Job {
 							}
 						})
 						.catch(e => {
-							this.run(data, subj);
 							console.error(e);
+							this.run(data, subj);
 							// subj.error(e);
 						});
 			},
-			e => subj.error(e)
+			e => {
+				console.error(e);
+				subj.error(e);
+			}
 		);
 
 		if (!this.inited) {
@@ -378,17 +381,17 @@ export class PhantomJob implements Job {
 	}
 
 	private printError(e: any, uri: string, proxy: string, html: string) {
-		console.error('////////////////////////////////');
-		console.error('////////////////////////////////');
-		console.error('////////////////////////////////');
-		console.error('////////////////////////////////');
+		console.warn('////////////////////////////////');
+		console.warn('////////////////////////////////');
+		console.warn('////////////////////////////////');
+		console.warn('////////////////////////////////');
 		console.error(e);
-		console.error(uri);
-		console.error(proxy);
-		console.error(html);
-		console.error('////////////////////////////////');
-		console.error('////////////////////////////////');
-		console.error('////////////////////////////////');
+		console.warn(uri);
+		console.warn(proxy);
+		console.warn(html);
+		console.warn('////////////////////////////////');
+		console.warn('////////////////////////////////');
+		console.warn('////////////////////////////////');
 	}
 
 	private getProxy() {

@@ -74,7 +74,7 @@ export class ItemsDelayJob implements Job {
 			}
 		});
 
-		console.log(list.map(i => i.delay));
+		// console.log(list.map(i => i.delay));
 
 		return async(list);
 	}

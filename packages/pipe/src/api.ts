@@ -371,7 +371,7 @@ cluster(function(worker) {
 
 	process.on('uncaughtException', function (err) {
 		console.error(err.stack);
-		console.log("Node NOT Exiting...");
+		console.error("Node NOT Exiting...");
 	});
 
 	const u = process.argv.indexOf('--port');
