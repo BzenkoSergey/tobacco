@@ -200,6 +200,12 @@ export class PhantomJob implements Job {
 								if (this.options.clickBefore) {
 									await this.timeout(2000);
 
+									const content = await page.content();;
+									if (content.includes('подозрительная активность')) {
+										await this.exit(page, browserContext, browser, subj, html, url, proxy, data, true);
+										return;
+									}
+
 									const offerbody = await page.$$('.offerbody');
 									if (!offerbody.length) {
 										await this.exit(page, browserContext, browser, subj, html, url, proxy, data, false);
