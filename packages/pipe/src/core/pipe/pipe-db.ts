@@ -587,7 +587,6 @@ export abstract class PipeDb extends PipeBase {
 	}
 
 	private canUseDb() {
-		return true;
 		if (this.process.status === PipeStatus.ERROR) {
 			return true;
 		}
@@ -619,10 +618,8 @@ export abstract class PipeDb extends PipeBase {
 		// console.warn('NOT SAVE!!!!!!!!!! UN ALOWW');
 		if (!!~modes.indexOf(PipeMode.DB_NO_SYNC)) {
 			// this.log('NO ALLOW DB - DB_NO_SYNC !!!!');
-			debugger;
 			return false;
 		}
-		debugger;
 		// this.log('NO ALLOW DB !!!!');
 		return false;
 	}
