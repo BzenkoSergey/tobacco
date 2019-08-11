@@ -39,6 +39,7 @@ export class DomifyJob implements Job {
 
 	run(html: any) {
 		return async({
+			...html,
 			url: html.url,
 			dom: cheerio.load(html.html).root().toString()
 		});

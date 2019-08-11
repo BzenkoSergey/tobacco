@@ -45,6 +45,9 @@ export class UtilsFilterPropsJob implements Job {
 		if (inRoot) {
 			d = dom;
 		}
+		if (this.options.dataProp) {
+			d = dom[this.options.dataProp] || {};
+		}
 		const stop = filters.some(s => {
 			if (inverse) {
 				return !!d[s];

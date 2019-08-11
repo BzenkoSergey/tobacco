@@ -81,16 +81,23 @@ export class AggregateJob implements Job {
 			return async(null);
 		}
 		let unitId = '';
-		let item: any = {};
-		if (typeof info === 'string') {
-			unitId = info;
+		let resource = '';
+
+		if (this.options.fromRoot) {
+			unitId = info.productId;
+			resource = info.resource;
 		} else {
-			const data = info.data;
-			item = Array.isArray(data) ? data[0] : data;
-			if (!item) {
-				return async(null);
-			}
-			unitId = item.productId;
+			if (typeof info === 'string') {
+				unitId = info;
+			} else {
+				const data = info.data;
+				const item = Array.isArray(data) ? data[0] : data;
+				if (!item) {
+					return async(null);
+				}
+				unitId = item.productId;
+				resource = item.resourceId;
+			}	
 		}
 
 		if (!unitId) {
@@ -104,6 +111,7 @@ export class AggregateJob implements Job {
 			this.getAssignedItems(unitId)
 		).pipe(
 			mergeMap(d => {
+				debugger;
 				const unitParts = d[0];
 				const items = d[1];
 				const company = unitParts.company;
@@ -244,7 +252,7 @@ export class AggregateJob implements Job {
 									map(d => {
 										return {
 											aggregated: d,
-											resourceId: item.resourceId
+											resourceId: resource
 										}
 									})
 							);

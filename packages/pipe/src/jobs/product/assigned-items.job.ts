@@ -85,7 +85,7 @@ export class AssignedItemsJob implements Job {
 						if (!!~unitIds.indexOf(i[prop])) {
 							return;
 						}
-						unitIds.push(i[prop]);
+						unitIds.push(i);
 					});
 					return unitIds;
 				})
