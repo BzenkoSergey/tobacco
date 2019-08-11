@@ -15,7 +15,7 @@
 					"id" : "5c0ff4e4dee83c1b3bf268e9",
 					"type" : "",
 					"label" : "",
-					"options" : "[\"title\"]",
+					"options" : "{\n    \"filters\": [\"title\"],\n    \"dataProp\": \"data\"\n}",
 					"children" : [
 						{
 							"id" : "5c0ffb6bdee83c1b3bf32403",

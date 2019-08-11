@@ -2,7 +2,7 @@
 	"options" : null,
 	"id": null,
 	"type" : "LINE",
-	"config": "{\"limit\":10000}",
+	"config": "{\n    \"limit\": 1,\n    \"modes\": [\"AVOID_OUTPUT\", \"DB_SYNC_ON_IN_PROCESS\"]\n}",
 	"label" : "",
 	"services" : [
 		"HTTP_STACK",

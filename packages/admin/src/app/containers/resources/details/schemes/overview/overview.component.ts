@@ -162,6 +162,49 @@ export class OverviewComponent implements OnDestroy {
 		// intervalSchemeClone.config = JSON.stringify({
 		// 	limit: 10000
 		// });
+		const domParse = this.getByCode(intervalSchemeClone, 'DOM_PARSE');
+		domParse.children.push({
+			'_id' : null,
+			'id' : '5c0ff4e4dee83c1b3bf268e9',
+			'type' : '',
+			'label' : '',
+			'children' : [
+				{
+					'_id' : null,
+					'id' : '5d5054de6d89cfdac1fa9a0f',
+					'type' : '',
+					'label' : '',
+					'children' : [
+						{
+							'_id' : null,
+							'id' : '5c22370e631acded0fbdaa62',
+							'type' : '',
+							'label' : '',
+							'children' : [],
+							'services' : [],
+							'options' : JSON.stringify({
+								fromRoot: true
+							}),
+							'jobName' : '',
+							'code' : ''
+						}
+					],
+					'services' : [],
+					'options' : '',
+					'jobName' : '',
+					'code' : ''
+				}
+			],
+			'services' : [],
+			'options' : JSON.stringify({
+				inverse: true,
+				filters: ['title'],
+				dataProp: 'data'
+			}),
+			'jobName' : '',
+			'code' : '',
+			'config' : ''
+		});
 		return intervalSchemeClone;
 	}
 
