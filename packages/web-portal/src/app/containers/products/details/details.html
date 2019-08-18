@@ -1,10 +1,11 @@
 <div
-	class="content"
+	class="page-product"
 	itemscope
 	itemtype="https://schema.org/Product">
 
 	<meta itemprop="brand" content="{{unit?.company.name}}">
 	<meta itemprop="image" content="{{'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + unit?.logo}}">
+	<meta itemprop="category" content="{{unit?.categories[0]?.name}}">
 
 	<h1
 		*ngIf="unit"

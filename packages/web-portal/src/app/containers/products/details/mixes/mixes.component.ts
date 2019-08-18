@@ -1,51 +1,51 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
 
+import { Subscription } from 'rxjs';
+
+import { DeviceService } from '@common/device.service';
 import { MixesRestService } from '@rest/mixes';
-import { AggregatedProductDto } from '@rest/products/product-full.dto';
+import { AggregatedProductDto } from '@rest/products';
+import { ProductService } from '@common/products.service';
 
-import { FiltersService } from './../../../filters.service';
-import { LinkService } from './../../../link.service';
+import { BreadcrumbService, BreadcrumbModel } from '@components/breadcrumb';
 
-import { BreadcrumbService } from '@components/breadcrumb/breadcrumb.service';
-import { BreadcrumbModel } from '@components/breadcrumb/breadcrumb.model';
+import { DetailsService } from './../details.service';
 
 @Component({
 	templateUrl: './mixes.html',
-	styleUrls: ['./mixes.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		MixesRestService
 	]
 })
 
 export class MixesComponent implements OnDestroy {
-	product: AggregatedProductDto;
-	loading = false;
+	private sub: Subscription;
+
+	screenWidth = this.deviceService.width();
+	unit: AggregatedProductDto;
 	mixes: any[] = [];
+	cheaper: any;
+	cheaperPrice = 0;
 
 	constructor(
+		private cd: ChangeDetectorRef,
+		private deviceService: DeviceService,
+		private productService: ProductService,
+		private detailsService: DetailsService,
 		private breadcrumb: BreadcrumbService,
 		private mixesRestService: MixesRestService,
-		private title: Title,
-		private meta: Meta,
-		private filters: FiltersService,
-		private linkService: LinkService,
 		route: ActivatedRoute
 	) {
-		route.data.subscribe((data: { unit: AggregatedProductDto }) => {
-			this.setUnit(data.unit);
-			this.loading = false;
-		});
-		route.params.subscribe(params => {
-			const query: any = {};
-			Object.keys(params)
-				.forEach(prop => {
-					let value = params[prop] || '';
-					value = value.split(',').filter(v => v !== 'all');
-					query[prop] = value;
-				});
-			this.filters.push(query);
+		this.sub = route.data.subscribe((data: { unit: AggregatedProductDto }) => {
+			const unit = data.unit;
+			this.unit = unit;
+			this.detailsService.setMetaTitle(unit, this.getMetaTitle());
+			this.detailsService.setMetaUrl(unit, 'mixes');
+			this.detailsService.setMetaDescription(unit, this.getDescription());
+			this.detailsService.setMetaKeywords(unit, this.getMetaTitle());
+			this.fetchMixes();
 		});
 
 		this.breadcrumb.add([
@@ -60,102 +60,64 @@ export class MixesComponent implements OnDestroy {
 
 	ngOnDestroy() {
 		this.breadcrumb.remove('product-detail-add');
-		this.resetOg();
+		this.detailsService.resetMeta([
+			'og:title',
+			'og:url',
+			'og:description'
+		]);
+		if (this.sub) {
+			this.sub.unsubscribe();
+		}
 	}
 
-	fetchMixes() {
+	private fetchMixes() {
 		this.mixesRestService.list({
-			units: [this.product.productId]
+			units: [this.unit.productId]
 		})
 		.subscribe(d => {
 			this.mixes = d.items;
+			this.setCheaper();
+			this.cd.markForCheck();
 		});
 	}
 
-	getMin() {
-		return this.mixes.map(m => {
-			return this.getCost(m);
+	private setCheaper() {
+		const cheaper = this.mixes.map(m => {
+			return this.getCheaperItems(m);
 		})
 		.sort((a, b) => {
 			return a[0] - b[0];
 		})[0];
+
+		this.cheaper = cheaper[1];
+		this.cheaperPrice = cheaper[0];
 	}
 
-	getCost(product: any) {
-		const items = product.recipes
+	private getCheaperItems(mix: any) {
+		const items = mix.recipes
 			.map(r => r.unit)
 			.map(unit => {
-				const available = unit.items
-					.filter(i => i.available);
-
-				const list = available.length ? available : unit.items;
-				return list.sort((a, b) => a.price - b.price)[0];
-			});
+				const item = this.productService.sortByCheaperItems(unit.items, true)[0];
+				if (item) {
+					return item;
+				}
+				return this.productService.sortByCheaperItems(unit.items, false)[0];
+			})
+			.filter(i => !!i);
 
 		let cost = 0;
 		items.forEach(i => cost += i.price);
-		return [cost, product];
-	}
-
-	private resetOg() {
-		this.meta.removeTag('property="og:title"');
-		this.meta.removeTag('property="og:url"');
-		this.meta.removeTag('property="og:description"');
-	}
-
-	private setOg() {
-		this.meta.updateTag({
-			property: 'og:title',
-			content: this.getMetaTitle()
-		});
-		this.meta.updateTag({
-			property: 'og:description',
-			content: this.getDescription()
-		});
-		this.meta.updateTag({
-			property: 'og:url',
-			content: window.location.origin + `/products/detail/${this.product.readableName}/mixes`
-		});
-	}
-
-	private setUnit(d: AggregatedProductDto) {
-		this.product = d;
-		this.linkService.updateTag({
-			rel: 'canonical',
-			href: window.location.origin + `/products/detail/${d.readableName}/mixes`
-		});
-		this.title.setTitle(this.getMetaTitle());
-		this.meta.updateTag({
-			name: 'description',
-			content: this.getDescription()
-		});
-		this.meta.updateTag({
-			name: 'keywords',
-			content: this.getMetaTitle()
-		});
-		this.setOg();
-		this.fetchMixes();
+		return [cost, mix];
 	}
 
 	private getDescription() {
-		const productLineName = this.product.productLine ? this.product.productLine.name : '';
-		const text = 'Миксы для кальяна с брендом ' + this.product.company.name + ' ' + productLineName + ' вкус ' + this.product.name + '.';
+		const productLineName = this.unit.productLine ? this.unit.productLine.name : '';
+		const productNameLine = productLineName ? ' ' + productLineName : '';
+		const text = 'Миксы для кальяна с брендом ' + this.unit.company.name + productNameLine + ' вкус ' + this.unit.name + '.';
 		return text;
 	}
 
 	private getMetaTitle() {
-		let title = this.product.seo && this.product.seo.title;
-		if (!title) {
-			title = this.product.name;
-			if (this.product.productLine && this.product.productLine.name) {
-				title = this.product.productLine.name + ' ' + title;
-			}
-			if (this.product.company && this.product.company.name) {
-				title = this.product.company.name + ' ' + title;
-			}
-			const catTitle = 'Миксы с';
-			title = catTitle + ' ' + title;
-		}
-		return title;
+		return this.detailsService.genMetaTitle(this.unit, 'Миксы с', true);
 	}
 }

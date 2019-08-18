@@ -1,12 +1,12 @@
 <div
 	*ngIf="items.length || !hideEmpty"
 	class="products"
-	[class.cols]="cols"
-	[class.home]="home">
+	[attr.cols]="cols">
 
 	<section
 		*ngIf="!items.length && !loading"
-		class="product-empty">
+		class="product-message">
+
 		<icon
 			class="middle"
 			icon="info-circle"
@@ -18,7 +18,8 @@
 
 	<section
 		*ngIf="!items.length && loading"
-		class="product-empty">
+		class="product-message">
+
 		<icon
 			class="middle"
 			icon="spinner"
@@ -29,47 +30,60 @@
 	</section>
 
 	<section
-		*ngFor="let product of items; let i = index"
+		*ngFor="let product of items; trackBy: trackByFn; let i = index"
 		class="product"
 		itemscope
 		itemtype="https://schema.org/Product">
 
-		<a
-			class="product-main"
-			queryParamsHandling="merge"
-			[routerLink]="getLink(product.readableName)">
+		<meta itemprop="brand" content="{{product.company.name}}">
+		<meta itemprop="image" content="{{'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + product?.logo}}">
 
-			<div class="product-logo-wrap">
-				<picture>
-					<source
-						media="(min-width: 425px)"
-						offset="100"
-						[attr.lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + product.logo">
+		<div class="product-info">
+			<img
+				[src]="product.company.logo"
+				alt="{{product.company.name}}">
 
-					<img
-						class="product-logo"
-						offset="200"
-						itemprop="image"
-						[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/md-' + product.logo"
-						alt="{{product.company?.name}} {{product.productLine?.name}} {{product.name}}">
-				</picture>
-			</div>
+			<ng-container *ngIf="product.company as company">
+				{{company.name}}
+			</ng-container>
+			<ng-container *ngIf="product.productLine as productLine">
+				{{productLine.name}}
+			</ng-container>
+		</div>
 
-			<meta itemprop="brand" content="{{product.company.name}}">
-			<h2
-				class="product-name"
-				itemprop="name">
+		<div class="product-main">
+			<a [routerLink]="getLink(product.readableName)">
 
-				<span class="product-brand">
-					<ng-container *ngIf="product.company as company">
-						{{company.name}}
-					</ng-container>
-					<ng-container *ngIf="product.productLine as productLine">
-						{{productLine.name}}
-					</ng-container>
-				</span>
+				<div class="product-logo">
+					<picture>
+						<source
+							media="(min-width: 425px)"
+							offset="100"
+							[attr.lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + product.logo">
 
-				<span class="product-names">
+						<img
+							offset="200"
+							itemprop="image"
+							alt="{{product.company?.name}} {{product.productLine?.name}} {{product.name}}"
+							[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/md-' + product.logo">
+					</picture>
+				</div>
+			</a>
+
+			<a [routerLink]="getLink(product.readableName)">
+				<h2
+					class="product-name"
+					itemprop="name">
+
+					<span class="product-name-brand">
+						<ng-container *ngIf="product.company as company">
+							{{company.name}}
+						</ng-container>
+						<ng-container *ngIf="product.productLine as productLine">
+							{{productLine.name}}
+						</ng-container>
+					</span>
+
 					<ng-container *ngIf="titleAs === 'composition'">
 						{{product.name}}
 					</ng-container>
@@ -79,27 +93,60 @@
 					<ng-container *ngIf="titleAs === 'translate'">
 						{{product.translate || product.originName}}
 					</ng-container>
-				</span>
-			</h2>
+				</h2>
+			</a>
 
-			<ul class="product-summary">
-				<li
-					*ngFor="let item of getItems(product)"
-					class="product-summary-item product-prices-box">
+			<div class="product-base">
+				<a
+					class="product-details"
+					[routerLink]="getLink(product.readableName)">
 
-					<div
-						*ngIf="item.attr"
-						class="attr">
+					Детали
+				</a>
+				<ul
+					class="product-summary"
+					itemtype="http://schema.org/AggregateOffer"
+					itemprop="offers"
+					itemscope>
 
-						{{item.attr}}
-					</div>
-					<div class="price">
-						{{item.prices}}
-					</div>
-					грн
-				</li>
-			</ul>
-		</a>
+					<meta content="{{product.items.length}}" itemprop="offerCount">
+					<meta content="{{getHighPrice(product)}}" itemprop="highPrice">
+					<meta content="{{getLowPrice(product)}}" itemprop="lowPrice">
+					<meta content="UAH" itemprop="priceCurrency">
+
+					<li
+						*ngFor="let item of getRanges(product)"
+						class="product-summary-item product-prices-box">
+
+						<span
+							*ngIf="item.attr"
+							class="attr">
+
+							{{item.attr}}
+						</span>
+						<span class="price">
+							{{item.prices}}
+						</span>
+						грн
+					</li>
+					<li class="product-summary-item-offers">
+						{{product.items.length}} предложений
+					</li>
+				</ul>
+
+				<div
+					*ngIf="product.reviews"
+					class="product-comments">
+					<icon
+						class="middle"
+						icon="comment"
+						width="26"
+						height="29">
+					</icon>
+					{{product.reviews}}
+				</div>
+			</div>
+		</div>
 
 		<button
 			*ngIf="!hideOffers"
@@ -122,6 +169,10 @@
 				itemscope
 				itemtype="https://schema.org/Offer">
 
+				<meta itemprop="url" content="{{item.url}}">
+				<meta itemprop="priceCurrency" content="UAH">
+				<meta itemprop="availability" content="{{item.available ? 'InStock' : 'OutOfStock'}}">
+
 				<a
 					class="product-item-info"
 					target="_blank"
@@ -139,7 +190,6 @@
 							[defaultImage]="market.logo"
 							[alt]="market.name">
 
-						<meta itemprop="availability" content="{{item.available ? 'InStock' : 'OutOfStock'}}">
 						<ng-container *ngIf="!market.logo">{{market.name}}</ng-container>
 					</div>
 					<div class="attrs">
@@ -152,12 +202,22 @@
 						</ng-container>
 					</div>
 					<div class="price">
-						<meta itemprop="url" content="{{item.url}}">
-						<meta itemprop="priceCurrency" content="UAH">
 						<span itemprop="price">{{item.price}}</span>грн
 					</div>
 				</a>
 			</li>
 		</ul>
 	</section>
+
+	<button
+		*ngIf="showLoadMode && queries && totalItems > (queries.page + 1) * queries.itemsPerPage"
+		class="product load-more"
+		type="button"
+		(click)="loadMore()">
+
+		<icon icon="redo"></icon>
+		Показать
+		<br>
+		еще {{queries.itemsPerPage}}
+	</button>
 </div>

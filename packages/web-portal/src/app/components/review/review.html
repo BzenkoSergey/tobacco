@@ -1,10 +1,28 @@
 <article
 	class="review"
-	[class.mini]="hideDate">
+	[class.mini]="hideDate"
+	itemprop="review"
+	itemtype="http://schema.org/Review"
+	itemscope>
 
 	<div class="heading">
-		<span class="author">{{review.author}}</span>
-		<span class="rating">
+		<span
+			class="author"
+			itemprop="author"
+			itemtype="http://schema.org/Person"
+			itemscope>
+			<span itemprop="name">{{review.author}}</span>
+		</span>
+		<span
+			class="rating"
+			itemprop="reviewRating"
+			itemtype="http://schema.org/Rating"
+			itemscope>
+
+			<meta itemprop="ratingValue" content="{{review.rating || 0}}">
+			<meta itemprop="bestRating" content="10">
+			<meta itemprop="worstRating" content="0">
+
 			<span *ngIf="!hideDate">
 				Оценка: {{review.rating}}
 			</span>

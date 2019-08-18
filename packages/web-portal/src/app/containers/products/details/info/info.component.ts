@@ -1,19 +1,20 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
 
-import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+
+import { DeviceService } from '@common/device.service';
+import { ProductService } from '@common/products.service';
 
 import { MixesRestService } from '@rest/mixes';
 import { ReviewsRestService, ReviewDto, ReviewType } from '@rest/reviews';
-import { AggregatedProductDto, AggregatedProductItemDto } from '@rest/products/product-full.dto';
+import { AggregatedProductDto, AggregatedProductItemDto } from '@rest/products';
 
-import { FiltersService } from './../../../filters.service';
-import { LinkService } from './../../../link.service';
+import { DetailsService } from './../details.service';
 
 @Component({
 	templateUrl: './info.html',
-	styleUrls: ['./info.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		MixesRestService,
 		ReviewsRestService
@@ -21,249 +22,126 @@ import { LinkService } from './../../../link.service';
 })
 
 export class InfoComponent implements OnDestroy {
-	product: AggregatedProductDto;
+	private sub: Subscription;
+
+	unit: AggregatedProductDto;
 	productsTotal = 0;
 	productsQueries: any = null;
-	loading = false;
+
+	hasAvailable = true;
 	mixes: any[] = [];
 	reviews: ReviewDto[] = [];
-	commonRating = 0;
-	screenWidth = screen.width;
+	screenWidth = this.deviceService.width();
+	highPrice = 0;
+	lowPrice = 0;
+	ranges: any[] = [];
+	offers: AggregatedProductItemDto[] = [];
+	fields: any = [];
 
 	constructor(
+		private cd: ChangeDetectorRef,
+		private productService: ProductService,
+		private deviceService: DeviceService,
 		private reviewsRestService: ReviewsRestService,
 		private mixesRestService: MixesRestService,
-		private title: Title,
-		private meta: Meta,
-		private filters: FiltersService,
-		private linkService: LinkService,
+		private detailsService: DetailsService,
 		route: ActivatedRoute
 	) {
-		route.data.subscribe((data: { unit: AggregatedProductDto }) => {
-			this.setUnit(data.unit);
-			this.loading = false;
+		this.sub = route.data.subscribe((data: { unit: AggregatedProductDto }) => {
+			const unit = data.unit;
+			this.unit = unit;
+			this.detailsService.setMetaTitle(unit);
+			this.detailsService.setMetaDescription(unit);
+			this.detailsService.setMetaUrl(unit);
+			this.detailsService.setMetaKeywords(unit);
 
-			if (data.unit.reviews) {
+			if (unit.reviews) {
 				this.fetchReviews();
 			}
-			this.fetchProducts();
-		});
-		route.params.subscribe(params => {
-			const query: any = {};
-			Object.keys(params)
-				.forEach(prop => {
-					let value = params[prop] || '';
-					value = value.split(',').filter(v => v !== 'all');
-					query[prop] = value;
-				});
-			this.filters.push(query);
+			this.defineFields();
+			this.setOffers();
+			this.setPriceRanges();
+			this.setRanges();
+			this.fetchMixes();
+			this.setProductsQueries();
+			this.setHasAvailable();
+			this.cd.markForCheck();
 		});
 	}
 
 	ngOnDestroy() {
-		this.resetOg();
-	}
-
-	getReviews() {
-		this.reviewsRestService.list({
-			entityId: this.product.productId,
-			type: ReviewType.UNIT,
-			itemsPerPage: this.product.reviews
-		})
-		.subscribe(d => {
-			let rating = 0;
-			d.items.forEach(i => {
-				rating = rating + (+i.rating);
-			});
-			this.commonRating = rating / d.items.length;
-		});
-	}
-
-	fetchMixes() {
-		this.mixesRestService.list({
-			units: [this.product.productId]
-		})
-		.subscribe(d => {
-			this.mixes = d.items;
-		});
-	}
-
-	priceRange(items: AggregatedProductItemDto[]) {
-		if (!items.length) {
-			return [];
+		this.detailsService.resetMeta([
+			'og:title',
+			'og:url',
+			'og:description'
+		]);
+		if (this.sub) {
+			this.sub.unsubscribe();
 		}
-		const highPrice = items
-			.sort((a, b) => {
-				return b.price - a.price;
-			})[0].price;
-
-		const lowPrice = items
-			.sort((a, b) => {
-				return a.price - b.price;
-			})[0].price;
-
-		return [lowPrice, highPrice];
 	}
 
-	sortItems(items: AggregatedProductItemDto[]) {
-		return items
-			.filter(i => {
-				return i.available;
-			})
-			.sort((a, b) => {
-				return a.price - b.price;
-			})
-			.slice(0, 3);
-	}
-
-	getItems(p: AggregatedProductDto) {
-		const map = new Map<string, AggregatedProductItemDto[]>();
-
-		p.items.forEach(pm => {
-			const pa = pm.productAttributes[0];
-			if (pa) {
-				let list2 = map.get(pa.value) || [];
-				list2.push(pm);
-				list2 = list2
-					.sort((a, b) => {
-						return a.price - b.price;
-					});
-				map.set(pa.value, list2);
+	private defineFields() {
+		this.fields = this.unit.fields.filter(f => {
+			const value = f.value;
+			if (value.length > 30) {
+				return false;
 			}
-		});
-		const info = [];
-		if (!map.size) {
-			if (!p.items.length) {
-				return {
-					attr: null,
-					prices: '',
-					pricesList: []
-				};
-			}
-			let prices = '';
-			const pricesList = [];
-			if (p.items.length > 1) {
-				pricesList.push(p.items[0].price);
-				pricesList.push(p.items[p.items.length - 1].price);
-				prices += p.items[0].price;
-				prices += '-' + p.items[p.items.length - 1].price;
-			} else {
-				pricesList.push(p.items[0].price);
-				prices += p.items[0].price;
-			}
-			info.push({
-				attr: null,
-				prices: prices,
-				pricesList: pricesList
-			});
-			return info;
-		}
-
-
-		map.forEach((mps, key) => {
-			let prices = '';
-			const pricesList = [];
-			if (mps.length > 1) {
-				pricesList.push(mps[0].price);
-				pricesList.push(mps[mps.length - 1].price);
-				prices += mps[0].price;
-				prices += '-' + mps[mps.length - 1].price;
-			} else {
-				pricesList.push(mps[0].price);
-				prices += mps[0].price;
-			}
-
-			info.push({
-				attr: key,
-				prices: prices,
-				pricesList: pricesList
-			});
-		});
-		return info;
-	}
-
-	private resetOg() {
-		this.meta.removeTag('property="og:title"');
-		this.meta.removeTag('property="og:url"');
-		this.meta.removeTag('property="og:description"');
-	}
-
-	private setOg() {
-		this.meta.updateTag({
-			property: 'og:title',
-			content: this.getMetaTitle()
-		});
-		this.meta.updateTag({
-			property: 'og:description',
-			content: (this.product.seo && this.product.seo.description) ? this.product.seo.description : this.getMetaTitle()
-		});
-		this.meta.updateTag({
-			property: 'og:url',
-			content: window.location.origin + `/products/detail/${this.product.readableName}`
+			return !~value.indexOf('http');
 		});
 	}
 
-	private setUnit(d: AggregatedProductDto) {
-		this.product = d;
-		this.linkService.updateTag({
-			rel: 'canonical',
-			href: window.location.origin + `/products/detail/${d.readableName}`
-		});
-		this.title.setTitle(this.getMetaTitle());
-		this.meta.updateTag({
-			name: 'description',
-			content: (d.seo && d.seo.description) ? d.seo.description : this.getMetaTitle()
-		});
-		this.meta.updateTag({
-			name: 'keywords',
-			content: (d.seo && d.seo.keywords) ? d.seo.keywords : ''
-		});
-		this.setOg();
-		this.fetchMixes();
+	private setHasAvailable() {
+		this.hasAvailable = this.unit.items.some(i => i.available);
 	}
 
-	private getMetaTitle() {
-		let title = this.product.seo && this.product.seo.title;
-		if (!title) {
-			title = this.product.name;
-			if (this.product.productLine && this.product.productLine.name) {
-				title = this.product.productLine.name + ' ' + title;
-			}
-			if (this.product.company && this.product.company.name) {
-				title = this.product.company.name + ' ' + title;
-			}
-			const catTitle = this.product.categories.map(c => c.name).join(' ');
-			title = catTitle ? catTitle + ' ' + title : title;
-		}
-		return title;
+	private setOffers() {
+		this.offers = this.productService.sortByCheaperItems(this.unit.items, true).slice(0, 3);
+	}
+
+	private setRanges() {
+		this.ranges = this.productService.getRanges(this.unit.items);
+	}
+
+	private setPriceRanges() {
+		const ranges = this.productService.getPriceRange(this.unit.items);
+		this.lowPrice = ranges[0];
+		this.highPrice = ranges[1];
 	}
 
 	private fetchReviews() {
 		this.reviewsRestService.list({
-			entityId: this.product.productId,
+			entityId: this.unit.productId,
 			type: ReviewType.UNIT,
-			itemsPerPage: this.product.reviews
+			itemsPerPage: 3
 		}).subscribe(d => {
-			this.reviews = d.items.slice(0, 3);
-
-			let rating = 0;
-			d.items.forEach(i => {
-				rating = rating + (+i.rating);
-			});
-			this.commonRating = rating / d.items.length;
+			this.reviews = d.items;
+			this.cd.markForCheck();
 		});
 	}
 
-	private fetchProducts() {
-		const r = this.product.name.split(' / ');
-		const search = r[0] +  '|' + r[1];
+	private fetchMixes() {
+		this.mixesRestService.list({
+			units: [this.unit.productId]
+		})
+		.subscribe(d => {
+			this.mixes = d.items;
+			this.cd.markForCheck();
+		});
+	}
+
+	private setProductsQueries() {
+		const r = this.unit.name.split(' / ');
+		let search = r[0];
+		if (r[1]) {
+			search += '|' + r[1];
+		}
 		this.productsQueries = {
 			or: true,
 			search: search,
-			company: [this.product.company.code],
-			exclude: [this.product.readableName],
+			company: [this.unit.company.code],
+			exclude: [this.unit.readableName],
 			itemsPerPage: 5,
-			categories: this.product.categories.map(c => c.code)
+			categories: this.unit.categories.map(c => c.code)
 		};
 	}
 }

@@ -11,12 +11,6 @@ const routes: Routes = [
 			breadcrumb: 'Products'
 		},
 		children: [
-			// {
-			// 	path: '',
-			// 	redirectTo: 'overview',
-			// 	pathMatch: 'full'
-			// },
-
 			// detail
 			{
 				path: 'detail/:unitCode',
@@ -68,9 +62,6 @@ const routes: Routes = [
 				path: ':resource/:category/:company/:unit-line/:WEIGHT',
 				loadChildren: './overview/overview.module#OverviewModule'
 			}
-
-			// category/company/line/product
-			// category/company/product
 		]
 	}
 ];

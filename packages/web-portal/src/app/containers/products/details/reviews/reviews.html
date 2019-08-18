@@ -1,10 +1,33 @@
-<div class="reviews">
-	<h2>
-		Отзывы об {{product.company?.name}} {{product.productLine?.name}} {{product.name}}
-	</h2>
+<div class="page-product-reviews">
+	<div class="reviews-header">
+		<h2 class="sub-title">
+			Отзывы об {{unit.company?.name}} {{unit.productLine?.name}} {{unit.name}}
+		</h2>
+
+		<div
+			class="rating summary-widget"
+			itemprop="aggregateRating"
+			itemscope
+			itemtype="https://schema.org/AggregateRating">
+
+			<meta itemprop="ratingCount" content="{{unit.reviews}}">
+			<meta itemprop="bestRating" content="10">
+			<meta itemprop="worstRating" content="0">
+
+			<span>
+				Общая оценка: <b itemprop="ratingValue">{{unit.reviewsRating}}</b>
+			</span>
+		</div>
+	</div>
 
 	<review
 		*ngFor="let review of reviews"
 		[review]="review">
 	</review>
+
+	<unit-navigation
+		*ngIf="screenWidth <= 588"
+		[productId]="unit.productId"
+		[reviews]="unit.reviews">
+	</unit-navigation>
 </div>

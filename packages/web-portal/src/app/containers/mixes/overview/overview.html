@@ -1,69 +1,7 @@
-<div class="main">
-	<button
-		class="filters-btn"
-		type="button"
-		(click)="showFilter = true">
-
-		<icon icon="filter"></icon>
-		Фильтра
-	</button>
-
-	<div
-		class="nav-db"
-		[class.open]="showFilter"
-		(click)="showFilter = false">
-	</div>
-
-	<div
-		class="nav"
-		[class.open]="showFilter">
-
-		<ul class="items">
-			<li *ngIf="hasFilters()">
-				<a
-					class="filter"
-					rel="noindex"
-					queryParamsHandling="merge"
-					[routerLink]="['/mixes']">
-
-					<icon icon="filter"></icon>
-					Сбросить Фильтра
-				</a>
-			</li>
-			<li
-				*ngFor="let i of getMenuItems()"
-				[class.hide]="!getMenuOptions(i).length"
-				(click)="$event.stopPropagation()">
-
-				<button
-					[class.selected]="filterSelected(i.code)"
-					type="button"
-					(click)="openFilter(i.code)">
-
-					{{i.label}}
-					<icon
-						*ngIf="i.options.length"
-						[icon]="openned.get(i.code) ? 'caret-up' : 'caret-down'">
-					</icon>
-				</button>
-
-				<div
-					*ngIf="i.options.length"
-					class="sub-items"
-					[class.open]="!openned.get(i.code)">
-
-					<filter-items
-						[mixes]="true"
-						[items]="getMenuOptions(i)"
-						[code]="i.code"
-						[selectedCodes]="queriesMap.get(i.code)"
-						[allSelected]="queriesMap"
-						(selected)="filter($event, i)">
-					</filter-items>
-				</div>
-			</li>
-		</ul>
-	</div>
+<div class="page-mixes">
+	<filters
+		[includedItems]="['company', 'unit-line']">
+	</filters>
 
 	<div class="content">
 		<h2
@@ -80,12 +18,12 @@
 		</ng-template>
 
 		<p
-			*ngIf="getContext(); else elseContext"
+			*ngIf="pageDescription; else elseDescription"
 			class="description">
-			{{getContext()}}
+			{{pageDescription}}
 		</p>
 
-		<ng-template #elseContext>
+		<ng-template #elseDescription>
 			<p
 				*ngIf="!queries.page"
 				class="description">
@@ -98,7 +36,7 @@
 		<div class="mixes">
 			<section
 				*ngIf="!items.length && !loading"
-				class="product-empty">
+				class="product-message">
 				<icon
 					class="middle"
 					icon="info-circle"
@@ -110,7 +48,7 @@
 
 			<section
 				*ngIf="!items.length && loading"
-				class="product-empty">
+				class="product-message">
 				<icon
 					class="middle"
 					icon="spinner"
@@ -128,11 +66,23 @@
 			</div>
 		</div>
 
+		<div class="load-more-wrap">
+			<button
+				*ngIf="queries && mixesTotal > (queries.page + 1) * queries.itemsPerPage"
+				class="load-more"
+				type="button"
+				(click)="loadMore()">
+
+				<icon icon="redo"></icon>
+				<span>Показать еще {{queries.itemsPerPage}}</span>
+			</button>
+		</div>
+
 		<pagination
 			class="pagination"
 			[itemsPerPage]="queries.itemsPerPage"
 			[page]="queries.page"
-			[total]="productsTotal">
+			[total]="mixesTotal">
 		</pagination>
 	</div>
 </div>

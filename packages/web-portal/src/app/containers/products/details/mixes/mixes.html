@@ -1,26 +1,30 @@
 <section
-	*ngIf="product && mixes.length"
-	class="content">
+	*ngIf="unit"
+	class="page-product-mixes">
 
 	<div class="summary">
 		<div class="description">
-			<h2>Миксы для кальяна с брендом {{product.company?.name}} {{product.productLine?.name}} вкус {{product.name}}</h2>
+			<h2 class="sub-title">
+				Миксы для кальяна с брендом {{unit.company?.name}} {{unit.productLine?.name}} вкус {{unit.name}}
+			</h2>
 			<p>
-				Все миксы в состав которых входит табак {{product.company?.name}} {{product.productLine?.name}} {{product.name}}.
+				Все миксы в состав которых входит табак {{unit.company?.name}} {{unit.productLine?.name}} {{unit.name}}.
 				<br>
 				Всего миксов: <b>{{mixes.length}}</b>.
 				<br>
 				Посмотреть все
-				<a [routerLink]="['/mixes', product.company.code]">
-					миксы с табаком {{product.company?.name}}
+				<a [routerLink]="['/mixes', unit.company.code]">
+					миксы с табаком {{unit.company?.name}}
 				</a>.
 			</p>
-			<h4>Самый бюджетный микс {{getMin()[0]}} грн</h4>
+			<h4>Самый бюджетный микс {{cheaperPrice}} грн</h4>
 
-			<div class="mixes">
+			<div
+				*ngIf="mixes.length"
+				class="mixes">
 				<mix
-					[d]="getMin()[1]"
-					[brand]="product.company.code"
+					[d]="cheaper"
+					[brand]="unit.company.code"
 					[absolute]="true">
 				</mix>
 			</div>
@@ -47,8 +51,14 @@
 		<mix
 			*ngFor="let m of mixes"
 			[absolute]="true"
-			[brand]="product.company.code"
+			[brand]="unit.company.code"
 			[d]="m">
 		</mix>
 	</div>
 </section>
+
+<unit-navigation
+	*ngIf="screenWidth <= 588"
+	[productId]="unit.productId"
+	[reviews]="unit.reviews">
+</unit-navigation>

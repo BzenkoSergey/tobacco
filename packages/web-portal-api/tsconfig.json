@@ -1,14 +1,34 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
 	"outDir": "./dist",
     "moduleResolution": "node",
 	"lib": ["es2015", "dom"],
-    "rootDir": "src",
-    "declaration": true
-  },
+	"rootDir": "src",
+    "typeRoots": [
+		"node_modules/@types"
+	  ],
+	  "types": [
+		"node"
+	  ],
+    "declaration": true,
+
+	"sourceMap": true,
+	"removeComments": true,
+
+	"strict": false,
+	"noImplicitAny": false,
+	"strictNullChecks": false,
+	"strictFunctionTypes": false,
+	"noImplicitThis": false,
+	"alwaysStrict": false,
+
+	"noUnusedLocals": false,
+	"noUnusedParameters": false,
+	"noImplicitReturns": false,
+	"noFallthroughCasesInSwitch": false
+	},
   "exclude": [
 	  "node_modules",
 	  "dist"

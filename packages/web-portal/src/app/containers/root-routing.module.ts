@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-
+import { RouterModule, Routes, RouteReuseStrategy } from '@angular/router';
+import { CustomReuseStrategy } from './shared/reuse-strategy';
 const routes: Routes = [
 	{
 		path: '',
@@ -32,6 +32,7 @@ const routes: Routes = [
 @NgModule({
 	imports: [
 		RouterModule.forRoot(routes, {
+			initialNavigation: 'enabled',
 			paramsInheritanceStrategy: 'always'
 			// ,
 			// preloadingStrategy: PreloadAllModules
@@ -39,6 +40,9 @@ const routes: Routes = [
 	],
 	exports: [
 		RouterModule
+	],
+	providers: [
+		{provide: RouteReuseStrategy, useClass: CustomReuseStrategy}
 	]
 })
 export class RootRoutingModule {}

@@ -1,6 +1,6 @@
-<div class="content">
+<div class="page-home">
 	<ul class="brands">
-		<li *ngFor="let option of getCategories()">
+		<li *ngFor="let option of brands">
 			<a [routerLink]="['../products', 'all', 'all', option.code]">
 
 				<img
@@ -43,45 +43,49 @@
 		</a>
 	</div>
 
-	<div class="row">
-		<div class="col-4">
-			<h2>Табак</h2>
+	<div class="content">
+		<div class="row">
+			<div class="col-4">
+				<h2>Табак</h2>
 
-			<products
-				[cols]="3"
-				[home]="true"
-				[openedId]="openedId"
-				[queries]="tobaccoQueries"
-				(opened)="tooggleItems($event)">
-			</products>
-		</div>
+				<products
+					[cols]="3"
+					[home]="true"
+					[openedId]="openedId"
+					[queries]="tobaccoQueries"
+					(opened)="tooggleItems($event)">
+				</products>
+			</div>
 
-		<div class="col-6">
-			<h2>Миксы табаков</h2>
+			<div class="col-6 mixes-wrap">
+				<h2>Миксы табаков</h2>
 
-			<div class="mixes">
-				<mix
-					*ngFor="let d of mixes"
-					[absolute]="true"
-					[d]="d">
-				</mix>
+				<div class="mixes">
+					<mix
+						*ngFor="let d of mixes"
+						[absolute]="true"
+						[d]="d">
+					</mix>
+				</div>
 			</div>
 		</div>
+
+		<h2>Чаши</h2>
+		<products
+			[cols]="7"
+			[home]="true"
+			[openedId]="openedId"
+			[queries]="bowlQueries"
+			(opened)="tooggleItems($event)">
+		</products>
+
+		<h2>Уголь</h2>
+		<products
+			[cols]="7"
+			[home]="true"
+			[openedId]="openedId"
+			[queries]="coalQueries"
+			(opened)="tooggleItems($event)">
+		</products>
 	</div>
-
-	<h2>Чаши</h2>
-	<products
-		[home]="true"
-		[openedId]="openedId"
-		[queries]="bowlQueries"
-		(opened)="tooggleItems($event)">
-	</products>
-
-	<h2>Уголь</h2>
-	<products
-		[home]="true"
-		[openedId]="openedId"
-		[queries]="coalQueries"
-		(opened)="tooggleItems($event)">
-	</products>
 </div>

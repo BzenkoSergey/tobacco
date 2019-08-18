@@ -19,19 +19,19 @@ const routes: Routes = [
 
 			// detail
 			{
-				path: 'detail/:unitCode',
+				path: 'detail/:mixCode',
 				loadChildren: './mixes-details.module#DetailsModule'
 			},
 			{
-				path: 'detail/:unitCode',
+				path: 'detail/:mixCode',
 				loadChildren: './mixes-details.module#DetailsModule'
 			},
 			{
-				path: ':company/detail/:unitCode',
+				path: ':company/detail/:mixCode',
 				loadChildren: './mixes-details.module#DetailsModule'
 			},
 			{
-				path: ':company/:unit-line/detail/:unitCode',
+				path: ':company/:unit-line/detail/:mixCode',
 				loadChildren: './mixes-details.module#DetailsModule'
 			},
 

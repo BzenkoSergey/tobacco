@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { LazyLoadImageModule, intersectionObserverPreset } from 'ng-lazyload-image';
+
+import { LazyLoadImageModule } from 'ng-lazyload-image';
+
+import { NavigationModule } from './../shared/navigation/navigation.module';
 
 import { CharacteristicsRoutingModule } from './characteristics-routing.module';
 import { CharacteristicsComponent } from './characteristics.component';
@@ -8,10 +11,10 @@ import { CharacteristicsComponent } from './characteristics.component';
 @NgModule({
 	imports: [
 		CommonModule,
-		LazyLoadImageModule.forRoot({
-			preset: intersectionObserverPreset
-		}),
-		CharacteristicsRoutingModule
+		LazyLoadImageModule,
+
+		CharacteristicsRoutingModule,
+		NavigationModule
 	],
 	declarations: [
 		CharacteristicsComponent
@@ -22,5 +25,3 @@ import { CharacteristicsComponent } from './characteristics.component';
 })
 
 export class CharacteristicsModule {}
-
-//node_modules/.bin/ivy-ngcc

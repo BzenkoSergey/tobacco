@@ -1,11 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { DOCUMENT } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 
 import { apiUrl } from './../api';
 
 @Injectable()
 export class MenuRestService {
-	constructor(private http: HttpClient) {}
+	constructor(
+		private http: HttpClient,
+		@Inject(DOCUMENT) private document: Document,
+		@Inject(PLATFORM_ID) private platformId: Object
+	) {}
 
 	list() {
 		const url = this.apiUrl();
@@ -13,7 +19,6 @@ export class MenuRestService {
 	}
 
 	private apiUrl() {
-		return apiUrl + `menu`;
-		// return window.location.protocol + `//` + window.location.hostname + `:5000/menu`;
+		return apiUrl(this.document, isPlatformBrowser(this.platformId), true) + 'menu';
 	}
 }

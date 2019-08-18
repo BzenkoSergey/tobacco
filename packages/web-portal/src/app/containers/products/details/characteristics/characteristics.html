@@ -1,46 +1,55 @@
 <section
-	*ngIf="product"
-	class="content">
+	*ngIf="unit"
+	class="page-product-characteristics">
 
 	<img
 		class="image"
 		offset="100"
-		[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + product.logo"
-		alt="{{product.company?.name}} {{product.productLine?.name}} {{product.name}}">
+		alt="{{unit.company?.name}} {{unit.productLine?.name}} {{unit.name}}"
+		[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + unit.logo">
 
 	<div class="items">
-		<h2>
+		<h2 class="sub-title">
 			Характеристики
-			<ng-container *ngIf="product.company as company">
+			<ng-container *ngIf="unit.company as company">
 				{{company.name}}
 			</ng-container>
-			<ng-container *ngIf="product.productLine as productLine">
+			<ng-container *ngIf="unit.productLine as productLine">
 				{{productLine.name}}
 			</ng-container>
-			{{product.name}}
+			{{unit.name}}
 		</h2>
 
 		<ul
-			*ngIf="product.fields.length"
+			*ngIf="unit.fields.length"
 			class="list-unstyled">
 
 			<li
-				*ngFor="let field of product.fields"
-				itemprop="description">
+				*ngFor="let field of unit.fields"
+				itemprop="additionalProperty"
+				itemscope
+				itemtype="http://schema.org/PropertyValue">
 
-				{{field.label}}:
+				<span itemprop="name">{{field.label}}</span>:
 				<ng-container *ngIf="isLink(field.value); else elseBlock">
 					<a
 						target="_blank"
 						rel="noindex"
+						itemprop="value"
 						href="{{field.value}}">
 						{{field.value}}
 					</a>
 				</ng-container>
 				<ng-template #elseBlock>
-					{{field.value}}
+					<span itemprop="value">{{field.value}}</span>
 				</ng-template>
 			</li>
 		</ul>
 	</div>
+
+	<unit-navigation
+		*ngIf="screenWidth <= 588"
+		[productId]="unit.productId"
+		[reviews]="unit.reviews">
+	</unit-navigation>
 </section>

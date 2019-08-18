@@ -1,20 +1,32 @@
-import { Component, Input, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
+import {
+	Component,
+	Input,
+	OnChanges,
+	SimpleChanges,
+	Output,
+	EventEmitter,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef
+} from '@angular/core';
+import { Router } from '@angular/router';
 
-import { ProductsRestService } from '@rest/products';
-import { AggregatedProductDto, AggregatedProductItemDto } from '@rest/products/product-full.dto';
+import { DeviceService } from '@common/device.service';
+import { ProductsRestService, AggregatedProductDto, AggregatedProductItemDto } from '@rest/products';
 import { SearchRestService } from '@rest/search';
+import { ProductService } from '@common/products.service';
 
 @Component({
 	selector: 'products',
 	templateUrl: './products.html',
-	styleUrls: ['./products.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
+		ProductService,
 		ProductsRestService,
 		SearchRestService
 	]
 })
 
-export class ProductsComponent implements OnChanges, OnDestroy {
+export class ProductsComponent implements OnChanges {
 	@Output() opened = new EventEmitter<string>();
 	@Output() total = new EventEmitter<number>();
 	@Input() queries: any = {};
@@ -25,17 +37,26 @@ export class ProductsComponent implements OnChanges, OnDestroy {
 	@Input() hideOffers = false;
 	@Input() titleAs: 'originName'|'translate'|'composition' = 'composition';
 	@Input() home = false;
+	@Input() showLoadMode = false;
+
+	totalItems = 0;
 	items: AggregatedProductDto[] = [];
 	loading = false;
 	link = [];
+	isMobile = this.deviceService.isMobile();
+	isLoadingMore = false;
 
 	constructor(
-		private productsService: ProductsRestService,
+		private router: Router,
+		private cd: ChangeDetectorRef,
+		private deviceService: DeviceService,
+		private productsRestService: ProductsRestService,
+		private productsService: ProductService,
 		private searchRestService: SearchRestService
 	) {}
 
 	ngOnChanges(changes: SimpleChanges) {
-		if (changes.queries) {
+		if (changes.queries && changes.queries.currentValue) {
 			this.fetch();
 		}
 
@@ -51,8 +72,23 @@ export class ProductsComponent implements OnChanges, OnDestroy {
 		}
 	}
 
-	ngOnDestroy() {
+	getHighPrice(p: AggregatedProductDto) {
+		const ranges = this.productsService.getPriceRange(p.items);
+		return ranges[1];
+	}
 
+	getLowPrice(p: AggregatedProductDto) {
+		const ranges = this.productsService.getPriceRange(p.items);
+		return ranges[0];
+	}
+
+	loadMore() {
+		this.isLoadingMore = true;
+		this.router.navigate([], {
+			queryParams: {
+				page: (this.queries.page || 0) + 1
+			}
+		});
 	}
 
 	getLink(readableName: string) {
@@ -65,14 +101,20 @@ export class ProductsComponent implements OnChanges, OnDestroy {
 
 	fetch() {
 		this.loading = true;
-		const products = this.productsService.list(this.queries);
-		products
+		this.productsRestService.list(this.queries)
 			.subscribe(
 				list => {
-					this.items = list.items;
+					if (this.isLoadingMore) {
+						this.items = this.items.concat(list.items);
+					} else {
+						this.items = list.items;
+					}
+					this.isLoadingMore = false;
 					const total = list.total;
+					this.totalItems = total;
 					this.total.emit(total);
 					this.loading = false;
+					this.cd.markForCheck();
 					if (total && this.queries.search) {
 						this.searchRestService.create({
 							query: this.queries.search
@@ -80,67 +122,23 @@ export class ProductsComponent implements OnChanges, OnDestroy {
 						.subscribe();
 					}
 				},
-				() => this.loading = false
+				() => {
+					this.loading = false;
+					this.cd.markForCheck();
+				}
 			);
 	}
 
-	sortItems(items: AggregatedProductItemDto[]) {
-		return items.sort((a, b) => {
-			return a.price - b.price;
-		});
+	trackByFn(index: number, item: AggregatedProductDto) {
+		return item.readableName;
 	}
 
-	getItems(p: AggregatedProductDto) {
-		const map = new Map<string, AggregatedProductItemDto[]>();
+	sortItems(items: AggregatedProductItemDto[]) {
+		return this.productsService.sortByCheaperItems(items);
+	}
 
-		p.items.forEach(pm => {
-			const pa = pm.productAttributes[0];
-			if (pa) {
-				let list2 = map.get(pa.value) || [];
-				list2.push(pm);
-				list2 = list2
-					.filter((e, pos, arr) => {
-						const i = arr.findIndex((f) => {
-							return f.price === e.price;
-						});
-						return i === pos;
-					})
-					.sort((a, b) => {
-						return a.price - b.price;
-					});
-				map.set(pa.value, list2);
-			}
-		});
-		const info = [];
-		if (!map.size) {
-			let prices = '';
-			if (p.items.length > 1) {
-				prices += p.items[0].price;
-				prices += '-' + p.items[p.items.length - 1].price;
-			} else {
-				prices += p.items[0].price;
-			}
-			info.push({
-				attr: null,
-				prices: prices
-			});
-			return info;
-		}
-
-		map.forEach((mps, key) => {
-			let prices = '';
-			if (mps.length > 1) {
-				prices += mps[0].price;
-				prices += '-' + mps[mps.length - 1].price;
-			} else {
-				prices += mps[0].price;
-			}
-
-			info.push({
-				attr: key,
-				prices: prices
-			});
-		});
-		return info;
+	getRanges(p: AggregatedProductDto) {
+		const spaces = this.isMobile ? ' ' : '';
+		return this.productsService.getRanges(p.items, spaces);
 	}
 }

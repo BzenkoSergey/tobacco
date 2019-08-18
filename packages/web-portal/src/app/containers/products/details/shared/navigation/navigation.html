@@ -1,9 +1,10 @@
-<ul>
+<ul class="navigation">
 	<li>
 		<a
 			routerLinkActive="active"
+			queryParamsHandling="merge"
 			[routerLinkActiveOptions]="{exact: true}"
-			[routerLink]="['./']">
+			[routerLink]="[baseUrl]">
 			О товаре
 
 			<icon icon="angle-right"></icon>
@@ -12,7 +13,8 @@
 	<li>
 		<a
 			routerLinkActive="active"
-			[routerLink]="['characteristics']">
+			queryParamsHandling="merge"
+			[routerLink]="[baseUrl, 'characteristics']">
 			Характеристики
 
 			<icon icon="angle-right"></icon>
@@ -21,7 +23,8 @@
 	<li>
 		<a
 			routerLinkActive="active"
-			[routerLink]="['prices']">
+			queryParamsHandling="merge"
+			[routerLink]="[baseUrl, 'prices']">
 			Цены
 
 			<icon icon="angle-right"></icon>
@@ -30,7 +33,8 @@
 	<li *ngIf="hasMixes">
 		<a
 			routerLinkActive="active"
-			[routerLink]="['mixes']">
+			queryParamsHandling="merge"
+			[routerLink]="[baseUrl, 'mixes']">
 			Миксы
 
 			<icon icon="angle-right"></icon>
@@ -39,7 +43,8 @@
 	<li *ngIf="reviews">
 		<a
 			routerLinkActive="active"
-			[routerLink]="['reviews']">
+			queryParamsHandling="merge"
+			[routerLink]="[baseUrl, 'reviews']">
 			Отзывы ({{reviews}})
 
 			<icon icon="angle-right"></icon>

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-	templateUrl: './mixes.html'
+	templateUrl: './mixes.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MixesComponent {}

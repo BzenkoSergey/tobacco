@@ -1,10 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { IconService } from './icon.service';
 
 @Component({
 	selector: 'icon',
-	templateUrl: './icon.html'
+	templateUrl: './icon.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class IconComponent implements OnChanges {
@@ -17,7 +18,6 @@ export class IconComponent implements OnChanges {
 		private el: ElementRef
 	) {
 		el.nativeElement.style.display = 'inline-block';
-		// el.nativeElement.style.verticalAlign = 'middle';
 	}
 
 	ngOnChanges(change: SimpleChanges) {

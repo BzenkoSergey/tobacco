@@ -22,9 +22,9 @@ const allowedExt = [
 app.use("*", function(req, res) {
 	console.log(req.url);
 	if (allowedExt.filter(ext => req.url.indexOf(ext) > 0).length > 0) {
-		res.sendFile(path.resolve(`/dist/${req.url}`));
+		res.sendFile(path.resolve(`/dist/web-portal/${req.url}`));
 	} else {
-		res.sendFile(__dirname + '/dist/index.html');
+		res.sendFile(__dirname + '/dist/web-portal/index.html');
 	}
 	// resp.sendFile(__dirname + '/dist/web-portal/index.html');
 });

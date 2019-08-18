@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { DOCUMENT } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 
 import { map } from 'rxjs/operators';
 
@@ -14,7 +16,11 @@ type Page = {
 
 @Injectable()
 export class ProductsRestService {
-	constructor(private http: HttpClient) {}
+	constructor(
+		private http: HttpClient,
+		@Inject(DOCUMENT) private document: Document,
+		@Inject(PLATFORM_ID) private platformId: Object
+	) {}
 
 	list(queries: any) {
 		const url = this.apiUrl();
@@ -38,7 +44,6 @@ export class ProductsRestService {
 	}
 
 	private apiUrl() {
-		// return window.location.protocol + `//api.` + window.location.hostname + `/products`;
-		return apiUrl + `products`;
+		return apiUrl(this.document, isPlatformBrowser(this.platformId), false) + 'products';
 	}
 }

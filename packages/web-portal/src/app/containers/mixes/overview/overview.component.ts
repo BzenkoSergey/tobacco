@@ -1,293 +1,116 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
 
-import { combineLatest } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 
-import { FiltersService } from './../../filters.service';
-import { MenuService } from './../../menu.service';
-import { LinkService } from './../../link.service';
-import { Utils } from './../../utils';
-
+import { ParamsService, PageCode } from '@common/params.service';
+import { MenuService } from '@common/menu.service';
 import { MixesRestService } from '@rest/mixes';
+
+import { OverviewService } from './overview.service';
 
 @Component({
 	templateUrl: './overview.html',
-	styleUrls: ['./overview.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		MixesRestService
 	]
 })
 
 export class OverviewComponent implements OnDestroy {
-	productsQueries: any = {};
-	queries: any = {
-		markets: [],
-		companies: [],
-		productLines: [],
-		page: 0,
-		itemsPerPage: 25,
-		search: ''
-	};
+	private sub: Subscription;
+	private menu: any;
 
+	queries: any = null;
 	items: any = [];
 
-	showFilter = false;
-	productsTotal = 0;
+	mixesTotal = 0;
+	isLoadingMore = false;
 	loading = false;
 
-	openedId: string|null = null;
 	queriesMap = new Map<string, string[]>();
-	menu: any;
 	pageTitle = '';
-
-	openned = new Map<string, boolean>();
-	search = '';
+	pageDescription = '';
 
 	constructor(
 		private router: Router,
-		route: ActivatedRoute,
-		private filters: FiltersService,
-		private title: Title,
-		private meta: Meta,
-		private linkService: LinkService,
+		private cd: ChangeDetectorRef,
+		private overviewService: OverviewService,
+		private paramsService: ParamsService,
 		private mixesRestService: MixesRestService,
-		private menuService: MenuService
+		private menuService: MenuService,
+		route: ActivatedRoute
 	) {
-		this.filters.setCode('MIXES');
-		combineLatest(
+		this.paramsService.setRelatedPage(PageCode.Mixes);
+		this.defineQueries();
+
+		this.sub = combineLatest(
 			route.params,
 			route.queryParams,
 			this.menuService.get()
 		)
 		.subscribe(d => {
-			this.openedId = null;
+			this.defineQueries();
+			this.menu = d[2];
 			const params = d[0];
 			const queryParams = d[1];
-			this.menu = d[2];
-
-			this.linkService.updateTag({
-				rel: 'canonical',
-				href: window.location.origin + this.router.url
-			});
-
-			const query: any = {};
-			Object.keys(params)
-				.forEach(prop => {
-					let value = params[prop] || '';
-					value = value.split(',').filter(v => v !== 'all');
-					query[prop] = value;
-					this.queriesMap.set(prop, value);
-					this.defineQueries();
-				});
-			this.filters.push(query);
-
 			this.queries.search = queryParams['search'] || '';
 			this.queries.page = isNaN(+queryParams['page']) ? 0 : +queryParams['page'];
+
+			this.overviewService.updateMetaUrl();
+
+			this.paramsService.update(params);
+			this.queriesMap = this.paramsService.getMap();
+
+			this.patchQueries();
+			this.setPageTitle();
+			this.setDescription();
 			this.defineMeta();
-			this.fetchProducts();
+			this.fetch();
+			this.cd.markForCheck();
 		});
 	}
 
 	ngOnDestroy() {
-		this.filters.setCode(null);
-		this.meta.removeTag('name="description"');
-		this.meta.removeTag('name="title"');
-		this.meta.removeTag('name="keywords"');
-		this.meta.removeTag('property="og:title"');
-		this.meta.removeTag('property="og:url"');
-		this.meta.removeTag('property="og:description"');
-	}
-
-	getMenuItems() {
-		if (!this.menu) {
-			return [];
+		this.overviewService.resetMeta();
+		if (this.sub) {
+			this.sub.unsubscribe();
 		}
-		return this.menu.menu.filter(i => {
-			return i.code !== 'resource' && i.code !== 'category' && i.code !== 'WEIGHT';
-		});
 	}
 
-	hasFilters() {
-		return !!this.queriesMap.size;
-	}
-
-	filter(itemsCodes: string[], filter: any) {
-		const filterCode = filter.code;
-		const query: any = {};
-		query[filterCode] = itemsCodes;
-		if (filterCode === 'company') {
-			query['unit-line'] = [];
-		}
-
-		Object.keys(query)
-			.forEach(p => {
-				this.queriesMap.set(p, query[p]);
-			});
-
-		const path = Utils.genPathUrl(this.queriesMap);
-		this.router.navigate(path, {
-			queryParamsHandling: 'merge'
-		});
-	}
-
-	openFilter(code: string, close?: boolean|undefined) {
-		const state = this.openned.get(code);
-		if (close) {
-			this.openned.set(code, false);
-			return;
-		}
-		this.openned.set(code, !state);
-	}
-
-	filterSelected(code: string) {
-		const list = this.queriesMap.get(code);
-		return list && list.length && list[0] !== 'all';
-	}
-
-	getMenuOptions(i: any) {
-		const options = i.options;
-		return options.filter(o => {
-			if (!o.dependOn || !o.dependOn.item) {
-				return true;
+	loadMore() {
+		this.isLoadingMore = true;
+		this.router.navigate([], {
+			queryParams: {
+				page: (this.queries.page || 0) + 1
 			}
-			const items = this.queriesMap.get(o.dependOn.item) || [];
-			return !!~items.indexOf(o.dependOn.option);
 		});
 	}
 
-	defineMeta() {
-		let title = '';
-		const keywords = 'миксы для кальяна, миксы табака для кальяна, кальянные миксы, миксы табаков для кальяна';
-		let description = this.getContext() || 'Все кальянные миксы которые можно найти. Каждый микс содержит информацию о доступности для покупки составляющих табаков а также их стоимость по минимальной цене в рамках украины.';
-
-		this.getTitle();
-		title = this.pageTitle;
-		title = title  || 'Миксы табаков для кальяна';
-
-		if (this.queries.page) {
-			title = title + ' страница ' + (this.queries.page + 1);
-			description = description + ' страница ' + (this.queries.page + 1);
-		}
-		this.title.setTitle(title);
-		this.meta.updateTag({
-			name: 'description',
-			content: description
-		});
-		this.meta.updateTag({
-			name: 'keywords',
-			content: keywords
-		});
-		this.meta.updateTag({
-			property: 'og:url',
-			content: window.location.origin + this.router.url
-		});
-		this.meta.updateTag({
-			property: 'og:title',
-			content: title
-		});
-		this.meta.updateTag({
-			property: 'og:description',
-			content: description
-		});
+	private defineMeta() {
+		this.overviewService.defineMeta(this.pageTitle, this.queries.page, this.pageDescription);
 	}
 
-	getContext() {
-		const company = this.queriesMap.get('company') || [];
-		const unitLine = this.queriesMap.get('unit-line') || [];
-		if (!company.length) {
-			return '';
-		}
-		let str = 'табаком';
-		if (company.length > 1) {
-			str = 'табаками';
-		}
-		const item = this.getItem('company', this.menu.menu);
-		str = str + ' ' + company
-			.map(o => {
-				let linesTitles = '';
-				if (unitLine.length) {
-					const lineItem = this.getItem('unit-line', this.menu.menu);
-					const lines = unitLine
-						.map(l => this.getOption(l, lineItem.options))
-						.filter(opt => {
-							return opt.dependOn.option === o;
-						})
-						.map(opt => {
-							return opt.label;
-						});
-					linesTitles = lines.join(' и ');
-				}
-				if (!this.getOption(o, item.options)) {
-					return null;
-				}
-				return this.getOption(o, item.options).label + (linesTitles ? ' ' + linesTitles : '');
-			})
-			.filter(i => !!i)
-			.join(', ');
-
-		return 'Узнай что можно смиксовать с ' + str + ' и сколько будет стоить твой микс';
+	private setDescription() {
+		this.pageDescription = this.overviewService.genDescription(this.queriesMap, this.menu);
 	}
 
-	getTitle(): string {
-		if (!this.queriesMap.set || !this.menu) {
-			this.pageTitle = '';
-			return;
-		}
-		const company = this.queriesMap.get('company') || [];
-		const unitLine = this.queriesMap.get('unit-line') || [];
-
-		if (!company.length && !unitLine.length) {
-			this.pageTitle = '';
-			return;
-		}
-
-		let title = '';
-		if (company.length) {
-			title = 'Кальянные миксы c';
-			if (company.length > 1) {
-				title += ' табаками';
-			} else {
-				title += ' табаком';
-			}
-
-			const item = this.getItem('company', this.menu.menu);
-			title = title + ' ' + company
-				.map(o => {
-					let linesTitles = '';
-					if (unitLine.length) {
-						const lineItem = this.getItem('unit-line', this.menu.menu);
-						const lines = unitLine
-							.map(l => this.getOption(l, lineItem.options))
-							.filter(opt => {
-								return opt.dependOn.option === o;
-							})
-							.map(opt => {
-								return opt.label;
-							});
-						linesTitles = lines.join(' и ');
-					}
-					if (!this.getOption(o, item.options)) {
-						return null;
-					}
-					return this.getOption(o, item.options).label + (linesTitles ? ' ' + linesTitles : '');
-				})
-				.filter(i => !!i)
-				.join(', ');
-		}
-
-		this.pageTitle = title;
+	private setPageTitle() {
+		this.pageTitle = this.overviewService.getPageTitle(this.queriesMap, this.menu);
 	}
 
-	private getItem(code: string, items: any[]) {
-		return items.find(i => i.code === code);
+	private defineQueries() {
+		this.queries = {
+			markets: [],
+			companies: [],
+			productLines: [],
+			page: 0,
+			itemsPerPage: 25,
+			search: ''
+		};
 	}
 
-	private getOption(code: string, options: any[]) {
-		return options.find(i => i.code === code);
-	}
-
-	defineQueries() {
+	private patchQueries() {
 		this.queriesMap.forEach((v, k) => {
 			if (k === 'company') {
 				this.queries.companies = v;
@@ -298,9 +121,9 @@ export class OverviewComponent implements OnDestroy {
 		});
 	}
 
-	fetchProducts() {
+	private fetch() {
 		this.loading = true;
-		this.productsQueries = {
+		const queries = {
 			company: this.queries.companies,
 			line: this.queries.lines || [],
 			page: this.queries.page,
@@ -308,11 +131,17 @@ export class OverviewComponent implements OnDestroy {
 			search: this.queries.search || ''
 		};
 
-		this.mixesRestService.list(this.productsQueries)
+		this.mixesRestService.list(queries)
 			.subscribe(d => {
-				this.items = d.items;
-				this.productsTotal = d.total;
+				if (this.isLoadingMore) {
+					this.items = this.items.concat(d.items);
+				} else {
+					this.items = d.items;
+				}
+				this.mixesTotal = d.total;
 				this.loading = false;
+				this.isLoadingMore = false;
+				this.cd.markForCheck();
 			});
 	}
 }

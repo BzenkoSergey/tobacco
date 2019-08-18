@@ -1,11 +1,13 @@
-import { Component, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import { Component, Input, Inject, OnChanges, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DOCUMENT } from '@angular/platform-browser';
 
-import { LinkService } from './../../containers/link.service';
+import { LinkService } from '@common/link.service';
 
 @Component({
 	selector: 'pagination',
-	templateUrl: './pagination.html'
+	templateUrl: './pagination.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class PaginationComponent implements OnChanges, OnDestroy {
@@ -19,10 +21,11 @@ export class PaginationComponent implements OnChanges, OnDestroy {
 	constructor(
 		private linkService: LinkService,
 		private router: Router,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		@Inject(DOCUMENT) private document: Document
 	) {}
 
-	ngOnChanges(changes: SimpleChanges) {
+	ngOnChanges() {
 		this.setPages();
 		this.defineRelLinks();
 	}
@@ -98,6 +101,6 @@ export class PaginationComponent implements OnChanges, OnDestroy {
 				page: page
 			}
 		});
-		return this.router.serializeUrl(a);
+		return this.document.location.origin + this.router.serializeUrl(a);
 	}
 }

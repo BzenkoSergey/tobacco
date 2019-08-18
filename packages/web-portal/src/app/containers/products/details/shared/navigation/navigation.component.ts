@@ -1,12 +1,12 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { AggregatedProductDto } from '@rest/products/product-full.dto';
 import { MixesRestService } from '@rest/mixes';
 
 @Component({
 	selector: 'unit-navigation',
 	templateUrl: './navigation.html',
-	styleUrls: ['./navigation.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		MixesRestService
 	]
@@ -17,8 +17,11 @@ export class NavigationComponent implements OnChanges {
 	@Input() reviews: number;
 
 	hasMixes = false;
+	baseUrl = './';
 
 	constructor(
+		private router: Router,
+		private cd: ChangeDetectorRef,
 		private mixesRestService: MixesRestService,
 	) {}
 
@@ -26,6 +29,10 @@ export class NavigationComponent implements OnChanges {
 		if (changes.productId) {
 			this.fetchMixes();
 		}
+		this.baseUrl = this.router.url
+			.replace(/\?(.*)/, '')
+			.replace(/(\/prices)|(\/mixes)|(\/characteristics)|(\/reviews)/, '');
+		this.cd.markForCheck();
 	}
 
 	private fetchMixes() {
@@ -34,6 +41,7 @@ export class NavigationComponent implements OnChanges {
 		})
 		.subscribe(d => {
 			this.hasMixes = !!d.items.length;
+			this.cd.markForCheck();
 		});
 	}
 }

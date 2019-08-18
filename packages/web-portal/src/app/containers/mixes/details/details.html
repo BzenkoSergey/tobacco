@@ -1,6 +1,6 @@
 <section
-	*ngIf="product"
-	class="mix"
+	*ngIf="mix"
+	class="page-mix"
 	itemscope
 	itemtype="http://schema.org/Recipe">
 
@@ -8,149 +8,151 @@
 		class="image"
 		offset="100"
 		itemprop="image"
-		alt="{{product.name}}"
-		[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/origin-' + product.image">
+		alt="{{mix.name}}"
+		[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/origin-' + mix.image">
 
-	<h1 itemprop="name">{{product.name}}</h1>
+	<div class="content">
+		<h1 itemprop="name">{{mix.name}}</h1>
 
-	<p>
-		Микс для кальяна с
-		<ng-container *ngFor="let name of getBrandsNames() as names; first as isFirst; last as isLast">
-			{{name}}<ng-container *ngIf="!isLast && names.length > 2">, </ng-container><ng-container *ngIf="!isLast && names.length < 3"> и </ng-container>
-		</ng-container>
-	</p>
+		<p>
+			Микс для кальяна с
+			<ng-container *ngFor="let name of brandsNames; first as isFirst; last as isLast">
+				{{name}}<ng-container *ngIf="!isLast && brandsNames.length > 2">, </ng-container><ng-container *ngIf="!isLast && brandsNames.length < 3"> и </ng-container>
+			</ng-container>
+		</p>
 
-	<div
-		*ngIf="product.description"
-		itemprop="description"
-		[innerHTML]="product.description">
-	</div>
-
-	<div class="options">
-		<div class="col">
-			<h2>Рецепт микса</h2>
-			<ul>
-				<li itemprop="recipeInstructions">берем чашу</li>
-				<li itemprop="recipeInstructions">нам понадобится {{product.recipes.length}} вида табака</li>
-				<li itemprop="recipeInstructions">забиваем табак со следующей пропорцией</li>
-				<li
-					*ngFor="let r of product.recipes"
-					itemprop="recipeInstructions">
-					<b>%{{r.percentage}}</b> - {{r.unit.company.name}} {{r.unit.productLine?.name}} {{r.unit.name}}
-				</li>
-			</ul>
+		<div
+			*ngIf="mix.description"
+			itemprop="description"
+			[innerHTML]="mix.description">
 		</div>
 
-		<div class="col">
-			<h2>Сводка</h2>
-			<div
-				itemprop="estimatedCost"
-				itemscope
-				itemtype="http://schema.org/MonetaryAmount">
-
-				<meta itemprop="currency" content="UAH">
-				<meta itemprop="value" content="{{getCost()}}">
-				<b>Бюджет:</b> {{getCost()}} грн
+		<div class="options">
+			<div class="col">
+				<h2>Рецепт микса</h2>
+				<ul>
+					<li itemprop="recipeInstructions">берем чашу</li>
+					<li itemprop="recipeInstructions">нам понадобится {{mix.recipes.length}} вида табака</li>
+					<li itemprop="recipeInstructions">забиваем табак со следующей пропорцией</li>
+					<li
+						*ngFor="let r of mix.recipes"
+						itemprop="recipeInstructions">
+						<b>%{{r.percentage}}</b> - {{r.unit.company.name}} {{r.unit.productLine?.name}} {{r.unit.name}}
+					</li>
+				</ul>
 			</div>
-			<b>Время подготовки: </b>
-			<span
-				[attr.content]="'PT' + (product.recipes.length + 1) + 'M'"
-				itemprop="prepTime">
-				{{product.recipes.length + 1}} минуты
-			</span>
-			<br>
-			<b>Время приготовления: </b>
-			<span
-				[attr.content]="'PT' + product.recipes.length * 2 + 'M'"
-				itemprop="cookTime">
-				{{product.recipes.length * 2}} минуты
-			</span>
-			<meta content="{{'PT' + (product.recipes.length + 1 + product.recipes.length * 2) + 'M'}}" itemprop="totalTime">
-			<meta content="{{'PT' + product.recipes.length * 2 + 'M'}}" itemprop="performTime">
 
-			<br>
-			<b>Возможность купить:</b>
-			<div
-				*ngIf="available(); else elseBlock"
-				class="available success">
-				Есть возможность купить все позиции
-			</div>
-			<ng-template #elseBlock>
-				<div class="available fail">
-					Нет возможности сложить данный микс
+			<div class="col">
+				<h2>Сводка</h2>
+				<div
+					itemprop="estimatedCost"
+					itemscope
+					itemtype="http://schema.org/MonetaryAmount">
+
+					<meta itemprop="currency" content="UAH">
+					<meta itemprop="value" content="{{cost}}">
+					<b>Бюджет:</b> {{cost}} грн
 				</div>
-			</ng-template>
+				<b>Время подготовки: </b>
+				<span
+					[attr.content]="'PT' + (mix.recipes.length + 1) + 'M'"
+					itemprop="prepTime">
+					{{mix.recipes.length + 1}} минуты
+				</span>
+				<br>
+				<b>Время приготовления: </b>
+				<span
+					[attr.content]="'PT' + mix.recipes.length * 2 + 'M'"
+					itemprop="cookTime">
+					{{mix.recipes.length * 2}} минуты
+				</span>
+				<meta content="{{'PT' + (mix.recipes.length + 1 + mix.recipes.length * 2) + 'M'}}" itemprop="totalTime">
+				<meta content="{{'PT' + mix.recipes.length * 2 + 'M'}}" itemprop="performTime">
+
+				<br>
+				<b>Возможность купить:</b>
+				<div
+					*ngIf="hasAvailable; else elseBlock"
+					class="available success">
+					Есть возможность купить все позиции
+				</div>
+				<ng-template #elseBlock>
+					<div class="available fail">
+						Нет возможности сложить данный микс
+					</div>
+				</ng-template>
+			</div>
 		</div>
-	</div>
 
-	<h2>Табаки используемые в миксе</h2>
-	<div class="units">
-		<ng-container *ngFor="let recipe of product.recipes">
-			<meta
-				itemprop="recipeIngredient"
-				content="%{{recipe.percentage}} {{recipe.unit.company?.name}} {{recipe.unit.productLine?.name}} {{recipe.unit.name}}">
+		<h2>Табаки используемые в миксе</h2>
+		<div class="units">
+			<ng-container *ngFor="let recipe of mix.recipes">
+				<meta
+					itemprop="recipeIngredient"
+					content="%{{recipe.percentage}} {{recipe.unit.company?.name}} {{recipe.unit.productLine?.name}} {{recipe.unit.name}}">
 
-			<a
-				itemscope
-				itemtype="https://schema.org/Product"
-				class="item"
-				[routerLink]="['/products/detail', recipe.unit.readableName]">
-				<meta itemprop="brand" content="{{recipe.unit.company.name}}">
+				<a
+					itemscope
+					itemtype="https://schema.org/Product"
+					class="item"
+					[routerLink]="['/products/detail', recipe.unit.readableName]">
+					<meta itemprop="brand" content="{{recipe.unit.company.name}}">
 
-				<picture>
-					<source
-						media="(min-width: 425px)"
-						offset="100"
-						[attr.lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + recipe.unit.logo">
+					<picture>
+						<source
+							media="(min-width: 425px)"
+							offset="100"
+							[attr.lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/sm-' + recipe.unit.logo">
 
-					<img
-						class="image"
-						offset="200"
-						itemprop="image"
-						[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/md-' + recipe.unit.logo"
-						alt="{{recipe.unit.company?.name}} {{recipe.unit.productLine?.name}} {{recipe.unit.name}}">
-				</picture>
+						<img
+							class="image"
+							offset="200"
+							itemprop="image"
+							alt="{{recipe.unit.company?.name}} {{recipe.unit.productLine?.name}} {{recipe.unit.name}}"
+							[lazyLoad]="'https://res.cloudinary.com/dwkakr4wt/image/upload/md-' + recipe.unit.logo">
+					</picture>
 
-				<div class="name">
-					<div itemprop="name">
-						<div class="company">
-							{{recipe.unit.company.name}}
-							{{recipe.unit.productLine?.name}}
-						</div>
-						{{recipe.unit.name}}
-					</div>
-
-					<div
-						*ngIf="getItems(recipe.unit) as items"
-						class="prices"
-						itemprop="offers"
-						itemscope
-						itemtype="https://schema.org/AggregateOffer">
-
-						<meta content="{{recipe.unit.items.length}}" itemprop="offerCount">
-						<meta content="{{priceRange(recipe.unit.items)[1]}}" itemprop="highPrice">
-						<meta content="{{priceRange(recipe.unit.items)[0]}}" itemprop="lowPrice">
-						<meta content="UAH" itemprop="priceCurrency">
-
-						<div *ngFor="let item of items">
-							<span
-								*ngIf="item.attr"
-								class="attribute">
-								{{item.attr}}
-							</span>
-
-							<span class="values">
-								<ng-container *ngFor="let price of item.pricesList; last as isLast; first as isFirst">
-									<ng-container *ngIf="isLast && !isFirst"> - </ng-container>
-									<span class="value">{{price}}</span> грн
-								</ng-container>
-							</span>
+					<div class="name">
+						<div itemprop="name">
+							<div class="company">
+								{{recipe.unit.company.name}}
+								{{recipe.unit.productLine?.name}}
+							</div>
+							{{recipe.unit.name}}
 						</div>
 
-						<b class="total">{{items.length}} предложений</b>
+						<div
+							*ngIf="getItems(recipe.unit) as items"
+							class="prices"
+							itemprop="offers"
+							itemscope
+							itemtype="https://schema.org/AggregateOffer">
+
+							<meta content="{{recipe.unit.items.length}}" itemprop="offerCount">
+							<meta content="{{priceRange(recipe.unit.items)[1]}}" itemprop="highPrice">
+							<meta content="{{priceRange(recipe.unit.items)[0]}}" itemprop="lowPrice">
+							<meta content="UAH" itemprop="priceCurrency">
+
+							<div *ngFor="let item of items">
+								<span
+									*ngIf="item.attr"
+									class="attribute">
+									{{item.attr}}
+								</span>
+
+								<span class="values">
+									<ng-container *ngFor="let price of item.pricesList; last as isLast; first as isFirst">
+										<ng-container *ngIf="isLast && !isFirst"> - </ng-container>
+										<span class="value">{{price}}</span> грн
+									</ng-container>
+								</span>
+							</div>
+
+							<b class="total">{{items.length}} предложений</b>
+						</div>
 					</div>
-				</div>
-			</a>
-		</ng-container>
+				</a>
+			</ng-container>
+		</div>
 	</div>
 </section>

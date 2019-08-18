@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { LazyLoadImageModule, intersectionObserverPreset } from 'ng-lazyload-image';
 
 import { MixModule } from '@components/mix/mix.module';
 import { IconModule } from '@components/icon/icon.module';
+
+import { NavigationModule } from './../shared/navigation/navigation.module';
 
 import { MixesRoutingModule } from './mixes-routing.module';
 import { MixesComponent } from './mixes.component';
@@ -11,12 +12,10 @@ import { MixesComponent } from './mixes.component';
 @NgModule({
 	imports: [
 		CommonModule,
-		LazyLoadImageModule.forRoot({
-			preset: intersectionObserverPreset
-		}),
 		MixModule,
 		IconModule,
-		MixesRoutingModule
+		MixesRoutingModule,
+		NavigationModule
 	],
 	declarations: [
 		MixesComponent

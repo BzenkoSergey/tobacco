@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { DOCUMENT } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 
 import { apiUrl } from './../api';
 
@@ -9,7 +11,11 @@ type SearchQueriesDto = {
 
 @Injectable()
 export class SearchRestService {
-	constructor(private http: HttpClient) {}
+	constructor(
+		private http: HttpClient,
+		@Inject(DOCUMENT) private document: Document,
+		@Inject(PLATFORM_ID) private platformId: Object
+	) {}
 
 	list(queries: SearchQueriesDto) {
 		const url = this.apiUrl();
@@ -22,7 +28,6 @@ export class SearchRestService {
 	}
 
 	private apiUrl() {
-		// return window.location.protocol + `//api.` + window.location.hostname + `/search`;
-		return apiUrl + `search`;
+		return apiUrl(this.document, isPlatformBrowser(this.platformId), false) + `search`;
 	}
 }

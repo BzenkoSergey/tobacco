@@ -1,20 +1,28 @@
 .breadcrumb {
-	// box-shadow: 0px 1px 2px #eaeaea;
 	font-size: 139%;
-	// margin-bottom: 15px;
-	@media (min-width: 588px) {
-		font-size: 111%;
-	}
+	display: flex;
+	margin: 0 0 15px;
 	padding: 0;
 	list-style-type: none;
-	// margin: -1px 0 0;
-	@media (min-width: 588px) {
-		// margin: -1px 25px 0;
+	border-bottom: 1px solid #ececec;
+	border-top: 1px solid #ececec;
+	background-color: #fff;
+	overflow: auto;
+
+	@media (min-width: $mobile-min) {
+		font-size: 111%;
+		margin: 11px 0 10px;
+		background-color: transparent;
+		border-bottom: none;
+		border-top: none;
+		padding-bottom: 1px; // show bottom border because of overflow: auto
+	}
+
+	@media (min-width: $big-tablet-max) {
+		margin: 17px 0 16px;
 	}
 
 	li {
-		float: left;
-
 		.last,
 		a {
 			background-color: #fff;
@@ -25,16 +33,19 @@
 			color: inherit;
 			fill: inherit;
 			position: relative;
-			border-top: 1px solid #ececec;
-			margin-bottom: -1px;
-			border-bottom: 1px solid #ececec;
+			@media (min-width: $mobile-min) {
+				border-bottom: 1px solid #ececec;
+				border-top: 1px solid #ececec;
+				margin-bottom: -1px;
+			}
 
 			icon {
 				width: 21px;
 				height: 20px;
+				margin-right: 5px;
 				vertical-align: text-top;
 
-				@media (min-width: 588px) {
+				@media (min-width: $mobile-min) {
 					width: 17px;
 					height: 17px;
 				}
@@ -60,13 +71,10 @@
 				z-index: 1;
 			}
 
+
 			$top: 19px;
 			$bottom: 19px;
 			$left: 15px;
-			// $lg-top: 17px;
-			// $lg-bottom: 16px;
-			// $lg-left: 15px;
-
 			$lg-top: 20px;
 			$lg-bottom: 19px;
 			$lg-left: 18px;
@@ -77,18 +85,6 @@
 				border-left: $width solid $color;
 			}
 
-			// 15.6 x 46
-			// 15 x 43.79
-
-			// right: -16.7px;
-			// border-top: 23px solid transparent;
-			// border-bottom: 23px solid transparent;
-			// border-left: 15.6px solid #000000;
-
-			// right: -16px;
-			// border-top: 21.9px solid transparent;
-			// border-bottom: 21.9px solid transparent;
-			// border-left: 15px solid #f00;
 			&:after {
 				top: 0;
 				right: -14px;
@@ -96,12 +92,9 @@
 				border-bottom: $bottom solid transparent;
 				border-left: $left solid #fff;
 
-				@media (min-width: 588px) {
+				@media (min-width: $mobile-min) {
 					right: -14.2px;
 					@include triangle(14.4px, 35px, #fff);
-					// border-top: $lg-top solid transparent;
-					// border-bottom: $lg-bottom solid transparent;
-					// border-left: $lg-left solid #fff;
 				}
 			}
 			&:before {
@@ -109,12 +102,9 @@
 				border-top: $top + 1px solid transparent;
 				border-bottom: $bottom + 1px solid transparent;
 				border-left: $left + 1px solid #ececec;
-				@media (min-width: 588px) {
+				@media (min-width: $mobile-min) {
 					right: -15px;
 					@include triangle(15px, 37px, #ececec);
-					// border-top: $lg-top + 1px solid transparent;
-					// border-bottom: $lg-bottom + 1px solid transparent;
-					// border-left: $lg-left - 1px solid #ececec;
 				}
 			}
 		}
@@ -134,166 +124,41 @@
 
 		.last {
 			display: none;
-			@media (min-width: 588px) {
+			@media (min-width: $mobile-min) {
 				color: #ccc;
 				display: inline-block;
 			}
 		}
 
-		// &:last-child {
-		// 	.last,
-		// 	a {
-		// 		&:before,
-		// 		&:after {
-		// 			display: none !important;
-		// 		}
-		// 	}
-		// }
+		&:last-child a,
+		&.last a {
+			&:after,
+			&:before {
+				display: none;
+				@media (min-width: $mobile-min) {
+					display: block;
+				}
+			}
+		}
 
 		&:first-child {
-
 			a {
-				border-left: 1px solid #ececec;
-				padding-left: 10px;
-				border-top-left-radius: 4px;
-				border-bottom-left-radius: 4px;
+				padding-left: 9px;
+
+				@media (min-width: $mobile-min) {
+					padding-left: 24px;
+				}
+			}
+		}
+		@media (min-width: $mobile-min) {
+			&:first-child {
+				a {
+					border-left: 1px solid #ececec;
+					padding-left: 10px;
+					border-top-left-radius: 4px;
+					border-bottom-left-radius: 4px;
+				}
 			}
 		}
 	}
 }
-
-
-// .breadcrumb {
-// 	background-color: #fff;
-// 	box-shadow: 0px 1px 2px #eaeaea;
-// 	font-size: 139%;
-// 	margin-bottom: 15px;
-// 	@media (min-width: 588px) {
-// 		font-size: 111%;
-// 	}
-// 	overflow: hidden;
-// 	padding: 0;
-
-// 	ul {
-// 		list-style-type: none;
-// 		margin: -1px 0 0;
-// 		padding: 0;
-// 		@media (min-width: 588px) {
-// 			margin: -1px 25px 0;
-// 		}
-
-// 		li {
-// 			float: left;
-
-// 			.last,
-// 			a {
-// 				display: block;
-// 				padding: 7px;
-// 				padding-right: 7px;
-// 				padding-left: 20px;
-// 				color: inherit;
-// 				fill: inherit;
-// 				position: relative;
-// 				border-top: 1px solid #ececec;
-// 				margin-bottom: -1px;
-// 				border-bottom: 1px solid #ececec;
-
-// 				icon {
-// 					width: 21px;
-// 					height: 20px;
-// 					vertical-align: text-top;
-
-// 					@media (min-width: 588px) {
-// 						width: 17px;
-// 						height: 17px;
-// 					}
-// 				}
-
-// 				.text {
-// 					display: block;
-// 					white-space: nowrap;
-// 					overflow: hidden;
-// 					text-overflow: ellipsis;
-// 				}
-
-// 				&:after,
-// 				&:before {
-// 					position: absolute;
-// 					display: block;
-// 					height: 0;
-// 					width: 0;
-// 					top: -1px;
-// 					margin-left: 5px;
-// 					border-right: 0;
-// 					content: " ";
-// 					z-index: 1;
-// 				}
-
-// 				&:after {
-// 					top: 0;
-// 					right: -15px;
-// 					border-top: 19px solid transparent;
-// 					border-bottom: 19px solid transparent;
-// 					border-left: 15px solid #fff;
-
-// 					@media (min-width: 588px) {
-// 						right: -13px;
-// 						border-top: 17px solid transparent;
-// 						border-bottom: 16px solid transparent;
-// 						border-left: 13px solid #fff;
-// 					}
-// 				}
-// 				&:before {
-// 					right: -16px;
-// 					border-top: 20px solid transparent;
-// 					border-bottom: 20px solid transparent;
-// 					border-left: 16px solid #ececec;
-// 					@media (min-width: 588px) {
-// 						right: -14px;
-// 						border-top: 18px solid transparent;
-// 						border-bottom: 17px solid transparent;
-// 						border-left: 14px solid #ececec;
-// 					}
-// 				}
-// 			}
-
-// 			a {
-// 				&:hover,
-// 				&:focus {
-// 					background-color: #fbfbfb;
-
-// 					&:after {
-// 						border-left-color: #fbfbfb;
-// 					}
-// 				}
-// 			}
-
-// 			.last {
-// 				display: none;
-// 				@media (min-width: 588px) {
-// 					color: #ccc;
-// 					display: inline-block;
-// 				}
-// 			}
-
-// 			&:last-child {
-// 				.last,
-// 				a {
-// 					&:before,
-// 					&:after {
-// 						display: none !important;
-// 					}
-// 				}
-// 			}
-
-// 			&:first-child {
-// 				border-top-left-radius: 4px;
-// 				border-bottom-left-radius: 4px;
-
-// 				a {
-// 					padding-left: 10px;
-// 				}
-// 			}
-// 		}
-// 	}
-// }

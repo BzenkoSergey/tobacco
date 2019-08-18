@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { LazyLoadImageModule, intersectionObserverPreset } from 'ng-lazyload-image';
+
+import { LazyLoadImageModule } from 'ng-lazyload-image';
+
+import { NavigationModule } from './../shared/navigation/navigation.module';
 
 import { PricesRoutingModule } from './prices-routing.module';
 import { PricesComponent } from './prices.component';
@@ -8,10 +11,10 @@ import { PricesComponent } from './prices.component';
 @NgModule({
 	imports: [
 		CommonModule,
-		LazyLoadImageModule.forRoot({
-			preset: intersectionObserverPreset
-		}),
-		PricesRoutingModule
+		LazyLoadImageModule,
+
+		PricesRoutingModule,
+		NavigationModule
 	],
 	declarations: [
 		PricesComponent
@@ -22,5 +25,3 @@ import { PricesComponent } from './prices.component';
 })
 
 export class PricesModule {}
-
-//node_modules/.bin/ivy-ngcc

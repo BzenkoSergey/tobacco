@@ -149,6 +149,31 @@ export class MongoDb {
 		return subj;
 	}
 
+	findOne(query: Object, subj?: Subject<any>): Subject<any> {
+		const queryInfo = new QueryInfo();
+		queryInfo.data = [query];
+		queryInfo.req = 'find';
+		this.queries.push(queryInfo);
+
+		subj = subj || new Subject<any>();
+		this.getDb().subscribe(db => {
+			db.collection(this.collection).findOne(query, (err, result) => {
+				queryInfo.result = result;
+				if (err) {
+					queryInfo.error = err;
+					this.error(queryInfo);
+					setTimeout(() => {
+						this.find(query, subj);
+					}, this.queryReTryDelay);
+					return;
+				}
+				subj.next(result);
+				subj.complete();
+			});
+		});
+		return subj;
+	}
+
 	find(query: Object, subj?: Subject<any>, limit?: number, skip?: number): Subject<any> {
 		const queryInfo = new QueryInfo();
 		queryInfo.data = [query];

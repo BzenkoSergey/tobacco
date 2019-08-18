@@ -1,107 +1,60 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Meta } from '@angular/platform-browser';
 
-import { MixesRestService } from '@rest/mixes';
-import { AggregatedProductDto } from '@rest/products/product-full.dto';
+import { DeviceService } from '@common/device.service';
+import { ParamsService, PageCode } from '@common/params.service';
 
-import { FiltersService } from './../../filters.service';
+import { AggregatedProductDto } from '@rest/products';
 
-import { BreadcrumbService } from '@components/breadcrumb/breadcrumb.service';
-import { BreadcrumbModel } from '@components/breadcrumb/breadcrumb.model';
+import { BreadcrumbService, BreadcrumbModel } from '@components/breadcrumb';
+
+import { DetailsService } from './details.service';
 
 @Component({
 	templateUrl: './details.html',
-	styleUrls: ['./details.scss'],
-	providers: [
-		MixesRestService
-	]
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class DetailsComponent implements OnDestroy {
 	unit: AggregatedProductDto;
-	hasMixes = false;
-	screenWidth = screen.width;
+	screenWidth = this.deviceService.width();
 
 	constructor(
+		private cd: ChangeDetectorRef,
+		private deviceService: DeviceService,
 		private breadcrumb: BreadcrumbService,
-		private filters: FiltersService,
-		private mixesRestService: MixesRestService,
-		private meta: Meta,
+		private detailsService: DetailsService,
+		paramsService: ParamsService,
 		route: ActivatedRoute
 	) {
+		paramsService.setRelatedPage(PageCode.Products);
+
 		route.data.subscribe((data: { unit: AggregatedProductDto }) => {
 			this.setUnit(data.unit);
-			this.fetchMixes();
 		});
 
 		route.params.subscribe(params => {
-			const query: any = {};
-			Object.keys(params)
-				.forEach(prop => {
-					let value = params[prop] || '';
-					value = value.split(',').filter(v => v !== 'all');
-					query[prop] = value;
-				});
-			this.filters.push(query);
+			paramsService.update(params);
 		});
 	}
 
 	ngOnDestroy() {
 		this.breadcrumb.remove('product-detail');
-		this.resetOg();
-	}
-
-	private resetOg() {
-		this.meta.removeTag('property="og:image"');
-		this.meta.removeTag('property="og:type"');
-		this.meta.removeTag('name="description"');
-		this.meta.removeTag('name="title"');
-		this.meta.removeTag('name="keywords"');
-	}
-
-	private setOg() {
-		this.meta.updateTag({
-			property: 'og:image',
-			content: 'https://res.cloudinary.com/dwkakr4wt/image/upload/lg-' + this.unit.logo
-		});
-		this.meta.updateTag({
-			property: 'og:type',
-			content: 'product'
-		});
+		this.detailsService.resetCommonMeta();
 	}
 
 	private setUnit(d: AggregatedProductDto) {
 		this.unit = d;
-		this.setOg();
+		this.detailsService.setCommonMeta(d);
 
 		this.breadcrumb.replaceAll([
 			new BreadcrumbModel({
-				title: this.getTitle(),
+				title: this.detailsService.genTitle(d),
 				code: 'product-detail',
 				url: null,
 				last: true
 			})
 		], 'product-detail');
-	}
-
-	private getTitle() {
-		let title = this.unit.name;
-		if (this.unit.productLine && this.unit.productLine.name) {
-			title = this.unit.productLine.name + ' ' + title;
-		}
-		if (this.unit.company && this.unit.company.name) {
-			title = this.unit.company.name + ' ' + title;
-		}
-		return '' + title;
-	}
-
-	fetchMixes() {
-		this.mixesRestService.list({
-			units: [this.unit.productId]
-		})
-		.subscribe(d => {
-			this.hasMixes = !!d.items.length;
-		});
+		this.cd.markForCheck();
 	}
 }

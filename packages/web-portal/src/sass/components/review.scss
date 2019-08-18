@@ -8,7 +8,7 @@ review:last-child .review {
 	border-bottom: 1px solid #f3f3f3;
 
 	&.mini .heading .rating {
-		@media (min-width: 578px) {
+		@media (min-width: $mobile-min) {
 			width: 50%;
 		}
 	}
@@ -18,7 +18,7 @@ review:last-child .review {
 		flex-flow: column;
 		padding-bottom: 10px;
 
-		@media (min-width: 578px) {
+		@media (min-width: $mobile-min) {
 			flex-flow: row wrap;
 			flex-direction: row;
 			padding-bottom: 15px;
@@ -27,13 +27,13 @@ review:last-child .review {
 		.author {
 			font-size: 18px;
 			font-weight: 500;
-			@media (min-width: 578px) {
+			@media (min-width: $mobile-min) {
 				width: 50%;
 			}
 		}
 
 		.rating {
-			@media (min-width: 578px) {
+			@media (min-width: $mobile-min) {
 				width: calc(50% - 100px);
 			}
 			color: #f3a03a;
@@ -47,7 +47,7 @@ review:last-child .review {
 		}
 
 		.time {
-			@media (min-width: 578px) {
+			@media (min-width: $mobile-min) {
 				width: 100px;
 				text-align: right;
 			}

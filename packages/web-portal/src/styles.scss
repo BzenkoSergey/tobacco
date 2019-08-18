@@ -1,15 +1,28 @@
+@import "./sass/variables.scss";
+
 html {
 	-webkit-font-smoothing: antialiased;
 }
 
+html,
 body {
-	font-family: Roboto, "Myriad Pro", Arial, sans-serif;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
 	font-size: 14px;
 	line-height: 1.33;
 	color: #4f4f4f;
 	fill: #4f4f4f;
-	margin: 0;
 	background-color: #fff;
+	// height: 3000px;
+}
+
+body,
+button {
+	font-family: Roboto, "Myriad Pro", Arial, sans-serif;
 }
 
 * {
@@ -39,25 +52,31 @@ img {
 	font-size: 19px;
 	font-weight: normal;
 
-	@media (min-width: 588px) {
-		padding: 0 13px;
-		margin: 5px 0 16px;
+	@media (min-width: $mobile-min) {
+		padding: 0 10px;
+		margin: 0 0 16px;
 		font-size: 29.5px;
 	}
 }
 
 .container {
 	width: 100%;
-	@media (min-width: 768px) {
-		padding: 0 20px;
-		max-width: 100%;
+	padding: 0;
+	max-width: 100%;
+
+	@media (min-width: $mobile-min) {
+		padding: 0 5px;
 	}
 
-	@media (min-width: 992px) {
+	@media (min-width: $tablet-min) {
+	}
+
+	@media (min-width: $big-tablet-min) {
+		padding: 0 20px;
 		max-width: 1300px;
 	}
 
-	@media (min-width: 1300px) {
+	@media (min-width: $desktop-min) {
 		padding: 0;
 	}
 }
@@ -65,3 +84,4 @@ img {
 @import "./sass/components/components.scss";
 @import "./sass/helpers/helpers.scss";
 @import "./sass/libs/fontawesome.scss";
+@import "./sass/pages/pages.scss";

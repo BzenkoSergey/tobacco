@@ -1,24 +1,23 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/platform-browser';
 
+import { DeviceService } from '@common/device.service';
+import { ParamsService } from '@common/params.service';
+import { MenuService } from '@common/menu.service';
 import { SearchRestService } from '@rest/search';
-import { BreadcrumbService } from '@components/breadcrumb/breadcrumb.service';
-
 import { MixesRestService } from '@rest/mixes';
-import { MenuService } from './../menu.service';
-import { FiltersService } from './../filters.service';
+import { BreadcrumbService } from '@components/breadcrumb';
 
 @Component({
 	templateUrl: './home.html',
-	styleUrls: ['./home.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		SearchRestService,
 		MixesRestService
 	]
 })
 export class HomeComponent implements OnDestroy {
-	menu: any;
-	mixes: any[] = [];
 	tobaccoQueries = {
 		available: true,
 		categories: ['tobacco'],
@@ -29,50 +28,33 @@ export class HomeComponent implements OnDestroy {
 		available: true,
 		categories: ['coal'],
 		page: 0,
-		itemsPerPage: 7,
+		itemsPerPage: this.getColsCount()
 	};
 	bowlQueries = {
 		available: true,
 		categories: ['bowl'],
 		page: 0,
-		itemsPerPage: 7,
+		itemsPerPage: this.getColsCount()
 	};
+	mixes: any[] = [];
+	brands: any[] = [];
 	openedId: string|null = null;
-	search = '';
 
 	constructor(
-		breadcrumb: BreadcrumbService,
+		private cd: ChangeDetectorRef,
 		private title: Title,
 		private meta: Meta,
-		filters: FiltersService,
-		service: MixesRestService,
-		private menuService: MenuService
+		private deviceService: DeviceService,
+		private mixesRestService: MixesRestService,
+		private menuService: MenuService,
+		@Inject(DOCUMENT) private document: Document,
+		breadcrumb: BreadcrumbService,
+		paramsService: ParamsService
 	) {
-		filters.push({});
+		paramsService.update({});
 		breadcrumb.remove('products');
-		this.menuService.get()
-			.subscribe(menu => {
-				this.menu = menu;
-			});
-
-		this.title.setTitle('Hoogle.com.ua кальянный навигатор');
-
-		this.meta.updateTag({
-			property: 'og:title',
-			content: 'Hoogle.com.ua кальянный навигатор'
-		});
-		this.meta.updateTag({
-			property: 'og:url',
-			content: window.location.href
-		});
-
-		service.list({
-			page: 0,
-			itemsPerPage: 4
-		})
-		.subscribe(d => {
-			this.mixes = d.items;
-		});
+		this.defineMeta();
+		this.fetch();
 	}
 
 	ngOnDestroy() {
@@ -88,10 +70,50 @@ export class HomeComponent implements OnDestroy {
 		this.openedId = id;
 	}
 
-	getCategories() {
-		if (!this.menu) {
-			return [];
+	private fetch() {
+		this.menuService.get()
+			.subscribe(menu => {
+				this.brands = menu.menu.find(o => o.code === 'company').options;
+				this.cd.markForCheck();
+			});
+
+		this.mixesRestService
+			.list({
+				page: 0,
+				itemsPerPage: 4
+			})
+			.subscribe(d => {
+				this.mixes = d.items;
+				this.cd.markForCheck();
+			});
+	}
+
+	private defineMeta() {
+		this.title.setTitle('Hoogle.com.ua кальянный навигатор');
+		this.meta.updateTag({
+			property: 'og:title',
+			content: 'Hoogle.com.ua кальянный навигатор'
+		});
+		this.meta.updateTag({
+			property: 'og:url',
+			content: this.document.location.href
+		});
+	}
+
+	private getColsCount() {
+		const width = this.deviceService.width();
+		if (width > 923) {
+			return 7;
 		}
-		return this.menu.menu.find(o => o.code === 'company').options;
+		if (width > 754) {
+			return 6;
+		}
+		if (width > 602) {
+			return 5;
+		}
+		if (width > 534) {
+			return 4;
+		}
+		return 3;
 	}
 }

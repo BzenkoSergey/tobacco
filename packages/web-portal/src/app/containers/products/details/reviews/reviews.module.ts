@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { ReviewModule } from '@components/review/review.module';
+import { IconModule } from '@components/icon/icon.module';
+
+import { NavigationModule } from './../shared/navigation/navigation.module';
 
 import { ReviewsRoutingModule } from './reviews-routing.module';
 import { ReviewsComponent } from './reviews.component';
@@ -11,7 +14,9 @@ import { ReviewsComponent } from './reviews.component';
 		CommonModule,
 
 		ReviewModule,
-		ReviewsRoutingModule
+		ReviewsRoutingModule,
+		NavigationModule,
+		IconModule
 	],
 	declarations: [
 		ReviewsComponent

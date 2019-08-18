@@ -1,22 +1,25 @@
-<ng-container *ngIf="product">
+<div
+	*ngIf="unit"
+	class="page-product-prices">
+
 	<section
 		class="summary"
 		itemtype="http://schema.org/AggregateOffer"
 		itemprop="offers"
 		itemscope>
 
-		<meta content="{{product.items.length}}" itemprop="offerCount">
-		<meta content="{{priceRange(product.items)[1]}}" itemprop="highPrice">
-		<meta content="{{priceRange(product.items)[0]}}" itemprop="lowPrice">
+		<meta content="{{unit.items.length}}" itemprop="offerCount">
+		<meta content="{{highPrice}}" itemprop="highPrice">
+		<meta content="{{lowPrice}}" itemprop="lowPrice">
 		<meta content="UAH" itemprop="priceCurrency">
 
-		<h2>
-			Цены на {{product.company?.name}} {{product.productLine?.name}} {{product.name}} по Украине
+		<h2 class="sub-title">
+			Цены на {{unit.company?.name}} {{unit.productLine?.name}} {{unit.name}} по Украине
 		</h2>
 
 		<div class="prices">
 			<div
-				*ngFor="let item of getItems(product)"
+				*ngFor="let item of ranges"
 				class="item">
 
 				<span
@@ -35,17 +38,16 @@
 			</div>
 		</div>
 
-		<b>Всего {{product.items.length}} предложений</b>
-
+		<b>Всего {{unit.items.length}} предложений</b>
 
 		<div class="description">
 			<div
-				*ngIf="available()"
+				*ngIf="hasAvailable"
 				class="available success">
 				Есть доступные позиции для покупки.
 			</div>
 			<div
-				*ngIf="!available()"
+				*ngIf="!hasAvailable"
 				class="available fail">
 				Не доступных позиции для покупки.
 			</div>
@@ -64,7 +66,7 @@
 			</tr>
 
 			<tr
-				*ngFor="let item of sortItems(product.items)"
+				*ngFor="let item of items"
 				itemprop="offers"
 				itemscope
 				itemtype="https://schema.org/Offer">
@@ -120,4 +122,10 @@
 			</tr>
 		</table>
 	</section>
-</ng-container>
+
+	<unit-navigation
+		*ngIf="screenWidth <= 588"
+		[productId]="unit.productId"
+		[reviews]="unit.reviews">
+	</unit-navigation>
+</div>

@@ -25,13 +25,134 @@
 				"src/manifest.json",
 				"src/robots.txt",
 				{
-					"glob": "**/*",
-					"input": "./node_modules/@fortawesome/fontawesome-free/svgs",
-					"output": "./assets/svg/"
+					"glob": "store.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "mortar-pestle.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "home.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "filter.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "angle-double-down.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "angle-right.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "caret-down.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "caret-up.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "star.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "chevron-down.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "chevron-up.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "chevron-right.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "info-circle.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "spinner.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "leaf.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "cubes.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "ring.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "long-arrow-alt-left.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "sliders-h.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "redo.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/solid",
+					"output": "./assets/svg/solid/"
+				},
+				{
+					"glob": "times-circle.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/regular",
+					"output": "./assets/svg/regular/"
+				},
+				{
+					"glob": "comment.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/regular",
+					"output": "./assets/svg/regular/"
+				},
+				{
+					"glob": "check-square.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/regular",
+					"output": "./assets/svg/regular/"
+				},
+				{
+					"glob": "star.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/regular",
+					"output": "./assets/svg/regular/"
+				},
+				{
+					"glob": "square.svg",
+					"input": "./node_modules/@fortawesome/fontawesome-free/svgs/regular",
+					"output": "./assets/svg/regular/"
 				}
-            ],
+			],
             "styles": [
-              "src/styles.scss"
+			  "src/styles.scss",
+			  "src/sass/critical/critical.scss"
             ],
             "scripts": []
           },
@@ -102,7 +223,27 @@
               "**/node_modules/**"
             ]
           }
-        }
+		},
+        "server": {
+			"builder": "@angular-devkit/build-angular:server",
+			"options": {
+			  "outputPath": "dist/server",
+			  "main": "src/main.server.ts",
+			  "tsConfig": "src/tsconfig.server.json"
+			},
+			"configurations": {
+			  "production": {
+				"sourceMap": false,
+				"optimization": true,
+				"fileReplacements": [
+				  {
+					"replace": "src/environments/environment.ts",
+					"with": "src/environments/environment.prod.ts"
+				  }
+				]
+			  }
+			}
+		  }
       }
     },
     "web-portal-e2e": {

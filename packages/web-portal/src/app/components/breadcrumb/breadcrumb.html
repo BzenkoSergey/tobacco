@@ -3,27 +3,25 @@
 	itemscope
 	itemtype="https://schema.org/BreadcrumbList">
 
-	<ng-container *ngFor="let i of subj | async; index as ind">
+	<ng-container *ngFor="let i of subj | async as items; index as ind">
 		<li
 			*ngIf="i.url"
 			itemprop="itemListElement"
 			itemscope
 			itemtype="https://schema.org/ListItem">
+
 			<a
 				itemtype="https://schema.org/Thing"
 				itemprop="item"
-				queryParamsHandling="merge"
 				[routerLink]="i.url">
 
-				<span
-					class="text"
-					itemprop="name">
+				<span class="text">
 					<icon
 						*ngIf="i.icon"
 						[icon]="i.icon">
 					</icon>
 
-					{{i.title}}
+					<span itemprop="name">{{i.title}}</span>
 				</span>
 			</a>
 			<meta itemprop="position" content="{{ind + 1}}">

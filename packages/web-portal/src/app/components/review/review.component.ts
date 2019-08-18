@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 import { ReviewDto } from '@rest/reviews';
 
 @Component({
 	selector: 'review',
-	templateUrl: './review.html'
+	templateUrl: './review.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ReviewComponent {

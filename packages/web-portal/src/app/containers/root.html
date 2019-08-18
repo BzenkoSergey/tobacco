@@ -1,21 +1,20 @@
 <div class="header-wrap">
-	<header class="header clearfix container center-layout">
+	<header class="header container center-layout">
 		<a
-			class="logo"
+			class="header-logo"
 			[routerLink]="['/']">
-			<div class="name">
-				Hoogle
-			</div>
-			<div class="description">
+
+			Hoogle
+			<span class="description">
 				Кальянный навигатор
-			</div>
+			</span>
 		</a>
-		<div class="header-content">
-			<search
-				[query]="search"
-				(changed)="performSearch($event)">
-			</search>
-		</div>
+
+		<search
+			class="header-content"
+			[query]="search"
+			(changed)="performSearch($event)">
+		</search>
 	</header>
 
 	<ul class="menu container center-layout">
@@ -26,24 +25,20 @@
 			</a>
 		</li>
 		<li>
-			<a [routerLink]="['products']">
+			<a [routerLink]="['/products', 'all', 'tobacco']">
 				<icon icon="leaf"></icon>
 				Табак для кальяна
 			</a>
 		</li>
 		<li>
-			<a [routerLink]="['products']">
+			<a [routerLink]="['products', 'all', 'coal']">
 				<icon icon="cubes"></icon>
 				Уголь
 			</a>
 		</li>
 		<li>
-			<a [routerLink]="['products']">
-				<icon
-					icon="ring"
-					width="18"
-					height="20">
-				</icon>
+			<a [routerLink]="['products', 'all', 'bowl']">
+				<icon icon="ring"></icon>
 				Чаши
 			</a>
 		</li>
@@ -59,3 +54,5 @@
 <main class="container center-layout">
 	<router-outlet></router-outlet>
 </main>
+
+<feedback></feedback>

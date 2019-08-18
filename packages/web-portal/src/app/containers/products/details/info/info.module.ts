@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { LazyLoadImageModule, intersectionObserverPreset } from 'ng-lazyload-image';
+
+import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 import { MixModule } from '@components/mix/mix.module';
 import { ReviewModule } from '@components/review/review.module';
@@ -15,12 +16,10 @@ import { InfoComponent } from './info.component';
 @NgModule({
 	imports: [
 		CommonModule,
-		LazyLoadImageModule.forRoot({
-			preset: intersectionObserverPreset
-		}),
 		ReviewModule,
 		MixModule,
 		IconModule,
+		LazyLoadImageModule,
 
 		ProductsModule,
 		NavigationModule,

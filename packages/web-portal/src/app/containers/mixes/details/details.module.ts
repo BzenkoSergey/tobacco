@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { LazyLoadImageModule, intersectionObserverPreset } from 'ng-lazyload-image';
+
+import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 import { DetailsRoutingModule } from './details-routing.module';
 import { DetailsComponent } from './details.component';
@@ -8,10 +9,8 @@ import { DetailsComponent } from './details.component';
 @NgModule({
 	imports: [
 		CommonModule,
-		LazyLoadImageModule.forRoot({
-			preset: intersectionObserverPreset
-		}),
-		DetailsRoutingModule
+		DetailsRoutingModule,
+		LazyLoadImageModule
 	],
 	declarations: [
 		DetailsComponent
@@ -22,5 +21,3 @@ import { DetailsComponent } from './details.component';
 })
 
 export class DetailsModule {}
-
-//node_modules/.bin/ivy-ngcc
